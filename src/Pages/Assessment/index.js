@@ -52,21 +52,22 @@ const Assessment = () => {
 
     const [audioChunks, setAudioChunks] = useState([]);
     const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [audio,setAudio] = useState(null);
     const [audioBlob, setAudioBlob] = useState(null);
+
     const [elapsedTime, setElapsedTime] = useState(0);
     const [elapsedMin,setElapsedMin] = useState(0);
     const [animation,setAnimation] = useState(false);
-
     const [timeUp,setTimeUp] = useState(false);
     const [flag,setFlag] = useState(false);
 
-    const sendData = async () => {
+    const sendData = async (formData) => {
         try{
             //sample payload
             const payload = {
                 ques_id : currentQuestion,
                 assess_id : 0,
-                data : audioBlob
+                data : formData
             }
             const apiResponse = await SendAssessmentStatusAPI(payload);
             console.log(apiResponse);
@@ -140,23 +141,29 @@ const Assessment = () => {
         mediaRecorder.start();
     };
 
-    const handleStopClick = async () => {
+    const handleStopClick = () => {
         setIsRecording(false);
         setAnimation(false);
         mediaRecorder.stop();
-
-        await sendData();
     };
 
     const handleDataAvailable = (event) => {
         setAudioChunks((prev) => [...prev, event.data]);
     };
 
-    const handleNextClick = () => {
+    const handleNextClick = async () => {
         // Make API request to get next question and send current audio file
         // Update state with new question and reset timer
-        const blob = new Blob(audioChunks, { type: "audio/ogg; codecs=opus" });
-        setAudioBlob(blob);
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(blob);
+
+        const audioBlob = await fetch(audioUrl).then((r) => r.blob());
+        const audioFile = new File([audioBlob],'answer.webm',{type: "audio/webm"});
+        const formData = new FormData();
+        formData.append('file',audioFile);
+
+        await sendData(formData);
+
         if(currentQuestion < 9){
             setCurrentQuestion((prevQuestion) => prevQuestion + 1);
             setTimer(60);
@@ -164,6 +171,7 @@ const Assessment = () => {
             setShowConfirmation(true);
         }
         setAudioChunks([]);
+
         setIsRecording(false);
         setElapsedMin(0);
         setElapsedTime(0);
@@ -178,13 +186,13 @@ const Assessment = () => {
         setAnimation(false);
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         // Make API request to submit exam and redirect to result page
         setShowConfirmation(false);
 
-        const blob = new Blob(audioChunks, { type: "audio/ogg; codecs=opus" });
-        setAudioBlob(blob);
-        console.log("Audio blob:", blob);
+        const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
+        const audioUrl = URL.createObjectURL(blob);
+        await sendData(audioUrl);
     };
 
     const handleCancel = () => {
@@ -295,6 +303,11 @@ const Assessment = () => {
                         <Button onClick={handleFinishClick}>Finish</Button>
                     </div>
                 </div>
+                {
+                    /*
+                    <audio src={audio} controls={true}></audio>
+                    */
+                }
                 <Modal
                     title="Confirm submission"
                     visible={showConfirmation}

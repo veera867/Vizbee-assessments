@@ -1,8 +1,29 @@
-import React from 'react'
+import React from 'react';
+import { AudioRecorder,useAudioRecorder } from 'react-audio-voice-recorder';
+
 
 function Skills() {
+
+    const addAudioElement = (blob) => {
+        const url = URL.createObjectURL(blob);
+        console.log(blob);
+        console.log(url);
+        const audio = document.createElement("audio");
+        audio.src = url;
+        audio.controls = true;
+        document.body.appendChild(audio);
+    };    
+
+    const recorderControls = useAudioRecorder()
+    
     return (
-        <div>This is skills page</div>
+        <div>
+            <AudioRecorder 
+                onRecordingComplete={(blob) => addAudioElement(blob)}
+                recorderControls={recorderControls}
+            />
+            <button onClick={recorderControls.stopRecording}>Stop recording</button>
+        </div>
     )
 }
 

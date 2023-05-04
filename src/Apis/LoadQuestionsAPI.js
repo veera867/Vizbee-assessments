@@ -9,12 +9,12 @@ let axiosConfig = {
     }
 };
 
-const LoadQuestionsAPI = async () => {
+const LoadQuestionsAPI = async (id) => {
 
     //This api has to be replaced.
-    const link = `http://dummyapi/getQues`;
+    const url = `https://8000-gathianalyt-skillmetric-oirvhb1lrus.ws-us96b.gitpod.io/getquestions?test_id=${id}`;
 
-    return await axios.get(link,axiosConfig)
+    return await axios.get(url,axiosConfig)
     .then((result)=>{
         return result;
     })

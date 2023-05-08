@@ -26,12 +26,12 @@ function AppLayout() {
         <Layout>
         <Header>
             <div className="header-wrapper">
-                <h1>Vizbee</h1>
+                <h1>Apexon Assessment System</h1>
                 <MenuOutlined className="icon-menu" onClick={showDrawer}/>
             </div>
         </Header>
 
-        <Drawer title="Vizbee" placement="left" onClose={onClose} open={open}>
+        <Drawer title="Apexon Assessment System" placement="left" onClose={onClose} open={open}>
             <div className="drawer-body">
                 <Button type="link" href="/app/dashboard">Dashboard</Button>
                 <Button type="link" href="/app/skills">Skills</Button>

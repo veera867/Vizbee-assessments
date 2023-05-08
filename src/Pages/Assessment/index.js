@@ -9,13 +9,16 @@ import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
 import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
 
 const Assessment = () => {
-  const [timer, setTimer] = useState(90); // Set timer to 60 seconds
+  const [timer, setTimer] = useState(60); // Set timer to 60 seconds
   const [isRecording, setIsRecording] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const ref = createRef(null);
-  const [image, takeScreenshot] = useScreenshot();
-  const getImage = () => takeScreenshot(ref.current);
+  const [image, setImagetakeScreenshot] = useScreenshot();
+
+  const getImage = () => {
+    setImagetakeScreenshot(ref.current);
+  }
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questions, setQuestions] = useState();
@@ -106,7 +109,7 @@ const Assessment = () => {
     setIsRecording(true);
     setAnimation(true);
     setFlag(true);
-
+    getImage()
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const mediaRecorder = new MediaRecorder(stream);
     setMediaRecorder(mediaRecorder);
@@ -136,7 +139,7 @@ const Assessment = () => {
     });
     console.log("audioBlob", audioBlob);
     const formData = new FormData();
-    formData.append("file", audioFile, audioFile);
+    formData.append("audio", audioFile);
     // formData.append('audiourl', audioUrl);
 
     // await sendData(audioBlob);
@@ -217,20 +220,20 @@ const Assessment = () => {
     },
   };
 
-  console.log("questions", questions);
+  console.log("questions", image);
 
   return (
     <>
-      <Button style={{ margin: "10px" }} onClick={getImage}>
+      {/* <Button style={{ margin: "10px" }} onClick={getImage}>
         <CameraOutlined /> Take Snapshot
-      </Button>
-      <img src={image} width="320" height="280"  alt="image"/>
+      </Button> */}
+      {/* <img style={{textAlign:"center"}} src={image} width="320" height="280"  alt="image"/> */}
       <div className="app-wrapper">
         <div className="content-wrapper">
           <div className="question-wrapper">
             <div className="time-wrapper">
               <p className="timer">
-                <ClockCircleOutlined className="icon-clock" /> Timer: {timer}
+                <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "90"}
               </p>
             </div>
             <div className="row-flexer">
@@ -276,7 +279,7 @@ const Assessment = () => {
                   Record
                 </Button>
               ) : (
-                <Button onClick={handleRecordClick} disabled={questions ? false : true}>Record</Button>
+                <Button onClick={handleRecordClick}disabled={questions ? false : true} >Record</Button>
               )}
               {isRecording ? (
                 <Button onClick={handleSkip} disabled>

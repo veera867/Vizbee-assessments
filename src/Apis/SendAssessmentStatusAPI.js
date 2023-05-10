@@ -2,7 +2,7 @@ import axios from "axios";
 
 let axiosConfig = {
     headers: {
-        //"Content-Type" : "multipart/form-data",
+        "Content-Type" : "multipart/form-data",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
@@ -13,9 +13,9 @@ const SendAssessmentStatusAPI = async (values) => {
     console.log("payload : ",values);
 
     //This api has to be replaced.
-    const link = `http://dummyapi`;
+    const url = `https://8000-gathianalyt-skillmetric-oirvhb1lrus.ws-us96b.gitpod.io/audio`;
 
-    return await axios.post(link,values,axiosConfig)
+    return await axios.post(url,values,axiosConfig)
     .then((result)=>{
         return result;
     })

@@ -6,6 +6,7 @@
 }
 .ant-layout-header{
   height: 60px;
+  padding: 2rem;
   background-color: #394867;
   color: #F1F6F9;
 
@@ -202,6 +203,9 @@ span.fifth{
 
 
 @media (max-width:600px) {
+  .ant-layout-header{
+    padding: .5rem;
+  }
   .instruction-box{
     display: none;
   }

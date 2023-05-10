@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState} from 'react';
 import { Layout, Button, Drawer  } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 
@@ -8,6 +8,8 @@ import Assessment from './Assessment';
 import '../App.css';
 import Skills from './Skills';
 import Dashboard from './Dashboard';
+import SkillCreate from './Skills/create';
+import SkillEdit from './Skills/edit';
 
 const { Header , Footer } = Layout;
 
@@ -31,7 +33,7 @@ function AppLayout() {
             </div>
         </Header>
 
-        <Drawer title="Vizbee" placement="left" onClose={onClose} open={open}>
+        <Drawer title="Vizbee" placement="right" onClose={onClose} open={open}>
             <div className="drawer-body">
                 <Button type="link" href="/app/dashboard">Dashboard</Button>
                 <Button type="link" href="/app/skills">Skills</Button>
@@ -44,6 +46,8 @@ function AppLayout() {
                 <Route path="/" element={<Navigate to="/app/assessment" />} />
                 <Route path="/assessment" element={<Assessment />}></Route>
                 <Route path="/skills" element={<Skills />}></Route>
+                <Route path="/skills/new" element={<SkillCreate />}></Route>
+                <Route path="/skills/edit/:id" element={<SkillEdit />}></Route>
                 <Route path="/dashboard" element={<Dashboard />}></Route>
             </Routes>
         </>

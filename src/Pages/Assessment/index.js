@@ -192,7 +192,13 @@ const Assessment = () => {
 
         const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
         const audioUrl = URL.createObjectURL(blob);
-        await sendData(audioUrl);
+
+        const audioBlob = await fetch(audioUrl).then((r) => r.blob());
+        const audioFile = new File([audioBlob],'answer.webm',{type: "audio/webm"});
+        const formData = new FormData();
+        formData.append('file',audioFile);
+        
+        await sendData(formData);
     };
 
     const handleCancel = () => {

@@ -228,109 +228,109 @@ const Assessment = () => {
         <CameraOutlined /> Take Snapshot
       </Button> */}
       {/* <img style={{textAlign:"center"}} src={image} width="320" height="280"  alt="image"/> */}
-      <div className="app-wrapper">
-        <div className="content-wrapper">
-          <div className="question-wrapper">
-            <div className="time-wrapper">
-              <p className="timer">
-                <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "90"}
-              </p>
+      <div className="layout-outer">
+        <div className="layout-inner flexer">
+            <div className="question-wrapper">
+              <div className="time-wrapper">
+                <p className="timer">
+                  <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "90"}
+                </p>
+              </div>
+              <div className="row-flexer">
+                <p>
+                  {questions && questions[currentQuestion].QuestionID}.{" "}
+                  {questions && questions[currentQuestion].Question}
+                </p>
+                {/* {questions && questions.map((item, index) => {
+                return (
+                  <>
+                    <p className="question-text">{`${index + 1} ${item.Question}`}</p>
+                  </>
+                );
+              })} */}
+              </div>
+              <div className="audio-animation">
+                {animation ? (
+                  <div className="animation running">
+                    <span className="first"></span>
+                    <span className="second"></span>
+                    <span className="third"></span>
+                    <span className="fourth"></span>
+                    <span className="fifth"></span>
+                  </div>
+                ) : (
+                  <div className="animation">
+                    <span className="first"></span>
+                    <span className="second"></span>
+                    <span className="third"></span>
+                    <span className="fourth"></span>
+                    <span className="fifth"></span>
+                  </div>
+                )}
+                <p>
+                  0{elapsedMin}:{elapsedTime}
+                </p>
+              </div>
+              <div className="button-wrapper">
+                {isRecording ? (
+                  <Button onClick={handleStopClick}>Stop</Button>
+                ) : timeUp ? (
+                  <Button onClick={handleRecordClick} disabled>
+                    Record
+                  </Button>
+                ) : (
+                  <Button onClick={handleRecordClick}disabled={questions ? false : true} >Record</Button>
+                )}
+                {isRecording ? (
+                  <Button onClick={handleSkip} disabled>
+                    Skip
+                  </Button>
+                ) : elapsedTime > 0 ? (
+                  <Button onClick={handleSkip} disabled>
+                    Skip
+                  </Button>
+                ) : (
+                  <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
+                )}
+                {!isRecording && flag ? (
+                  <Button onClick={handleNextClick}>Next</Button>
+                ) : (
+                  <Button onClick={handleNextClick} disabled>
+                    Next
+                  </Button>
+                )}
+                <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
+              </div>
             </div>
-            <div className="row-flexer">
-              <p>
-                {questions && questions[currentQuestion].QuestionID}.{" "}
-                {questions && questions[currentQuestion].Question}
-              </p>
-              {/* {questions && questions.map((item, index) => {
-              return (
-                <>
-                  <p className="question-text">{`${index + 1} ${item.Question}`}</p>
-                </>
-              );
-            })} */}
-            </div>
-            <div className="audio-animation">
-              {animation ? (
-                <div className="animation running">
-                  <span className="first"></span>
-                  <span className="second"></span>
-                  <span className="third"></span>
-                  <span className="fourth"></span>
-                  <span className="fifth"></span>
-                </div>
-              ) : (
-                <div className="animation">
-                  <span className="first"></span>
-                  <span className="second"></span>
-                  <span className="third"></span>
-                  <span className="fourth"></span>
-                  <span className="fifth"></span>
-                </div>
-              )}
-              <p>
-                0{elapsedMin}:{elapsedTime}
-              </p>
-            </div>
-            <div className="button-wrapper">
-              {isRecording ? (
-                <Button onClick={handleStopClick}>Stop</Button>
-              ) : timeUp ? (
-                <Button onClick={handleRecordClick} disabled>
-                  Record
-                </Button>
-              ) : (
-                <Button onClick={handleRecordClick}disabled={questions ? false : true} >Record</Button>
-              )}
-              {isRecording ? (
-                <Button onClick={handleSkip} disabled>
-                  Skip
-                </Button>
-              ) : elapsedTime > 0 ? (
-                <Button onClick={handleSkip} disabled>
-                  Skip
-                </Button>
-              ) : (
-                <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
-              )}
-              {!isRecording && flag ? (
-                <Button onClick={handleNextClick}>Next</Button>
-              ) : (
-                <Button onClick={handleNextClick} disabled>
-                  Next
-                </Button>
-              )}
-              <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
-            </div>
-          </div>
-          {/*
-                    <audio src={audio} controls={true}></audio>
-                    */}
-          <Modal
-            title="Confirm submission"
-            visible={showConfirmation}
-            onOk={handleConfirm}
-            onCancel={handleCancel}
-          >
-            <p>Are you sure you want to submit your exam?</p>
-          </Modal>
-        </div>
+            {/*
+              <audio src={audio} controls={true}></audio>
+            */}
+            <Modal
+              title="Confirm submission"
+              open={showConfirmation}
+              onOk={handleConfirm}
+              onCancel={handleCancel}
+            >
+              <p>Are you sure you want to submit your exam?</p>
+            </Modal>
 
-        <div className="right-wrapper">
+          <div className="right-wrapper">
             <div ref={ref}>
-          <Row>
-            <Col  span={10}>               
-              <Webcam {...webcamOptions} />
-            </Col>
-          </Row>
-          </div>
-          <div className="instruction-box">
-            <h3>Instructions</h3>
-           
-            <h5>
-              1. Please Precsiely to the question as data is evaluated by bot. 
-            </h5>
-            <h5>2. Test your audio device before starting the discussion</h5>
-            <h5>3. Test Duration is 45 minutes</h5>
+              <Row>
+                <Col  span={10}>               
+                  <Webcam {...webcamOptions} />
+                </Col>
+              </Row>
+              </div>
+              <div className="instruction-box">
+                <h3>Instructions</h3>
+
+                <h5>
+                  1. Please Precsiely to the question as data is evaluated by bot. 
+                </h5>
+                <h5>2. Test your audio device before starting the discussion</h5>
+                <h5>3. Test Duration is 45 minutes</h5>
+              </div>
           </div>
         </div>
       </div>

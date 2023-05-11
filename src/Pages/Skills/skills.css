@@ -10,6 +10,12 @@
 
     background-color: #fff;
 }
+.layout-inner.flexer{
+    max-width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 .title-bar{
     width: 100%;
 

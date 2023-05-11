@@ -34,7 +34,7 @@
 
 .app-wrapper{
   width: 100%;
-  height: calc(100% - 120px);
+  max-width: 100vw;
   background-color: #F1F6F9;
 
   display: flex;
@@ -48,8 +48,7 @@
 .instruction-box{
   width: 240px;
   height: 400px;
-  background-color: #FFF;
-  border-radius: 5px;
+  background-color: #9BA4B5;
   padding: 1rem;
 }
 .instruction-box h3{
@@ -59,9 +58,9 @@
 }
 
 .content-wrapper{
-  width: 100%;
-  max-width: 60%;
-  height: calc(100% - 120px);
+  width: 60%;
+  max-width: calc(100% - 300px);
+  height: auto;
   
   display: flex;
   flex-direction: column;
@@ -69,8 +68,8 @@
   justify-content: flex-start;
 }
 .question-wrapper{
-  width: 95%;
-  min-width: 500px;
+  width: 90%;
+  max-width: 700px;
   background-color: none;
   margin-top: 1rem;
 }

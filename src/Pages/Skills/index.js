@@ -231,6 +231,8 @@ function Skills() {
                     </div>
                 </div>
 
+                <Divider />
+                
                 <div className="content-wrapper">
                     {
                         loading

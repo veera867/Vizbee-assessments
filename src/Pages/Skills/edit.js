@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
 
+import DeleteQuestionnaireAPI from '../../Apis/Skills/DeleteQuestionnaireAPI';
+import EditQuestionnaireAPI from '../../Apis/Skills/EditQuestionnaireAPI';
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
 import GetQuestionnaireAPI from '../../Apis/Skills/GetQuestionnaireAPI';
 
 import './skills.css';
 
-function CreateSkill() {
+function EditSkill() {
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
@@ -23,16 +25,16 @@ function CreateSkill() {
             importance: 'Beginner',
         },
         {
-            slno : 2,
-            question : 'What is Java?',
-            answer : 'Java is a porgramming language.',
-            importance: 'Intermediate',
+          slno : 2,
+          question : 'What is Java?',
+          answer : 'Java is a porgramming language.',
+          importance: 'Intermediate',
         },
         {
-            slno : 3,
-            question : 'What is JavaScript?',
-            answer : 'JavaScript is a porgramming language.',
-            importance: 'Beginner',
+          slno : 3,
+          question : 'What is JavaScript?',
+          answer : 'JavaScript is a porgramming language.',
+          importance: 'Beginner',
         },
     ]);
 
@@ -102,8 +104,7 @@ function CreateSkill() {
         try{
             const payload = {
                 skillName : skillName,
-                skillGroup : skillGroup,
-                questionnaire : questions
+                skillGroup : skillGroup
             }
             const apiResponse = await CreateSkillsAPI(payload);
             console.log(apiResponse);
@@ -133,68 +134,68 @@ function CreateSkill() {
         }
     }
 
-    useEffect(()=>{
-        console.log('loading : ',questions);
-    },[loading]);
-
     //Edit Functionality
     const handleEdit = async (record) => {
-        setEditId(record.slno);
         setCurrentEditModel(record);
         setQuestion(record.question);
         setAnswer(record.answer);
         setImportance(record.importance);
 
         setOpenEdit(true);
+        setEditId(record.slno);
     }
     const handleEdit2 = () =>{
-        setEditId(0);
         setCurrentEditModel({
             slno : 0,
             question : '',
             answer : '',
-            importance: 'Beginner',
+            importance: '',
         });
         setQuestion('');
         setAnswer('');
-        setImportance('Beginner');
+        setImportance('');
 
         setOpenEdit(true);
+        setEditId(0);
     }
     const handleEditOk = async () => {
         setEditLoading(true);
         try{
-            if(editId === 0){
-                let temp = {
-                    slno : questions.length > 0 
-                                ? question.length === 1 
-                                    ? questions.length+1 
-                                    : question.length 
-                                : 1,
-                    question : question,
-                    answer : answer,
-                    importance: importance,
-                };
-                setQuestions([...questions,temp]);
+            const payload = {
+                slno : editId,
+                question: question,
+                answer: answer,
+                importance: importance
+            };
+
+            const apiResponse = await EditQuestionnaireAPI(payload);
+            console.log(apiResponse);
+
+            //According to the status from API
+            if(apiResponse.status === 200){
+                setEditLoading(false);
+                setCnfmDel(false);
+                setDelId(null);
+
+                messageApi.open({
+                    type: 'success',
+                    content: 'Successfully Saved.',
+                });              
             } else {
-                questions.map(ques => {
-                    if(ques.slno === editId){
-                        ques.question = question;
-                        ques.answer = answer;
-                        ques.importance = importance;
-                    }
-    
-                    return null;
-                })
-            }
-            setEditLoading(false);
-            setOpenEdit(false);
-            setEditId(null);
+                setEditLoading(false);
+                setCnfmDel(false);
+                setDelId(null);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });              
+            }    
         } catch (err) {
             console.log(err.message);
             setEditLoading(false);
-            setOpenEdit(false);
-            setEditId(null);
+            setCnfmDel(false);
+            setDelId(null);
 
             messageApi.open({
                 type: 'error',
@@ -215,11 +216,29 @@ function CreateSkill() {
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try{
-            setQuestions(questions.filter(ques => ques.slno !== delId));
+            const apiResponse = await DeleteQuestionnaireAPI(delId);
+            console.log(apiResponse);
 
-            setConfirmLoading(false);
-            setCnfmDel(false);
-            setDelId(null);
+            //According to the status from API
+            if(apiResponse.status === 200){
+                setConfirmLoading(false);
+                setCnfmDel(false);
+                setDelId(null);
+
+                messageApi.open({
+                    type: 'success',
+                    content: 'Deleted Successfully',
+                });              
+            } else {
+                setConfirmLoading(false);
+                setCnfmDel(false);
+                setDelId(null);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });              
+            }    
         } catch (err) {
             console.log(err.message);
             setConfirmLoading(false);
@@ -348,8 +367,7 @@ function CreateSkill() {
                     <label for="slno">Sl No : </label>
                     <Input 
                         placeholder="Sl No"
-                        defaultValue={editId}
-                        value={editId}
+                        defaultValue={currentEditModel.slno}
                         name="slno"
                         disabled
                     ></Input>
@@ -400,4 +418,4 @@ function CreateSkill() {
     )
 }
 
-export default CreateSkill
+export default EditSkill

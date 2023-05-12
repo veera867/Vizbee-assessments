@@ -17,17 +17,59 @@ function Skills() {
         {
             skillId : 1,
             skillName : 'Python',
-            question : 'What is Python?'
+            question : 'What is Python?',
+            questionnaire: [
+                {
+                    question : 'What is Python',
+                    answer : 'Pytho is a programming langauge'
+                },
+                {
+                    question : 'How to compile python code?',
+                    answer : 'Using Python file.py cmd'
+                },
+                {
+                    question : 'What is the stable version of Python?',
+                    answer : 'Latest LTS is 3.10.0'
+                }
+            ]
         },
         {
             skillId : 2,
             skillName : 'Java',
-            question : 'What is Java?'
+            question : 'What is Java?',
+            questionnaire: [
+                {
+                    question : 'What is Java',
+                    answer : 'Java is a programming langauge'
+                },
+                {
+                    question : 'How to compile Java code?',
+                    answer : 'Using javac file.java cmd'
+                },
+                {
+                    question : 'What is the stable version of Java?',
+                    answer : 'Latest LTS is 16.8.0'
+                }
+            ]
         },
         {
             skillId : 3,
             skillName : 'JavaScript',
-            question : 'What is JavaScript?'
+            question : 'What is JavaScript?',
+            questionnaire: [
+                {
+                    question : 'What is JavaScript',
+                    answer : 'JavScript is a programming langauge'
+                },
+                {
+                    question : 'How to compile JavaScript code?',
+                    answer : 'Using node file.js or in browser console.'
+                },
+                {
+                    question : 'What is the stable version of JavaScript?',
+                    answer : 'Latest ECMAScript'
+                }
+            ]
         }
     ]);
 

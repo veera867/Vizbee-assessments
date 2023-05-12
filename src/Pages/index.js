@@ -9,6 +9,7 @@ import '../App.css';
 import Skills from './Skills';
 import Dashboard from './Dashboard';
 import SkillCreate from './Skills/create';
+import NewQuestionnaire from './Skills/NewQuestionnaire';
 
 const { Header , Footer } = Layout;
 
@@ -46,6 +47,7 @@ function AppLayout() {
                 <Route path="/assessment" element={<Assessment />}></Route>
                 <Route path="/skills" element={<Skills />}></Route>
                 <Route path="/skills/new" element={<SkillCreate />}></Route>
+                <Route path="/skills/new/addQuestionnaire" element={<NewQuestionnaire />}></Route>
                 <Route path="/dashboard" element={<Dashboard />}></Route>
             </Routes>
         </>

@@ -25,16 +25,16 @@ function EditSkill() {
             importance: 'Beginner',
         },
         {
-          slno : 2,
-          question : 'What is Java?',
-          answer : 'Java is a porgramming language.',
-          importance: 'Intermediate',
+            slno : 2,
+            question : 'What is Java?',
+            answer : 'Java is a porgramming language.',
+            importance: 'Intermediate',
         },
         {
-          slno : 3,
-          question : 'What is JavaScript?',
-          answer : 'JavaScript is a porgramming language.',
-          importance: 'Beginner',
+            slno : 3,
+            question : 'What is JavaScript?',
+            answer : 'JavaScript is a porgramming language.',
+            importance: 'Beginner',
         },
     ]);
 

@@ -133,10 +133,6 @@ function CreateSkill() {
         }
     }
 
-    useEffect(()=>{
-        console.log('loading : ',questions);
-    },[loading]);
-
     //Edit Functionality
     const handleEdit = async (record) => {
         setEditId(record.slno);
@@ -307,7 +303,7 @@ function CreateSkill() {
                 </Space>
 
                 <div className="title-bar">
-                    <h1></h1>
+                    <h1>{''}</h1>
 
                     <div className="button-holder">
                         <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
@@ -374,7 +370,7 @@ function CreateSkill() {
 
                     <label for="importance">Importance : </label>
                     <Select
-                        defaultValue='beginner'
+                        defaultValue='Beginner'
                         onChange={(value)=>setImportance(value)}
                         style={{
                             width : '100%'

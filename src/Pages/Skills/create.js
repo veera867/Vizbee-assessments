@@ -1,13 +1,13 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
 
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
-import GetQuestionnaireAPI from '../../Apis/Skills/GetQuestionnaireAPI';
 
 import './skills.css';
+import processCSVData from './CSVparser';
 
 function CreateSkill() {
 
@@ -58,45 +58,40 @@ function CreateSkill() {
     const [answer,setAnswer] = useState('');
     const [importance,setImportance] = useState('');
 
-
-    useEffect(()=>{
-        async function getQuestionnaire(){
-            setLoading(true);
-            try{
-                const apiResponse = await GetQuestionnaireAPI({});
-                console.log(apiResponse);
-    
-                //According to the status from API
-                if(apiResponse.status === 200){
-                    setQuestions(apiResponse.data);
-                    setLoading(false);
-                } else {
-                    setHasErr(true);
-                    setErrMsg(apiResponse.message);
-                    setLoading(false);
-
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.message,
-                    });                  
-                }    
-            } catch (err) {
-                console.log(err.message);
-                setLoading(false);
-
-                messageApi.open({
-                    type: 'error',
-                    content: err.message,
-                }); 
-            }    
-        }
-
-        getQuestionnaire();
-    },[]);
+    const fileInputRef = useRef(null);
 
     const handleCancel = () => {
         navigate(-1);
     }
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+    
+    const handleCSVUpload = (e) => {
+        const file = e.target.files[0];
+
+        // Create a FileReader object
+        const reader = new FileReader();
+
+        // Define the onload function
+        reader.onload = (event) => {
+            const csvData = event.target.result;
+            
+            // Process the CSV data and extract the necessary information
+            const extractedData = processCSVData(csvData);
+            
+            // Update the state with the extracted data
+            setQuestions([...questions, ...extractedData]);
+            
+            messageApi.open({
+                type: 'success',
+                content: 'CSV file uploaded successfully.',
+            });
+        };
+        // Read the contents of the file as text
+        reader.readAsText(file);
+    };
 
     const handleSave = async () => {
         try{
@@ -308,7 +303,21 @@ function CreateSkill() {
                     <div className="button-holder">
                         <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
                         <span></span>
-                        <Button type="primary" shape="circle" onClick={()=>{}} icon={<CloudUploadOutlined />}/>
+                        <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
+                            <Button type="primary" 
+                                shape="circle" 
+                                icon={<CloudUploadOutlined />} 
+                                onClick={handleUploadClick} 
+                            />
+                            <input
+                                type="file"
+                                id="csv-upload"
+                                accept=".csv"
+                                style={{ display: 'none' }}
+                                ref={fileInputRef}
+                                onChange={handleCSVUpload}
+                            />
+                        </label>                        
                         <span></span>
                         <Button type="primary" onClick={()=>{}}>Auto Generate</Button>
                     </div>

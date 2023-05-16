@@ -17,7 +17,6 @@ function Skills() {
         {
             skillId : 1,
             skillName : 'Python',
-            question : 'What is Python?',
             questionnaire: [
                 {
                     question : 'What is Python',
@@ -36,7 +35,6 @@ function Skills() {
         {
             skillId : 2,
             skillName : 'Java',
-            question : 'What is Java?',
             questionnaire: [
                 {
                     question : 'What is Java',
@@ -55,7 +53,6 @@ function Skills() {
         {
             skillId : 3,
             skillName : 'JavaScript',
-            question : 'What is JavaScript?',
             questionnaire: [
                 {
                     question : 'What is JavaScript',
@@ -82,15 +79,6 @@ function Skills() {
     const [cnfmDel,setCnfmDel] = useState(false);
     const [delId,setDelId] = useState(0);
     const [confirmLoading,setConfirmLoading] = useState(false);
-
-    //for edit popup box
-    const [openEdit,setOpenEdit] = useState(false);
-    const [editId,setEditId] = useState(0);
-    const [editLoading,setEditLoading] = useState(false);
-    const [currentEditModel,setCurrentEditModel] = useState({});
-    const [editName,setEditName] = useState('');
-    const [editQues,setEditQues] = useState('');
-
 
     useEffect(()=>{
         async function getSkills(){
@@ -126,64 +114,6 @@ function Skills() {
 
         getSkills();
     },[]);
-
-    //Edit Functionality
-    const handleEdit = async (record) => {
-        setCurrentEditModel(record);
-        setEditName(record.skillName);
-        setEditQues(record.question);
-
-        setOpenEdit(true);
-        setEditId(record.skillId);
-    }
-    const handleEditOk = async () => {
-        setEditLoading(true);
-        try{
-            const payload = {
-                skillId : editId,
-                skillName: editName,
-                question: editQues
-            };
-
-            const apiResponse = await EditKSillsAPI(payload);
-            console.log(apiResponse);
-
-            //According to the status from API
-            if(apiResponse.status === 200){
-                setEditLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'success',
-                    content: 'Successfully Saved.',
-                });              
-            } else {
-                setEditLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'error',
-                    content: apiResponse.message,
-                });              
-            }    
-        } catch (err) {
-            console.log(err.message);
-            setEditLoading(false);
-            setCnfmDel(false);
-            setDelId(null);
-
-            messageApi.open({
-                type: 'error',
-                content: err.message,
-            });              
-        }    
-    }
-    const handleEditCancel = () => {
-        setOpenEdit(false);
-        setEditId(null);
-    }
 
     // Delete Functionality
     const handleRemove = async (record) => {
@@ -245,16 +175,11 @@ function Skills() {
             key: 'skillName',
         },
         {
-            title: 'Question',
-            dataIndex: 'question',
-            key: 'question',
-        },
-        {
             title: 'Action',
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EditFilled />} onClick={() => handleEdit(record)}></Button>
+                <Button icon={<EditFilled />} href={`skills/edit/${record.skillId}`}></Button>
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
@@ -291,43 +216,6 @@ function Skills() {
                 onCancel={handleDelCancel}
             >
                 <p>Are you sure to delete?</p>
-            </Modal>
-
-            <Modal
-                title="Edit Skill"
-                open={openEdit}
-                onOk={handleEditOk}
-                confirmLoading={editLoading}
-                onCancel={handleEditCancel}
-            >
-                <Divider />
-                <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    <label for="skillId">Skill Id : </label>
-                    <Input 
-                        placeholder="Skill Id"
-                        defaultValue={currentEditModel.skillId}
-                        name="skillId"
-                        disabled
-                    ></Input>
-
-                    <label for="skillName">Skill Name : </label>
-                    <Input 
-                        placeholder="Skill Name"
-                        defaultValue={currentEditModel.skillName}
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                        name="skillName"
-                    ></Input>
-
-                    <label for="question">Question : </label>
-                    <Input 
-                        placeholder="Question"
-                        defaultValue={currentEditModel.question}
-                        value={editQues}
-                        onChange={(e) => setEditQues(e.target.value)}
-                        name="question"
-                    ></Input>
-                </Space>
             </Modal>
         </div>
     )

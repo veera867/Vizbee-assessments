@@ -13,6 +13,7 @@ import NewQuestionnaire from './Skills/NewQuestionnaire';
 import Schedule from './Dashboard/Schedule';
 import CreateTest from './Dashboard/CreateTest';
 import VerifyCode from './Assessment/VerifyCode';
+import EditSkill from './Skills/edit';
 
 const { Header , Footer } = Layout;
 
@@ -54,13 +55,18 @@ function AppLayout() {
                 <Route path="/assessment/create" element={<CreateTest />}></Route>
                 <Route path="/skills" element={<Skills />}></Route>
                 <Route path="/skills/new" element={<SkillCreate />}></Route>
+                <Route path="/skills/edit/:id" element={<EditSkill />}></Route>
                 <Route path="/skills/new/addQuestionnaire" element={<NewQuestionnaire />}></Route>
             </Routes>
         </>
 
-        <Footer>
-            Vizbee App ©2023 | All rights reserved.
-        </Footer>
+        {
+            /*
+                <Footer>
+                    Vizbee App ©2023 | All rights reserved.
+                </Footer>
+            */
+        }
     </Layout>
 )
 }

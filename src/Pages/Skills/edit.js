@@ -1,17 +1,18 @@
-import React,{useState,useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import React,{useState,useEffect, useRef} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import processCSVData from './CSVparser';
 
 import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
 
-import DeleteQuestionnaireAPI from '../../Apis/Skills/DeleteQuestionnaireAPI';
-import EditQuestionnaireAPI from '../../Apis/Skills/EditQuestionnaireAPI';
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
-import GetQuestionnaireAPI from '../../Apis/Skills/GetQuestionnaireAPI';
+import GetSkillWithID from '../../Apis/Skills/GetSkillWithID';
 
 import './skills.css';
 
 function EditSkill() {
+    const {id} = useParams();
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
@@ -43,6 +44,7 @@ function EditSkill() {
     const [hasErr,setHasErr] = useState(false);
     const [errMsg,setErrMsg] = useState('');
 
+    const [skillId,setSkillId] = useState(0);
     const [skillName,setSkillName] = useState('');
     const [skillGroup,setSkillGroup] = useState('');
 
@@ -60,17 +62,21 @@ function EditSkill() {
     const [answer,setAnswer] = useState('');
     const [importance,setImportance] = useState('');
 
+    const fileInputRef = useRef(null);
 
     useEffect(()=>{
-        async function getQuestionnaire(){
+        async function GetSkillDetails(){
             setLoading(true);
             try{
-                const apiResponse = await GetQuestionnaireAPI({});
+                const apiResponse = await GetSkillWithID(id !== undefined || id !== null ? id : 0);
                 console.log(apiResponse);
     
                 //According to the status from API
                 if(apiResponse.status === 200){
-                    setQuestions(apiResponse.data);
+                    setSkillId(apiResponse.data.skillId);
+                    setSkillName(apiResponse.data.skillName);
+                    setSkillGroup(apiResponse.data.skillGroup);
+                    setQuestions(apiResponse.data.questionnaire);
                     setLoading(false);
                 } else {
                     setHasErr(true);
@@ -93,18 +99,50 @@ function EditSkill() {
             }    
         }
 
-        getQuestionnaire();
+        setSkillId(id);
+        GetSkillDetails();
     },[]);
 
     const handleCancel = () => {
         navigate(-1);
     }
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+    
+    const handleCSVUpload = (e) => {
+        const file = e.target.files[0];
+
+        // Create a FileReader object
+        const reader = new FileReader();
+
+        // Define the onload function
+        reader.onload = (event) => {
+            const csvData = event.target.result;
+            
+            // Process the CSV data and extract the necessary information
+            const extractedData = processCSVData(csvData);
+            
+            // Update the state with the extracted data
+            setQuestions([...questions, ...extractedData]);
+            
+            messageApi.open({
+                type: 'success',
+                content: 'CSV file uploaded successfully.',
+            });
+        };
+        // Read the contents of the file as text
+        reader.readAsText(file);
+    };
+
     const handleSave = async () => {
         try{
             const payload = {
+                skillId : skillId,
                 skillName : skillName,
-                skillGroup : skillGroup
+                skillGroup : skillGroup,
+                questionnaire : questions
             }
             const apiResponse = await CreateSkillsAPI(payload);
             console.log(apiResponse);
@@ -136,66 +174,62 @@ function EditSkill() {
 
     //Edit Functionality
     const handleEdit = async (record) => {
+        setEditId(record.slno);
         setCurrentEditModel(record);
         setQuestion(record.question);
         setAnswer(record.answer);
         setImportance(record.importance);
 
         setOpenEdit(true);
-        setEditId(record.slno);
     }
     const handleEdit2 = () =>{
+        setEditId(0);
         setCurrentEditModel({
             slno : 0,
             question : '',
             answer : '',
-            importance: '',
+            importance: 'Beginner',
         });
         setQuestion('');
         setAnswer('');
-        setImportance('');
+        setImportance('Beginner');
 
         setOpenEdit(true);
-        setEditId(0);
     }
     const handleEditOk = async () => {
         setEditLoading(true);
         try{
-            const payload = {
-                slno : editId,
-                question: question,
-                answer: answer,
-                importance: importance
-            };
-
-            const apiResponse = await EditQuestionnaireAPI(payload);
-            console.log(apiResponse);
-
-            //According to the status from API
-            if(apiResponse.status === 200){
-                setEditLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'success',
-                    content: 'Successfully Saved.',
-                });              
+            if(editId === 0){
+                let temp = {
+                    slno : questions.length > 0 
+                                ? question.length === 1 
+                                    ? questions.length+1 
+                                    : question.length 
+                                : 1,
+                    question : question,
+                    answer : answer,
+                    importance: importance,
+                };
+                setQuestions([...questions,temp]);
             } else {
-                setEditLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'error',
-                    content: apiResponse.message,
-                });              
-            }    
+                questions.map(ques => {
+                    if(ques.slno === editId){
+                        ques.question = question;
+                        ques.answer = answer;
+                        ques.importance = importance;
+                    }
+    
+                    return null;
+                })
+            }
+            setEditLoading(false);
+            setOpenEdit(false);
+            setEditId(null);
         } catch (err) {
             console.log(err.message);
             setEditLoading(false);
-            setCnfmDel(false);
-            setDelId(null);
+            setOpenEdit(false);
+            setEditId(null);
 
             messageApi.open({
                 type: 'error',
@@ -216,29 +250,11 @@ function EditSkill() {
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try{
-            const apiResponse = await DeleteQuestionnaireAPI(delId);
-            console.log(apiResponse);
+            setQuestions(questions.filter(ques => ques.slno !== delId));
 
-            //According to the status from API
-            if(apiResponse.status === 200){
-                setConfirmLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'success',
-                    content: 'Deleted Successfully',
-                });              
-            } else {
-                setConfirmLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
-                messageApi.open({
-                    type: 'error',
-                    content: apiResponse.message,
-                });              
-            }    
+            setConfirmLoading(false);
+            setCnfmDel(false);
+            setDelId(null);
         } catch (err) {
             console.log(err.message);
             setConfirmLoading(false);
@@ -294,7 +310,7 @@ function EditSkill() {
             {contextHolder}
             <div className="layout-inner">
                 <div className="title-bar">
-                    <h1>Create New</h1>
+                    <h1>Edit Skill</h1>
 
                     <div className="button-holder">
                         <Button danger onClick={handleCancel}>Cancel</Button>
@@ -306,7 +322,16 @@ function EditSkill() {
                 <Divider />
 
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    <label for="skillName">Skill Name : </label>
+                    <label htmlFor="skillId">Skill Id : </label>
+                    <Input 
+                        placeholder="Skill Id"
+                        value={skillId}
+                        disabled
+                        name="skillId"
+                        style={{maxWidth:'500px'}}
+                    ></Input>
+
+                    <label htmlFor="skillName">Skill Name : </label>
                     <Input 
                         placeholder="Skill Name"
                         value={skillName}
@@ -315,7 +340,7 @@ function EditSkill() {
                         style={{maxWidth:'500px'}}
                     ></Input>
 
-                    <label for="skillGroup">Skill Group : </label>
+                    <label htmlFor="skillGroup">Skill Group : </label>
                     <Input 
                         placeholder="Skill Group"
                         value={skillGroup}
@@ -326,12 +351,26 @@ function EditSkill() {
                 </Space>
 
                 <div className="title-bar">
-                    <h1></h1>
+                    <h1>{''}</h1>
 
                     <div className="button-holder">
                         <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
                         <span></span>
-                        <Button type="primary" shape="circle" onClick={()=>{}} icon={<CloudUploadOutlined />}/>
+                        <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
+                            <Button type="primary" 
+                                shape="circle" 
+                                icon={<CloudUploadOutlined />} 
+                                onClick={handleUploadClick} 
+                            />
+                            <input
+                                type="file"
+                                id="csv-upload"
+                                accept=".csv"
+                                style={{ display: 'none' }}
+                                ref={fileInputRef}
+                                onChange={handleCSVUpload}
+                            />
+                        </label>                        
                         <span></span>
                         <Button type="primary" onClick={()=>{}}>Auto Generate</Button>
                     </div>
@@ -364,15 +403,16 @@ function EditSkill() {
             >
                 <Divider />
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    <label for="slno">Sl No : </label>
+                    <label htmlFor="slno">Sl No : </label>
                     <Input 
                         placeholder="Sl No"
-                        defaultValue={currentEditModel.slno}
+                        defaultValue={editId}
+                        value={editId}
                         name="slno"
                         disabled
                     ></Input>
 
-                    <label for="question">Question : </label>
+                    <label htmlFor="question">Question : </label>
                     <Input 
                         placeholder="Question"
                         defaultValue={currentEditModel.question}
@@ -381,7 +421,7 @@ function EditSkill() {
                         name="question"
                     ></Input>
 
-                    <label for="answer">Answer : </label>
+                    <label htmlFor="answer">Answer : </label>
                     <Input 
                         placeholder="Answer"
                         defaultValue={currentEditModel.answer}
@@ -390,9 +430,9 @@ function EditSkill() {
                         name="answer"
                     ></Input>
 
-                    <label for="importance">Importance : </label>
+                    <label htmlFor="importance">Importance : </label>
                     <Select
-                        defaultValue='beginner'
+                        defaultValue='Beginner'
                         onChange={(value)=>setImportance(value)}
                         style={{
                             width : '100%'

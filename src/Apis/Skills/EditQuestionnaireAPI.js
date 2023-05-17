@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -13,7 +13,7 @@ const EditQuestionnaireAPI = async (values) => {
     console.log("Edit request id : ",values.slno);
 
     //This api has to be replaced.
-    const link = `https://jsonplaceholder.typicode.com/skills/questionnaire/edit/${values.slno}`;
+    const link = `/skills/questionnaire/edit/${values.slno}`;
 
     return await axios.post(link,values,axiosConfig)
     .then((result)=>{

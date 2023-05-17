@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -13,7 +13,7 @@ const ScheduleAssessmentAPI = async (values) => {
     console.log("payload : ",values);
 
     //This api has to be replaced.
-    const url = `https://8000-gathianalyt-skillmetric-oirvhb1lrus.ws-us96b.gitpod.io/assessment-scheduler/schedule`;
+    const url = `/assessment-scheduler/schedule`;
 
     return await axios.post(url,values,axiosConfig)
     .then((result)=>{

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -13,7 +13,7 @@ const CreateSkillsAPI = async (values) => {
     console.log("New skill add : ",values);
 
     //This api has to be replaced.
-    const link = `https://jsonplaceholder.typicode.com/skills/create`;
+    const link = `/skills/create`;
 
     return await axios.post(link,values,axiosConfig)
     .then((result)=>{

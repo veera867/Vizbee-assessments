@@ -39,7 +39,12 @@ function AppLayout() {
             </div>
         </Header>
 
-        <Drawer title="Apexon Assessment System" placement="right" onClose={onClose} open={open}>
+        <Drawer 
+            title="Apexon Assessment System" 
+            placement="right" 
+            onClose={onClose} 
+            open={open}
+        >
             <div className="drawer-body">
                 <Button type="link" href="/app/dashboard">Dashboard</Button>
                 <Button type="link" href="/app/skills">Skills</Button>

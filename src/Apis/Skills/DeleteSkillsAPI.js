@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -13,7 +13,7 @@ const DeleteSkillsAPI = async (id) => {
     console.log("Delete request id : ",id);
 
     //This api has to be replaced.
-    const link = `https://jsonplaceholder.typicode.com/skills/delete/${id}`;
+    const link = `/skills/delete/${id}`;
 
     return await axios.delete(link,axiosConfig)
     .then((result)=>{

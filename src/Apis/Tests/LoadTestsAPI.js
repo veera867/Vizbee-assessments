@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -12,7 +12,7 @@ let axiosConfig = {
 const LoadTestsAPI = async () => {
 
     //This api has to be replaced.
-    const url = `https://8000-gathianalyt-skillmetric-oirvhb1lrus.ws-us96b.gitpod.io/tests/list`;
+    const url = `/tests/list`;
 
     return await axios.get(url,axiosConfig)
     .then((result)=>{

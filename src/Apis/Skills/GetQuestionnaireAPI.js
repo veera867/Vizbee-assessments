@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -12,7 +12,7 @@ let axiosConfig = {
 const GetQuestionnaireAPI = async () => {
 
     //This api has to be replaced.
-    const link = `https://jsonplaceholder.typicode.com/skills/questionnaire/list`;
+    const link = `/skills/questionnaire/list`;
 
     return await axios.get(link,axiosConfig)
     .then((result)=>{

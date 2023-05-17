@@ -11,9 +11,11 @@ import Dashboard from './Dashboard';
 import SkillCreate from './Skills/create';
 import NewQuestionnaire from './Skills/NewQuestionnaire';
 import Schedule from './Dashboard/Schedule';
-import CreateTest from './Dashboard/CreateTest';
+import CreateTest from './Tests/CreateTest';
 import VerifyCode from './Assessment/VerifyCode';
 import EditSkill from './Skills/edit';
+import Tests from './Tests';
+import EditTests from './Tests/EditTests';
 
 const { Header , Footer } = Layout;
 
@@ -42,6 +44,7 @@ function AppLayout() {
                 <Button type="link" href="/app/dashboard">Dashboard</Button>
                 <Button type="link" href="/app/skills">Skills</Button>
                 <Button type="link" href="/app/assessment">Assessment</Button>
+                <Button type="link" href="/app/tests">Tests</Button>
             </div>
         </Drawer>
 
@@ -52,11 +55,14 @@ function AppLayout() {
                 <Route path="/assessment" element={<VerifyCode />}></Route>
                 <Route path="/assessment/:code" element={<Assessment />}></Route>
                 <Route path="/assessment/schedule" element={<Schedule />}></Route>
-                <Route path="/assessment/create" element={<CreateTest />}></Route>
                 <Route path="/skills" element={<Skills />}></Route>
                 <Route path="/skills/new" element={<SkillCreate />}></Route>
                 <Route path="/skills/edit/:id" element={<EditSkill />}></Route>
                 <Route path="/skills/new/addQuestionnaire" element={<NewQuestionnaire />}></Route>
+
+                <Route path="/tests" element={<Tests />}></Route>
+                <Route path="/tests/new" element={<CreateTest />}></Route>
+                <Route path="/tests/edit/:id" element={<EditTests />}></Route>
             </Routes>
         </>
 

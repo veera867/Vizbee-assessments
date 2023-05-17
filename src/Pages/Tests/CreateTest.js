@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
-import CreateTestAPI from '../../Apis/Assessments/CreateTestAPI';
-import './dashboard.css';
+import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
+import '../Dashboard/dashboard.css';
 
 function CreateTest() {
     const navigate = useNavigate();

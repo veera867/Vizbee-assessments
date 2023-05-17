@@ -2,70 +2,37 @@ import React,{useState,useEffect} from 'react';
 import {PlusOutlined,EditFilled,DeleteFilled} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
 
-import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
-import DeleteSkillsAPI from '../../Apis/Skills/DeleteSkillsAPI';
+import LoadTestsAPI from '../../Apis/Tests/LoadTestsAPI';
+import DeleteTestAPI from '../../Apis/Tests/DeleteTestAPI';
 
-import './skills.css';
+import '../Skills/skills.css';
 
-function Skills() {
+function Tests() {
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [skills,setSkills] = useState([
+    const [Tests,setTests] = useState([
         //dummy data for testing purpose only. Can be removed!!
         {
-            skillId : 1,
-            skillName : 'Python',
-            questionnaire: [
-                {
-                    question : 'What is Python',
-                    answer : 'Pytho is a programming langauge'
-                },
-                {
-                    question : 'How to compile python code?',
-                    answer : 'Using Python file.py cmd'
-                },
-                {
-                    question : 'What is the stable version of Python?',
-                    answer : 'Latest LTS is 3.10.0'
-                }
-            ]
+            testId : 1,
+            testName : 'Python Assessment',
+            mandatorySkills: 'Python',
+            optionalSkills: 'C/C++',
+            complexity: 'Beginner'
         },
         {
-            skillId : 2,
-            skillName : 'Java',
-            questionnaire: [
-                {
-                    question : 'What is Java',
-                    answer : 'Java is a programming langauge'
-                },
-                {
-                    question : 'How to compile Java code?',
-                    answer : 'Using javac file.java cmd'
-                },
-                {
-                    question : 'What is the stable version of Java?',
-                    answer : 'Latest LTS is 16.8.0'
-                }
-            ]
+            testId : 2,
+            testName : 'Java Assessment',
+            mandatorySkills: 'Java',
+            optionalSkills: 'Springboot',
+            complexity: 'Intermediate'
         },
         {
-            skillId : 3,
-            skillName : 'JavaScript',
-            questionnaire: [
-                {
-                    question : 'What is JavaScript',
-                    answer : 'JavScript is a programming langauge'
-                },
-                {
-                    question : 'How to compile JavaScript code?',
-                    answer : 'Using node file.js or in browser console.'
-                },
-                {
-                    question : 'What is the stable version of JavaScript?',
-                    answer : 'Latest ECMAScript'
-                }
-            ]
+            testId : 3,
+            testName : 'JavaScript Assessment',
+            mandatorySkills: 'JavScript',
+            optionalSkills: 'Node.JS',
+            complexity: 'Beginner'
         }
     ]);
 
@@ -80,15 +47,15 @@ function Skills() {
     const [confirmLoading,setConfirmLoading] = useState(false);
 
     useEffect(()=>{
-        async function getSkills(){
+        async function getTests(){
             setLoading(true);
             try{
-                const apiResponse = await GetSkillsAPI({});
+                const apiResponse = await LoadTestsAPI({});
                 console.log(apiResponse);
     
                 //According to the status from API
                 if(apiResponse.status === 200){
-                    setSkills(apiResponse.data);
+                    setTests(apiResponse.data);
                     setLoading(false);
                 } else {
                     setHasErr(true);
@@ -111,18 +78,18 @@ function Skills() {
             }    
         }
 
-        getSkills();
+        getTests();
     },[]);
 
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.skillId);
+        setDelId(record.testId);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try{
-            const apiResponse = await DeleteSkillsAPI(delId);
+            const apiResponse = await DeleteTestAPI(delId);
             console.log(apiResponse);
 
             //According to the status from API
@@ -164,21 +131,31 @@ function Skills() {
     
     const columns = [
         {
-            title: 'Skill Id',
-            dataIndex: 'skillId',
-            key: 'skillId',
+            title: 'Test Id',
+            dataIndex: 'testId',
+            key: 'testId',
         },
         {
-            title: 'Skill Name',
-            dataIndex: 'skillName',
-            key: 'skillName',
+            title: 'Test Name',
+            dataIndex: 'testName',
+            key: 'testName',
+        },
+        {
+            title: 'Mandatory Skills',
+            dataIndex: 'mandatorySkills',
+            key: 'mandatorySkills',
+        },
+        {
+            title: 'Optional Skills',
+            dataIndex: 'optionalSkills',
+            key: 'optionalSkills',
         },
         {
             title: 'Action',
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EditFilled />} href={`skills/edit/${record.skillId}`}></Button>
+                <Button icon={<EditFilled />} href={`tests/edit/${record.testId}`}></Button>
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
@@ -190,10 +167,10 @@ function Skills() {
             {contextHolder}
             <div className="layout-inner">
                 <div className="title-bar">
-                    <h1>Skills Dashboard</h1>
+                    <h1>Tests Dashboard</h1>
 
                     <div className="button-holder">
-                        <Button type="primary" icon={<PlusOutlined />} href={`skills/new`}>Add skill</Button>
+                        <Button type="primary" icon={<PlusOutlined />} href={`tests/new`}>Create Test</Button>
                     </div>
                 </div>
 
@@ -203,7 +180,7 @@ function Skills() {
                     {
                         loading
                         ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={skills} columns={columns} />
+                        : <Table dataSource={Tests} columns={columns} />
                     }
                 </div>
             </div>
@@ -220,4 +197,4 @@ function Skills() {
     )
 }
 
-export default Skills
+export default Tests

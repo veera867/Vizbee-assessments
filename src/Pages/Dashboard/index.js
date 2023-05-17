@@ -133,8 +133,6 @@ function Dashboard() {
 
                     <div className="button-holder">
                         <Button type="primary" href={`assessment/schedule`}>Schedule Assessment</Button>
-                        <span></span>
-                        <Button type="primary" icon={<PlusOutlined />} href={`assessment/create`}>Create Test</Button>
                     </div>
                 </div>
 

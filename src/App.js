@@ -5,8 +5,8 @@ import AppLayout from './Pages';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/app/assessment" />} />
-      <Route path="/app/*" element={<AppLayout />}></Route>
+      <Route path="/" element={<Navigate to="/assessment" />} />
+      <Route path="/*" element={<AppLayout />}></Route>
     </Routes>
 )
 }

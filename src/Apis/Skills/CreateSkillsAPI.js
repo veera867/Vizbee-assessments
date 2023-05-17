@@ -13,9 +13,9 @@ const CreateSkillsAPI = async (values) => {
     console.log("New skill add : ",values);
 
     //This api has to be replaced.
-    const link = `https://jsonplaceholder.typicode.com/skills/create`;
+    const url = `https://jsonplaceholder.typicode.com/skills/create`;
 
-    return await axios.post(link,values,axiosConfig)
+    return await axios.post(url,values,axiosConfig)
     .then((result)=>{
         return result;
     })

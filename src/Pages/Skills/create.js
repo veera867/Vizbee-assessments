@@ -266,7 +266,7 @@ function CreateSkill() {
             {contextHolder}
             <div className="layout-inner">
                 <div className="title-bar">
-                    <h1>Create New</h1>
+                    <h1>New Skills</h1>
 
                     <div className="button-holder">
                         <Button danger onClick={handleCancel}>Cancel</Button>
@@ -342,7 +342,7 @@ function CreateSkill() {
             </Modal>
 
             <Modal
-                title="Edit Questionnaire"
+                title="Add Questionnaire"
                 open={openEdit}
                 onOk={handleEditOk}
                 confirmLoading={editLoading}
@@ -350,14 +350,14 @@ function CreateSkill() {
             >
                 <Divider />
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    <label for="slno">Sl No : </label>
+                    {/* <label for="slno">Sl No : </label>
                     <Input 
                         placeholder="Sl No"
                         defaultValue={editId}
                         value={editId}
                         name="slno"
                         disabled
-                    ></Input>
+                    ></Input> */}
 
                     <label for="question">Question : </label>
                     <Input 

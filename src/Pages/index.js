@@ -46,16 +46,16 @@ function AppLayout() {
             open={open}
         >
             <div className="drawer-body">
-                <Button type="link" href="/app/dashboard">Dashboard</Button>
-                <Button type="link" href="/app/skills">Skills</Button>
-                <Button type="link" href="/app/assessment">Assessment</Button>
-                <Button type="link" href="/app/tests">Tests</Button>
+                <Button type="link" href="/dashboard">Dashboard</Button>
+                <Button type="link" href="/skills">Skills</Button>
+                <Button type="link" href="/assessment">Assessment</Button>
+                <Button type="link" href="/tests">Tests</Button>
             </div>
         </Drawer>
 
         <>
             <Routes>
-                <Route path="/" element={<Navigate to="/app/dashboard" />} />
+                <Route path="/" element={<Navigate to="/dashboard" />} />
                 <Route path="/dashboard" element={<Dashboard />}></Route>
                 <Route path="/assessment" element={<VerifyCode />}></Route>
                 <Route path="/assessment/:code" element={<Assessment />}></Route>

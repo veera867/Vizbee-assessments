@@ -1,6 +1,7 @@
 import React, {useState,useEffect} from 'react';
-import { Layout, Button, Drawer  } from 'antd';
+import { Layout, Button, Drawer,Collapse  } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
+import { CaretRightOutlined } from '@ant-design/icons';
 
 import {Navigate , Routes , Route} from 'react-router-dom';
 import Assessment from './Assessment';
@@ -17,7 +18,8 @@ import EditSkill from './Skills/edit';
 import Tests from './Tests';
 import EditTests from './Tests/EditTests';
 
-const { Header , Footer } = Layout;
+const { Header } = Layout;
+const { Panel } = Collapse;
 
 function AppLayout() {
     //To manage the sidebar drawer
@@ -74,9 +76,18 @@ function AppLayout() {
             >
                 <div className="drawer-body">
                     <Button type="link" href="/dashboard">Dashboard</Button>
-                    <Button type="link" href="/skills">Skills</Button>
                     <Button type="link" href="/assessment">Assessment</Button>
-                    <Button type="link" href="/tests">Tests</Button>
+
+                    <Collapse 
+                        expandIconPosition={'end'} 
+                        ghost
+                        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                    >
+                        <Panel header="Settings" key="1">
+                            <Button type="link" href="/skills">Skills</Button>
+                            <Button type="link" href="/tests">Tests</Button>
+                        </Panel>
+                    </Collapse>
                 </div>
             </Drawer>
             : null
@@ -89,9 +100,17 @@ function AppLayout() {
                     <div className="drawer-body">
                         <h3>Menu</h3>
                         <Button type="link" href="/dashboard">Dashboard</Button>
-                        <Button type="link" href="/skills">Skills</Button>
                         <Button type="link" href="/assessment">Assessment</Button>
-                        <Button type="link" href="/tests">Tests</Button>
+                        <Collapse 
+                            expandIconPosition={'end'} 
+                            ghost
+                            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                        >
+                            <Panel header="Settings" key="1">
+                                <Button type="link" href="/skills">Skills</Button>
+                                <Button type="link" href="/tests">Tests</Button>
+                            </Panel>
+                        </Collapse>
                     </div>
                 </div>
                 : null

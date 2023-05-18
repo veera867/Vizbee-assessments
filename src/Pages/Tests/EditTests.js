@@ -19,8 +19,8 @@ function EditTests() {
 
     const [testId,setTestId] = useState(0);
     const [testName,setTestName] = useState();
-    const [mskills,setMskills] = useState();
-    const [oskills,setOskills] = useState();
+    const [mskills,setMskills] = useState([]);
+    const [oskills,setOskills] = useState([]);
     const [complexity,setComplexity] = useState();
 
     const [saveLoading,setSaveLoading] = useState(false);
@@ -108,6 +108,18 @@ function EditTests() {
         navigate(-1);
     }
 
+    const updateMSkills = (value) => {
+        let arr = mskills;
+        arr.push(value);
+        setMskills(arr);
+    }
+
+    const updateOSkills = (value) => {
+        let arr = oskills;
+        arr.push(value);
+        setOskills(arr);
+    }
+
     return (
         <div className="layout-outer">
             {contextHolder}
@@ -177,7 +189,8 @@ function EditTests() {
                             <Select
                                 defaultValue='React'
                                 value={mskills}
-                                onChange={(value)=>{setMskills(value)}}
+                                onChange={(value)=>updateMSkills(value)}
+                                mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
@@ -211,7 +224,8 @@ function EditTests() {
                             <Select
                                 defaultValue='React'
                                 value={oskills}
-                                onChange={(value)=>{setOskills(value)}}
+                                mode="multiple"
+                                onChange={(value)=>updateOSkills(value)}
                                 style={{
                                     width : '100%'
                                 }}

@@ -75,11 +75,11 @@ function CreateSkill() {
         const payload = {
             skillName: skillName
         }
-      const apiResponse = await LoadAutoGenerateQuestions(payload)
-      console.log("apiResponse", apiResponse)
-      if(apiResponse.status == 200){
-        setQuestions(apiResponse.data.questions)
-      }
+        const apiResponse = await LoadAutoGenerateQuestions(payload)
+        console.log("apiResponse", apiResponse)
+        if(apiResponse.status == 200){
+            setQuestions(apiResponse.data.questions)
+        }
     }
     
     const handleCSVUpload = (e) => {

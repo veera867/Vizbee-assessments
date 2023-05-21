@@ -2,11 +2,11 @@ import React, {useState,useEffect} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
-import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
-import GetTestWithID from '../../Apis/Tests/GetTestWithID';
+import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
+import GetJobWithID from '../../Apis/Jobs/GetJobWithID';
 import '../Dashboard/dashboard.css';
 
-function EditTests() {
+function EditJobs() {
     const {id} = useParams();
     const navigate = useNavigate();
 
@@ -17,8 +17,8 @@ function EditTests() {
     const [hasErr,setHasErr] = useState(false);
     const [errMsg,setErrMsg] = useState('');    
 
-    const [testId,setTestId] = useState(0);
-    const [testName,setTestName] = useState();
+    const [jdId,setJdId] = useState(0);
+    const [jdName,setJdName] = useState();
     const [mskills,setMskills] = useState();
     const [oskills,setOskills] = useState();
     const [complexity,setComplexity] = useState();
@@ -29,13 +29,13 @@ function EditTests() {
         async function GetSkillDetails(){
             setLoading(true);
             try{
-                const apiResponse = await GetTestWithID(id !== undefined || id !== null ? id : 0);
+                const apiResponse = await GetJobWithID(id !== undefined || id !== null ? id : 0);
                 console.log(apiResponse);
     
                 //According to the status from API
                 if(apiResponse.status === 200){
-                    setTestId(apiResponse.data.testId);
-                    setTestName(apiResponse.data.testName);
+                    setJdId(apiResponse.data.jdId);
+                    setJdName(apiResponse.data.jdName);
                     setMskills(apiResponse.data.mandatorySkills);
                     setOskills(apiResponse.data.optionalSkills);
                     setComplexity(apiResponse.data.complexity);
@@ -61,7 +61,7 @@ function EditTests() {
             }    
         }
 
-        setTestId(id);
+        setJdId(id);
         GetSkillDetails();
     },[]);
 
@@ -69,13 +69,13 @@ function EditTests() {
         try{
             setSaveLoading(true);
             const payload = {
-                testId: id,
-                testName: testName,
+                jdId: id,
+                jdName: jdName,
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
                 complexity: complexity
             }
-            const apiResponse = await CreateTestAPI(payload);
+            const apiResponse = await CreateJobAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
@@ -125,7 +125,7 @@ function EditTests() {
             {contextHolder}
             <div className="layout-inner">
                 <div className="title-bar">
-                    <h1>Edit Test</h1>
+                    <h1>Edit Job</h1>
 
                     <div className="button-holder">
                         <Button onClick={handleCancel}>Back</Button>
@@ -149,19 +149,19 @@ function EditTests() {
                         onFinish={handleSave}
                     >
                         <Form.Item
-                            label="Test ID"
-                            name="testId"
+                            label="Job ID"
+                            name="jdId"
                         >
                             <Input 
-                                value={testId}
+                                value={jdId}
                                 defaultValue={id}
                                 disabled
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Test Name"
-                            name="testName"
+                            label="JD Name"
+                            name="jdName"
                             rules={[
                                 {
                                     required: true,
@@ -170,8 +170,8 @@ function EditTests() {
                             ]}
                         >
                             <Input 
-                                value={testName}
-                                onChange={(value)=>setTestName(value)}
+                                value={jdName}
+                                onChange={(value)=>setJdName(value)}
                             />
                         </Form.Item>
 
@@ -302,4 +302,4 @@ function EditTests() {
     )
 }
 
-export default EditTests
+export default EditJobs

@@ -6,13 +6,16 @@
 
   overflow-y: hidden;
   overflow-x: hidden;
+
+  font-family: 'Roboto';
 }
 .ant-layout-header{
   width: 100%;
   height: 60px;
   padding: 2rem;
-  background-color: #394867;
-  color: #F1F6F9;
+  background-color: #FFFFFF;
+  color: #111111;
+  border-bottom: 1px solid rgba(211, 210, 210, 0.88);
 
   display: flex;
   flex-direction: row;
@@ -27,6 +30,28 @@
   align-items: center;
   justify-content: space-between;
 }
+.header-wrapper .logo-header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-wrapper img{
+  width: 30px;
+  height: 30px;
+  margin-right: .5rem;
+}
+.header-wrapper h1{
+  font-family: 'Comfortaa';
+}
+.header-wrapper .auth-link{
+  color: #DE502C;
+  font-weight: 500;
+}
+:where(.css-dev-only-do-not-override-yp8pcc).ant-btn-link:not(:disabled):hover{
+  color: #DE502C;
+}
+
 .icon-menu{
   cursor: pointer;
 }
@@ -114,10 +139,17 @@
 }
 .button-wrapper .ant-btn{
   width: 100%;
+  height: 40px;
   max-width: 150px;
   margin-right: .5rem;
+  border: none;outline: none;
 }
-
+.ant-btn-primary{
+  background: #DE502C;
+}
+:where(.css-dev-only-do-not-override-yp8pcc).ant-btn-primary:not(:disabled):hover{
+  background-color: #c63f1d;  
+}
 
 
 .row-flexer{
@@ -240,15 +272,40 @@ span.fifth{
   height: 100%;
   min-height: 100vh;
   background-color: #fff;
+  border-right: 1px solid rgba(211, 210, 210, 0.88);
 }
 .sidebar .drawer-body{
   padding: 1rem;
 }
-.drawer-body a{
-  font-size: 1.1rem;
-  padding: 1.5rem 0;
+.drawer-body .link{
+  width: 100%;
+  height: 50px;
+  padding: .5rem;
+  color: #394867;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.drawer-body .link.active{
+  background-color: #F1F6F9;
 }
 .drawer-body h3{
   margin: 0;
   padding: 0;
+}
+.ant-collapse{
+  width: 100%;
+}
+:where(.css-dev-only-do-not-override-yp8pcc).ant-collapse>.ant-collapse-item >.ant-collapse-header{
+  padding: 0;
+  font-weight: 500;
+  padding: .5rem;
+}
+.ant-collapse-content-box a{
+  padding: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }

@@ -1,81 +1,33 @@
-import React, {useState,useEffect} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
-import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
-import GetTestWithID from '../../Apis/Tests/GetTestWithID';
+import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
 import '../Dashboard/dashboard.css';
 
-function EditTests() {
-    const {id} = useParams();
+function CreateJob() {
     const navigate = useNavigate();
-
     const [messageApi, contextHolder] = message.useMessage();
 
-    //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
-    const [hasErr,setHasErr] = useState(false);
-    const [errMsg,setErrMsg] = useState('');    
-
-    const [testId,setTestId] = useState(0);
-    const [testName,setTestName] = useState();
-    const [mskills,setMskills] = useState();
-    const [oskills,setOskills] = useState();
+    const [jdName,setJdName] = useState();
+    const [mskills,setMskills] = useState([]);
+    const [oskills,setOskills] = useState([]);
     const [complexity,setComplexity] = useState();
 
     const [saveLoading,setSaveLoading] = useState(false);
 
-    useEffect(()=>{
-        async function GetSkillDetails(){
-            setLoading(true);
-            try{
-                const apiResponse = await GetTestWithID(id !== undefined || id !== null ? id : 0);
-                console.log(apiResponse);
-    
-                //According to the status from API
-                if(apiResponse.status === 200){
-                    setTestId(apiResponse.data.testId);
-                    setTestName(apiResponse.data.testName);
-                    setMskills(apiResponse.data.mandatorySkills);
-                    setOskills(apiResponse.data.optionalSkills);
-                    setComplexity(apiResponse.data.complexity);
-                    setLoading(false);
-                } else {
-                    setHasErr(true);
-                    setErrMsg(apiResponse.message);
-                    setLoading(false);
-
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.message,
-                    });                  
-                }    
-            } catch (err) {
-                console.log(err.message);
-                setLoading(false);
-
-                messageApi.open({
-                    type: 'error',
-                    content: err.message,
-                }); 
-            }    
-        }
-
-        setTestId(id);
-        GetSkillDetails();
-    },[]);
+    console.log("jdName", jdName)
 
     const handleSave = async () => {
         try{
             setSaveLoading(true);
             const payload = {
-                testId: id,
-                testName: testName,
+                jdName: jdName,
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
                 complexity: complexity
             }
-            const apiResponse = await CreateTestAPI(payload);
+            const apiResponse = await CreateJobAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
@@ -125,7 +77,7 @@ function EditTests() {
             {contextHolder}
             <div className="layout-inner">
                 <div className="title-bar">
-                    <h1>Edit Test</h1>
+                    <h1>Create Job</h1>
 
                     <div className="button-holder">
                         <Button onClick={handleCancel}>Back</Button>
@@ -149,29 +101,18 @@ function EditTests() {
                         onFinish={handleSave}
                     >
                         <Form.Item
-                            label="Test ID"
-                            name="testId"
-                        >
-                            <Input 
-                                value={testId}
-                                defaultValue={id}
-                                disabled
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Test Name"
-                            name="testName"
+                            label="JD Name"
+                            name="jdName"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please enter name!',
+                                    message: 'Please enter Jd Name!',
                                 }
                             ]}
                         >
                             <Input 
-                                value={testName}
-                                onChange={(value)=>setTestName(value)}
+                                value={jdName}
+                                onChange={(value)=>setJdName(value.target.value)}
                             />
                         </Form.Item>
 
@@ -224,8 +165,8 @@ function EditTests() {
                             <Select
                                 defaultValue='React'
                                 value={oskills}
-                                onChange={(value)=>updateOSkills(value)}
                                 mode="multiple"
+                                onChange={(value)=>updateOSkills(value)}
                                 style={{
                                     width : '100%'
                                 }}
@@ -302,4 +243,4 @@ function EditTests() {
     )
 }
 
-export default EditTests
+export default CreateJob

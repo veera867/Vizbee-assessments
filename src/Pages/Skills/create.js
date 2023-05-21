@@ -5,6 +5,7 @@ import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-des
 import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
 
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
+import LoadAutoGenerateQuestions from '../../Apis/Skills/LoadAutoGenerateQuestions'
 
 import './skills.css';
 import processCSVData from './CSVparser';
@@ -16,25 +17,27 @@ function CreateSkill() {
 
     const [questions,setQuestions] = useState([
         //dummy data for testing purpose only. Can be removed!!
-        {
-            slno : 1,
-            question : 'What is Python?',
-            answer : 'Python is a porgramming language.',
-            importance: 'Beginner',
-        },
-        {
-            slno : 2,
-            question : 'What is Java?',
-            answer : 'Java is a porgramming language.',
-            importance: 'Intermediate',
-        },
-        {
-            slno : 3,
-            question : 'What is JavaScript?',
-            answer : 'JavaScript is a porgramming language.',
-            importance: 'Beginner',
-        },
-    ]);
+    //     {
+    //         slno : 1,
+    //         question : 'What is Python?',
+    //         answer : 'Python is a porgramming language.',
+    //         importance: 'Beginner',
+    //     },
+    //     {
+    //         slno : 2,
+    //         question : 'What is Java?',
+    //         answer : 'Java is a porgramming language.',
+    //         importance: 'Intermediate',
+    //     },
+    //     {
+    //         slno : 3,
+    //         question : 'What is JavaScript?',
+    //         answer : 'JavaScript is a porgramming language.',
+    //         importance: 'Beginner',
+    //     },
+    // 
+]
+    );
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
@@ -67,6 +70,17 @@ function CreateSkill() {
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
+
+    const handleAutoGenerate = async() => {
+        const payload = {
+            skillName: skillName
+        }
+      const apiResponse = await LoadAutoGenerateQuestions(payload)
+      console.log("apiResponse", apiResponse)
+      if(apiResponse.status == 200){
+        setQuestions(apiResponse.data.questions)
+      }
+    }
     
     const handleCSVUpload = (e) => {
         const file = e.target.files[0];
@@ -107,6 +121,7 @@ function CreateSkill() {
             if(apiResponse.status === 200){
                 setQuestions(apiResponse.data);
                 setLoading(false);
+                navigate(-1)
             } else {
                 setHasErr(true);
                 setErrMsg(apiResponse.message);
@@ -207,7 +222,6 @@ function CreateSkill() {
         setConfirmLoading(true);
         try{
             setQuestions(questions.filter(ques => ques.slno !== delId));
-
             setConfirmLoading(false);
             setCnfmDel(false);
             setDelId(null);
@@ -227,6 +241,7 @@ function CreateSkill() {
         setCnfmDel(false);
         setDelId(null);
     }
+    console.log("questions", questions)
     
     const columns = [
         {
@@ -319,7 +334,7 @@ function CreateSkill() {
                             />
                         </label>                        
                         <span></span>
-                        <Button type="primary" onClick={()=>{}}>Auto Generate</Button>
+                        <Button type="primary" onClick={handleAutoGenerate}>Auto Generate</Button>
                     </div>
                 </div>
                 <div className="content-wrapper">

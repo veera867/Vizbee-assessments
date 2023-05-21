@@ -11,30 +11,7 @@ function Tests() {
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [Tests,setTests] = useState([
-        //dummy data for testing purpose only. Can be removed!!
-        {
-            testId : 1,
-            testName : 'Python Assessment',
-            mandatorySkills: 'Python',
-            optionalSkills: 'C/C++',
-            complexity: 'Beginner'
-        },
-        {
-            testId : 2,
-            testName : 'Java Assessment',
-            mandatorySkills: 'Java',
-            optionalSkills: 'Springboot',
-            complexity: 'Intermediate'
-        },
-        {
-            testId : 3,
-            testName : 'JavaScript Assessment',
-            mandatorySkills: 'JavScript',
-            optionalSkills: 'Node.JS',
-            complexity: 'Beginner'
-        }
-    ]);
+    const [Tests,setTests] = useState([]);
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
@@ -45,17 +22,18 @@ function Tests() {
     const [cnfmDel,setCnfmDel] = useState(false);
     const [delId,setDelId] = useState(0);
     const [confirmLoading,setConfirmLoading] = useState(false);
-
+console.log("Tests", Tests)
     useEffect(()=>{
         async function getTests(){
             setLoading(true);
             try{
                 const apiResponse = await LoadTestsAPI({});
-                console.log(apiResponse);
+                console.log("apiResponse",apiResponse);
     
                 //According to the status from API
-                if(apiResponse.status === 200){
-                    setTests(apiResponse.data);
+                if(apiResponse.status == 200){
+                    console.log("success")
+                    setTests(apiResponse.data.skills);
                     setLoading(false);
                 } else {
                     setHasErr(true);

@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
@@ -10,18 +10,13 @@ function CreateTest() {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [testName,setTestName] = useState();
-    const [mskills,setMskills] = useState([]);
-    const [oskills,setOskills] = useState([]);
+    const [mskills,setMskills] = useState();
+    const [oskills,setOskills] = useState();
     const [complexity,setComplexity] = useState();
 
     const [saveLoading,setSaveLoading] = useState(false);
 
-    useEffect(()=>{
-        console.log(mskills);
-        console.log(oskills);
-    },[mskills,oskills])
-
-
+    console.log("testName", testName)
     const handleSave = async () => {
         try{
             setSaveLoading(true);
@@ -64,18 +59,6 @@ function CreateTest() {
         navigate(-1);
     }
 
-    const updateMSkills = (value) => {
-        let arr = mskills;
-        arr.push(value);
-        setMskills(arr);
-    }
-
-    const updateOSkills = (value) => {
-        let arr = oskills;
-        arr.push(value);
-        setOskills(arr);
-    }
-
     return (
         <div className="layout-outer">
             {contextHolder}
@@ -116,7 +99,7 @@ function CreateTest() {
                         >
                             <Input 
                                 value={testName}
-                                onChange={(value)=>setTestName(value)}
+                                onChange={(value)=>setTestName(value.target.value)}
                             />
                         </Form.Item>
 
@@ -134,8 +117,7 @@ function CreateTest() {
                             <Select
                                 defaultValue='React'
                                 value={mskills}
-                                onChange={(value)=>updateMSkills(value)}
-                                mode="multiple"
+                                onChange={(value)=>{setMskills(value)}}
                                 style={{
                                     width : '100%'
                                 }}
@@ -169,8 +151,7 @@ function CreateTest() {
                             <Select
                                 defaultValue='React'
                                 value={oskills}
-                                mode="multiple"
-                                onChange={(value)=>updateOSkills(value)}
+                                onChange={(value)=>{setOskills(value)}}
                                 style={{
                                     width : '100%'
                                 }}

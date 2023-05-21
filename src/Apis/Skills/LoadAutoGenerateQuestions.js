@@ -1,22 +1,21 @@
-import axios from "./axiosInstance.js";
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
-        "Content-Type" : "multipart/form-data",
+        //"Content-Type" : "application/json",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
     }
 };
 
-const SendAssessmentStatusAPI = async (values) => {
-    console.log("payload : ",values);
+const LoadAutoGenerateQuestions = async (value) => {
 
     //This api has to be replaced.
-    const url = `/audio`;
+    const link = `skills/autogenerate`;
 
-    return await axios.post(url, values, axiosConfig)
-    .then((result) => {
+    return await axios.post(link,value,axiosConfig)
+    .then((result)=>{
         return result;
     })
     .catch((error)=>{
@@ -26,4 +25,4 @@ const SendAssessmentStatusAPI = async (values) => {
     })
 }
 
-export default SendAssessmentStatusAPI;
+export default LoadAutoGenerateQuestions;

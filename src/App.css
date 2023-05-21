@@ -252,17 +252,3 @@ span.fifth{
   margin: 0;
   padding: 0;
 }
-
-.ant-collapse{
-  width: 100%;
-}
-:where(.css-dev-only-do-not-override-yp8pcc).ant-collapse>.ant-collapse-item >.ant-collapse-header{
-  padding: 0;
-  padding-top: 1.5rem;
-  font-size: 1.1rem;
-}
-.ant-collapse-content-box a{
-  padding: 0;
-  display: block;
-  text-align: left;
-}

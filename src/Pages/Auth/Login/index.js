@@ -104,7 +104,10 @@ function Login() {
             <div className='login_container'>
                 <div className='login_box'>
                     <div className='title_box'>
-                        <h1>Apexon</h1>
+                        <div className='header-logo-wrapper'>
+                            <img alt="logo" src="/apexon-logo.jpg"/>
+                            <h1>Apexon</h1>
+                        </div>
                         <span>Login to access your account.</span>
                     </div>
 

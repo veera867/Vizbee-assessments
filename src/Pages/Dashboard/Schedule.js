@@ -137,7 +137,6 @@ function Schedule() {
                             ]}
                         >
                             <Select
-                                defaultValue='React'
                                 value={test}
                                 onChange={(value)=>{setTest(value)}}
                                 style={{

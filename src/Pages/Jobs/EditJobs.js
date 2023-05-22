@@ -26,7 +26,7 @@ function EditJobs() {
     const [saveLoading,setSaveLoading] = useState(false);
 
     useEffect(()=>{
-        async function GetSkillDetails(){
+        async function GetJobDetails(){
             setLoading(true);
             try{
                 const apiResponse = await GetJobWithID(id !== undefined || id !== null ? id : 0);
@@ -62,7 +62,7 @@ function EditJobs() {
         }
 
         setJdId(id);
-        GetSkillDetails();
+        GetJobDetails();
     },[]);
 
     const handleSave = async () => {
@@ -187,7 +187,6 @@ function EditJobs() {
                             ]}
                         >
                             <Select
-                                defaultValue='React'
                                 value={mskills}
                                 onChange={(value)=>updateMSkills(value)}
                                 mode="multiple"
@@ -222,7 +221,6 @@ function EditJobs() {
                             ]}
                         >
                             <Select
-                                defaultValue='React'
                                 value={oskills}
                                 onChange={(value)=>updateOSkills(value)}
                                 mode="multiple"
@@ -257,7 +255,6 @@ function EditJobs() {
                             ]}
                         >
                             <Select
-                                defaultValue='Beginner'
                                 value={complexity}
                                 onChange={(value)=>{setComplexity(value)}}
                                 style={{

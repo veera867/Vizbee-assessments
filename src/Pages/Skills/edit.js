@@ -432,7 +432,6 @@ function EditSkill() {
 
                     <label htmlFor="importance">Importance : </label>
                     <Select
-                        defaultValue='Beginner'
                         onChange={(value)=>setImportance(value)}
                         style={{
                             width : '100%'

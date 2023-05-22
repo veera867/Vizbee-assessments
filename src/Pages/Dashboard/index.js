@@ -52,7 +52,7 @@ function Dashboard() {
     const [errMsg,setErrMsg] = useState('');
 
     useEffect(()=>{
-        async function getSkills(){
+        async function getAssessments(){
             setLoading(true);
             try{
                 const apiResponse = await LoadAssessmentsAPI({});
@@ -83,7 +83,7 @@ function Dashboard() {
             }    
         }
 
-        getSkills();
+        getAssessments();
     },[]);
     
     const columns = [

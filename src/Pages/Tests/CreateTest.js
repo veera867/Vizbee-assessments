@@ -128,7 +128,6 @@ function CreateTest() {
                             ]}
                         >
                             <Select
-                                defaultValue='React'
                                 value={mskills}
                                 onChange={(value)=>updateMSkills(value)}
                                 mode="multiple"
@@ -163,7 +162,6 @@ function CreateTest() {
                             ]}
                         >
                             <Select
-                                defaultValue='React'
                                 value={oskills}
                                 mode="multiple"
                                 onChange={(value)=>updateOSkills(value)}
@@ -198,7 +196,6 @@ function CreateTest() {
                             ]}
                         >
                             <Select
-                                defaultValue='Beginner'
                                 value={complexity}
                                 onChange={(value)=>{setComplexity(value)}}
                                 style={{

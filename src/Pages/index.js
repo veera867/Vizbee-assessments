@@ -72,8 +72,8 @@ function AppLayout() {
 
                 {
                     login
-                    ? <Button type="link" className="auth-link">Signout</Button>
-                    : <Button type="link" className="auth-link">Login</Button>
+                    ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
+                    : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
                 }
 
                 {
@@ -95,22 +95,22 @@ function AppLayout() {
                 <div className="drawer-body">
                     <Button type="link" 
                         icon={<CalendarFilled />}
-                        href="/jobs" 
+                        href="/app/jobs" 
                         className={location.pathname.includes('jobs') ? 'link active' : 'link'}
                     >
                         Jobs Dashboard
                     </Button>
                     <Button type="link" 
                         icon={<FileProtectOutlined />}
-                        href="/dashboard" 
-                        className={location.pathname.includes('dashboard') ? 'link active' : 'link'}
+                        href="/app/asmt-dashboard" 
+                        className={location.pathname.includes('asmt-dashboard') ? 'link active' : 'link'}
                     >
                         Assessment Dashboard
                     </Button>
                     
                     <Button type="link" 
                         icon={<PlayCircleOutlined />}
-                        href="/assessment"
+                        href="/app/assessment"
                         className={location.pathname.includes('assessment') ? 'link active' : 'link'}
                     >
                         Live Assessment
@@ -127,12 +127,12 @@ function AppLayout() {
                         >
                             <Button type="link" 
                                 icon={<TrophyOutlined />}
-                                href="/skills"
+                                href="/app/skills"
                                 className={location.pathname.includes('skills') ? 'link active' : 'link'}
                             >Skills</Button>
                             <Button type="link" 
                                 icon={<FileDoneOutlined />}
-                                href="/tests"
+                                href="/app/tests"
                                 className={location.pathname.includes('tests') ? 'link active' : 'link'}
                             >Tests</Button>
                         </Panel>
@@ -151,22 +151,22 @@ function AppLayout() {
 
                         <Button type="link" 
                             icon={<CalendarFilled />}
-                            href="/jobs" 
+                            href="/app/jobs" 
                             className={location.pathname.includes('jobs') ? 'link active' : 'link'}
                         >
                             Jobs Dashboard
                         </Button>
                         <Button type="link" 
                             icon={<FileProtectOutlined />}
-                            href="/dashboard" 
-                            className={location.pathname.includes('dashboard') ? 'link active' : 'link'}
+                            href="/app/asmt-dashboard" 
+                            className={location.pathname.includes('asmt-dashboard') ? 'link active' : 'link'}
                         >
                             Assessment Dashboard
                         </Button>
                         
                         <Button type="link" 
                             icon={<PlayCircleOutlined />}
-                            href="/assessment"
+                            href="/app/assessment"
                             className={location.pathname.includes('assessment') ? 'link active' : 'link'}
                         >
                             Live Assessment
@@ -182,12 +182,12 @@ function AppLayout() {
                             >
                                 <Button type="link" 
                                     icon={<TrophyOutlined />}
-                                    href="/skills"
+                                    href="/app/skills"
                                     className={location.pathname.includes('skills') ? 'link active' : 'link'}
                                 >Skills</Button>
                                 <Button type="link" 
                                     icon={<FileDoneOutlined />}
-                                    href="/tests"
+                                    href="/app/tests"
                                     className={location.pathname.includes('tests') ? 'link active' : 'link'}
                                 >Tests</Button>
                             </Panel>
@@ -196,12 +196,12 @@ function AppLayout() {
                 </div>
                 : null
             }
+            
             <Routes>
                 <Route path="/" element={<Navigate to="/jobs" />} />
-                <Route path="/dashboard" element={<Dashboard />}></Route>
-                <Route path="/assessment" element={<VerifyCode />}></Route>
-                <Route path="/assessment/:code" element={<Assessment />}></Route>
-                <Route path="/assessment/schedule" element={<Schedule />}></Route>
+                <Route path="/asmt-dashboard" element={<Dashboard />}></Route>
+                <Route path="/asmt-dashboard/schedule" element={<Schedule />}></Route>
+
                 <Route path="/skills" element={<Skills />}></Route>
                 <Route path="/skills/new" element={<SkillCreate />}></Route>
                 <Route path="/skills/edit/:id" element={<EditSkill />}></Route>
@@ -214,6 +214,9 @@ function AppLayout() {
                 <Route path="/jobs" element={<Jobs />}></Route>
                 <Route path="/jobs/new" element={<CreateJob />}></Route>
                 <Route path="/jobs/edit/:id" element={<EditJobs />}></Route>
+
+                <Route path="/assessment" element={<VerifyCode />}></Route>
+                <Route path="/assessment/:code" element={<Assessment />}></Route>
             </Routes>
         </div>
 

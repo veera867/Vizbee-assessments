@@ -164,7 +164,7 @@ function Jobs() {
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EyeFilled />} href={`dashboard/`} />
+                <Button icon={<EyeFilled />} href={`/app/asmt-dashboard/`} />
                 <span></span>
                 <Button icon={<EditFilled />} href={`jobs/edit/${record.jdId}`}></Button>
                 <span></span>

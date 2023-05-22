@@ -132,7 +132,7 @@ function Dashboard() {
                     <h1>Assessment Dashboard</h1>
 
                     <div className="button-holder">
-                        <Button type="primary" href={`assessment/schedule`}>Schedule Assessment</Button>
+                        <Button type="primary" href={`/app/asmt-dashboard/schedule`}>Schedule Assessment</Button>
                     </div>
                 </div>
 

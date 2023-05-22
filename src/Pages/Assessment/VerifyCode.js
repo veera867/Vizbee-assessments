@@ -9,7 +9,7 @@ function VerifyCode() {
     const [code,setCode] = useState('');
 
     const handleRedirect = async () => {
-            navigate(`assessment/${code}`);
+            navigate(`/app/assessment/${code}`);
     }
 
     return (
@@ -46,6 +46,8 @@ function VerifyCode() {
                         >
                             <Input 
                                 placeholder="Enter code" 
+                                value={code}
+                                onChange={(value)=>setCode(value.target.value)}
                             />
                             <Button type="primary" onClick={handleRedirect}>Start</Button>
                         </Space.Compact>                        

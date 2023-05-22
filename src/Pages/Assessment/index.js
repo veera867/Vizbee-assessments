@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import React, { createRef } from "react";
 import { Row, Col, Button, Modal } from "antd";
-import { ClockCircleOutlined, CameraOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
 import "../../App.css";

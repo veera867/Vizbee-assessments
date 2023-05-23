@@ -94,7 +94,7 @@ function Login() {
                         <img src="/assets/login-img-1.jpg" alt="carousel-img-1"/>
                     </SwiperSlide>
                     <SwiperSlide className="carousel imgHolder">
-                        <img src="/assets/login-img-2.jpg" alt="carousel-img-2"/>
+                        <img src="https://th.bing.com/th/id/OIP.ovapKB_Knx7k25foNLe_pAHaLH?w=115&h=180&c=7&r=0&o=5&pid=1.7" alt="carousel-img-2"/>
                     </SwiperSlide>
                     <SwiperSlide className="carousel imgHolder">
                         <img src="/assets/login-img-3.jpg" alt="carousel-img-3"/>

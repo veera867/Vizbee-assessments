@@ -13,7 +13,7 @@ const LoginAPI = async (values) => {
     console.log("payload : ",values);
 
     //This api has to be replaced.
-    const url = `/auth/login`;
+    const url = `admin/auth/user`;
 
     return await axios.post(url,values,axiosConfig)
     .then((result)=>{

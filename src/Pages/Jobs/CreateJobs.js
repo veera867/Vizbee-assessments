@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
@@ -16,7 +16,6 @@ function CreateJob() {
 
     const [saveLoading,setSaveLoading] = useState(false);
 
-    console.log("jdName", jdName)
 
     const handleSave = async () => {
         try{
@@ -56,27 +55,17 @@ function CreateJob() {
         }
     }
 
-    useEffect(()=>{
-        console.log(mskills,oskills);
-    },[mskills,oskills]);
-
     const handleCancel = () => {
         navigate(-1);
     }
 
-    /*
-    const updateMSkills = (value) => {
-        let arr = mskills;
-        arr.push(value);
-        setMskills(arr);
+    const updateMSkills = (value) => {        
+        setMskills(value);
     }
 
-    const updateOSkills = (value) => {
-        let arr = oskills;
-        arr.push(value);
-        setOskills(arr);
+    const updateOSkills = (value) => {      
+        setOskills(value);
     }
-    */
 
     return (
         <div className="layout-outer">
@@ -135,7 +124,7 @@ function CreateJob() {
                         >
                             <Select
                                 value={mskills}
-                                onChange={(value)=>setMskills(value)}
+                                onChange={updateMSkills}
                                 mode="multiple"
                                 style={{
                                     width : '100%'
@@ -170,7 +159,7 @@ function CreateJob() {
                             <Select
                                 value={oskills}
                                 mode="multiple"
-                                onChange={(value)=>setOskills(value)}
+                                onChange={updateOSkills}
                                 style={{
                                     width : '100%'
                                 }}

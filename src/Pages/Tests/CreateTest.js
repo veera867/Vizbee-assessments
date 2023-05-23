@@ -129,7 +129,7 @@ function CreateTest() {
                         >
                             <Select
                                 value={mskills}
-                                onChange={(value)=>updateMSkills(value)}
+                                onChange={(value)=>setMskills(value)}
                                 mode="multiple"
                                 style={{
                                     width : '100%'
@@ -164,7 +164,7 @@ function CreateTest() {
                             <Select
                                 value={oskills}
                                 mode="multiple"
-                                onChange={(value)=>updateOSkills(value)}
+                                onChange={(value)=>setOskills(value)}
                                 style={{
                                     width : '100%'
                                 }}

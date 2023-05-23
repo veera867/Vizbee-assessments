@@ -188,7 +188,7 @@ function EditJobs() {
                         >
                             <Select
                                 value={mskills}
-                                onChange={(value)=>updateMSkills(value)}
+                                onChange={(value)=>setMskills(value)}
                                 mode="multiple"
                                 style={{
                                     width : '100%'
@@ -222,7 +222,7 @@ function EditJobs() {
                         >
                             <Select
                                 value={oskills}
-                                onChange={(value)=>updateOSkills(value)}
+                                onChange={(value)=>setOskills(value)}
                                 mode="multiple"
                                 style={{
                                     width : '100%'

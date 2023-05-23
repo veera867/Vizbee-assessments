@@ -30,37 +30,51 @@ function Schedule() {
 
     const handleDateSelect = (value) => {
         const date = new Date(value); 
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-         const formattedDate = date.toLocaleString('en-GB', options);
-         console.log("formattedDate", formattedDate) 
-         setDate(formattedDate)
+        //const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        //const formattedDate = date.toLocaleString('en-GB', options);
+
+        //let formattedDate = date.toISOString();
+        //console.log("formattedDate", formattedDate);
+
+        //Making T -> " "
+        //let formattedDate = date.toISOString().toString().replace("T","-");
+        //console.log("formattedDate", formattedDate);
+        //setDate(formattedDate)
+
+        //Making milliseconds and 'Z' -> ''
+        // sample : formattedDate 2023-05-27T07:14:40
+        
+        let formattedDate =  date.toISOString().substring(0,19);
+        setDate(formattedDate);
+
+        console.log("formattedDate", formattedDate);
     }
 
     const handleTestSelectChange = (value) => {
         setTest(value)
-        const filterData = testData.filter(item => item.testName == value)
+        const filterData = testData.filter(item => item.testName === value)
         console.log("filterData", filterData)
         setTestId(filterData[0].testId)
     }
 
     const handleJDnumberSelect = (values) => {
         setJdNumber(values)
-       const data = jDData.filter(item => item.JobID == values)
-       console.log("data", data)
-       const JdNameoptionsdata = data.map(item => ({
-        value: item.jdName,
-        label:item.jdName
-       }))
-       setJdName(data[0].jdName)
-       setJdNameOptions(JdNameoptionsdata)
+        const data = jDData.filter(item => item.JobID === values)
+        console.log("data", data)
+        const JdNameoptionsdata = data.map(item => ({
+            value: item.jdName,
+            label:item.jdName
+        }))
+        setJdName(data[0].jdName)
+        setJdNameOptions(JdNameoptionsdata)
     //    setJdName(data[0].jdName)
     }
 
     useEffect(() => {
         fetchJobDashboardData()
-     }, [])
+    }, [])
  
-     const fetchJobDashboardData = async() => {
+    const fetchJobDashboardData = async() => {
          const apiResponse = await LoadJobsAPI();
          console.log("apiResponse", apiResponse)
          setJDData(apiResponse.data.skills)
@@ -79,7 +93,7 @@ function Schedule() {
         setJdNumberOptions(JdnumOptions)
         // setJdNameOptions(JdnameOptions)
 
-     }
+    }
 
     useEffect(() => {
         fetchTestData()
@@ -93,8 +107,8 @@ function Schedule() {
             value: item.testName,
             label: item.testName
         }))
-         setTestDataOptions(testOptions)
-         setTestData(response.data.skills)
+        setTestDataOptions(testOptions)
+        setTestData(response.data.skills)
     }
 
     const handleSave = async () => {
@@ -172,7 +186,13 @@ function Schedule() {
                         autoComplete="off"
                         onFinish={handleSave}
                     >
-                        <Space direction="horizontal" size="middle" style={{ display: 'flex' }}>
+                        <Space direction="horizontal" size="large" 
+                            style={{ 
+                                width:'100%',
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}
+                        >
                             {/* <Form.Item
                                 label="JD Number"
                                 name="jdNumber"
@@ -189,15 +209,18 @@ function Schedule() {
                                 />
                             </Form.Item> */}
                             <Form.Item
-                            label="JD Number"
-                            name="JD Number"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                }
-                            ]}
-                        >
+                                label="JD Number"
+                                name="JD Number"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    }
+                                ]}
+                                style={{
+                                    width: '100%',
+                                }}
+                            >
                             <Select
                                 value={jdNumber}
                                 // onChange={(value)=>{setJdNumber(value)}}
@@ -219,6 +242,9 @@ function Schedule() {
                                     message: 'Please select!',
                                 }
                             ]}
+                            style={{
+                                width: '100%'
+                            }}
                         >
                             <Select
                                 value={jdName}

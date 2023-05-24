@@ -42,7 +42,7 @@ function Schedule() {
 
         //Making milliseconds and 'Z' -> ''
         // sample : formattedDate 2023-05-27T07:14:40
-        
+
         let formattedDate =  date.toISOString().substring(0,19);
         setDate(formattedDate);
 
@@ -99,15 +99,21 @@ function Schedule() {
     },[])
 
     const fetchTestData = async() => {
-        const response = await LoadTestsAPI()
-        console.log("test response", response)
+        try{
+            const response = await LoadTestsAPI();
+            console.log("test response", response)
 
-        const testOptions = response.data.skills.map( item => ({
-            value: item.testName,
-            label: item.testName
-        }))
-        setTestDataOptions(testOptions)
-        setTestData(response.data.skills)
+            if(response.status === 200){
+                const testOptions = response.data.skills.map( item => ({
+                    value: item.testName,
+                    label: item.testName
+                }))
+                setTestDataOptions(testOptions);
+                setTestData(response.data.skills);
+            }
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     const handleSave = async () => {

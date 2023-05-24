@@ -27,13 +27,29 @@ function CreateJob() {
 
     const fetchSkillsData = async() => {
         console.log("fetch")
-        const response = await GetSkillsAPI()
-        console.log("response", response)
-        const selectOptions = response.data.skills.map(item => ({
-            value: item.SkillName,
-            label: item.SkillName
-        }))
-        setSkillsData(selectOptions)
+        try{
+            const response = await GetSkillsAPI()
+            console.log("response", response)
+
+            if(response.status === 200){
+                const selectOptions = response.data.skills.map(item => ({
+                    value: item.SkillName,
+                    label: item.SkillName
+                }))
+                setSkillsData(selectOptions)
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: response.message,
+                });                  
+            }
+        } catch (err) {
+            console.log(err);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });                  
+        }
     }
 
     const handleSave = async () => {

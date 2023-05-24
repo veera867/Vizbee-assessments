@@ -229,47 +229,49 @@ const Assessment = () => {
       </Button> */}
       {/* <img style={{textAlign:"center"}} src={image} width="320" height="280"  alt="image"/> */}
       <div className="layout-outer">
-        <div className="layout-inner flexer">
+        <div className="layout-inner flexer live-assessment">
             <div className="question-wrapper">
-              <div className="time-wrapper">
-                <p className="timer">
-                  <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "60"}
-                </p>
-              </div>
-              <div className="row-flexer">
-                <p>
-                  {questions && questions[currentQuestion].QuestionID}.{" "}
-                  {questions && questions[currentQuestion].Question}
-                </p>
-                {/* {questions && questions.map((item, index) => {
-                return (
-                  <>
-                    <p className="question-text">{`${index + 1} ${item.Question}`}</p>
-                  </>
-                );
-              })} */}
-              </div>
-              <div className="audio-animation">
-                {animation ? (
-                  <div className="animation running">
-                    <span className="first"></span>
-                    <span className="second"></span>
-                    <span className="third"></span>
-                    <span className="fourth"></span>
-                    <span className="fifth"></span>
-                  </div>
-                ) : (
-                  <div className="animation">
-                    <span className="first"></span>
-                    <span className="second"></span>
-                    <span className="third"></span>
-                    <span className="fourth"></span>
-                    <span className="fifth"></span>
-                  </div>
-                )}
-                <p>
-                  0{elapsedMin}:{elapsedTime}
-                </p>
+              <div className="question-card">
+                <div className="time-wrapper">
+                  <p className="timer">
+                    <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "60"}
+                  </p>
+                </div>
+                <div className="row-flexer">
+                  <p>
+                    {questions && questions[currentQuestion].QuestionID}.{" "}
+                    {questions && questions[currentQuestion].Question}
+                  </p>
+                  {/* {questions && questions.map((item, index) => {
+                  return (
+                    <>
+                      <p className="question-text">{`${index + 1} ${item.Question}`}</p>
+                    </>
+                  );
+                })} */}
+                </div>
+                <div className="audio-animation">
+                  {animation ? (
+                    <div className="animation running">
+                      <span className="first"></span>
+                      <span className="second"></span>
+                      <span className="third"></span>
+                      <span className="fourth"></span>
+                      <span className="fifth"></span>
+                    </div>
+                  ) : (
+                    <div className="animation">
+                      <span className="first"></span>
+                      <span className="second"></span>
+                      <span className="third"></span>
+                      <span className="fourth"></span>
+                      <span className="fifth"></span>
+                    </div>
+                  )}
+                  <p>
+                    0{elapsedMin}:{elapsedTime}
+                  </p>
+                </div>
               </div>
               <div className="button-wrapper">
                 {isRecording ? (

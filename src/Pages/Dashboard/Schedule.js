@@ -29,14 +29,13 @@ function Schedule() {
     const [saveLoading, setSaveLoading] = useState(false);
     const [mandatorySkills, setMandatorySkills] = useState()
     const [optionalSkills, setOptionalSkills] = useState()
-    const handleDateSelect = (value) => {
 
+    const handleDateSelect = (value) => {
         // const date = new Date(value);
         const date = new Date(value); 
         const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');      
         
         setDate(formattedDate)
-
     }
 
     const handleTestSelectChange = (value) => {
@@ -92,15 +91,21 @@ function Schedule() {
     }, [])
 
     const fetchTestData = async () => {
-        const response = await LoadTestsAPI()
-        console.log("test response", response)
+        try{
+            const response = await LoadTestsAPI();
+            console.log("test response", response)
 
-        const testOptions = response.data.skills.map(item => ({
-            value: item.testName,
-            label: item.testName
-        }))
-        setTestDataOptions(testOptions)
-        setTestData(response.data.skills)
+            if(response.status === 200){
+                const testOptions = response.data.skills.map( item => ({
+                    value: item.testName,
+                    label: item.testName
+                }))
+                setTestDataOptions(testOptions);
+                setTestData(response.data.skills);
+            }
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     const handleSave = async () => {
@@ -182,7 +187,15 @@ function Schedule() {
                         autoComplete="off"
                         onFinish={handleSave}
                     >
-                        <Space direction="horizontal" size="middle" style={{ display: 'flex' }}>
+                        <Space 
+                            direction="horizontal" 
+                            size="large" 
+                            style={{ 
+                                width:'100%',
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}
+                        >
                         <Form.Item
                                 label="JD Name"
                                 name="JD Name"
@@ -192,6 +205,9 @@ function Schedule() {
                                         message: 'Please select!',
                                     }
                                 ]}
+                                style={{
+                                    width: '100%',
+                                }}
                             >
                                 <Select
                                     value={jdName}
@@ -212,6 +228,9 @@ function Schedule() {
                                         message: 'Please select!',
                                     }
                                 ]}
+                                style={{
+                                    width: '100%',
+                                }}
                             >
                                 <Select
                                     value={jdNumber}

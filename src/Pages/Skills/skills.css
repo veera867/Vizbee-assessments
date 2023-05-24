@@ -20,6 +20,11 @@
     flex-direction: row;
     justify-content: space-between;
 }
+.layout-inner.live-assessment{
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
 .title-bar{
     width: 100%;
 

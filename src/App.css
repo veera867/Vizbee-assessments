@@ -102,6 +102,13 @@
   background-color: none;
   margin-top: 1rem;
 }
+.question-model-card{
+  width: 100%;
+  padding: .5rem;
+  background-color: #FFF;
+  border-radius: 5px;
+  border: 1px solid rgba(211, 210, 210, 0.88);
+}
 
 .time-wrapper{
   width: 100%;
@@ -142,7 +149,6 @@
   height: 40px;
   max-width: 150px;
   margin-right: .5rem;
-  border: none;outline: none;
 }
 .ant-btn-primary{
   background: #DE502C;

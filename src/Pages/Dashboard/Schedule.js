@@ -49,7 +49,7 @@ function Schedule() {
 
     const handleJdNameChange = (values) => {
         console.log(jDData, "values", values)
-        setJdName(values)
+        setJdNumber(values)
         const data = jDData.filter(item => item.JobID == values)
         console.log("data", data)
         const JdNumberoptionsdata = data.map(item => ({

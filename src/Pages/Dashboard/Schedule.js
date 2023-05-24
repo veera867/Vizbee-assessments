@@ -24,7 +24,6 @@ function Schedule() {
     const [testDataOptions, setTestDataOptions] = useState()
     const [jDData, setJDData] = useState()
     const [testData, setTestData] = useState()
-    console.log(hmail, "cmail", cmail)
 
     const [saveLoading,setSaveLoading] = useState(false);
 
@@ -192,22 +191,7 @@ function Schedule() {
                                 display: 'flex',
                                 justifyContent: 'space-between'
                             }}
-                        >
-                            {/* <Form.Item
-                                label="JD Number"
-                                name="jdNumber"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter value!',
-                                    },
-                                ]}
-                            >
-                                <Input 
-                                    value={jdNumber}
-                                    onChange={(value)=>setJdNumber(value)}
-                                />
-                            </Form.Item> */}
+                        >                            
                             <Form.Item
                                 label="JD Number"
                                 name="JD Number"
@@ -255,26 +239,7 @@ function Schedule() {
                                 options={jdNameOptions}
                             ></Select>
                         </Form.Item>
-
-
-
-                            {/* <Form.Item
-                                label="JD Name"
-                                name="jdName"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter value!',
-                                    },
-                                ]}
-                            >
-                                <Input 
-                                    value={jdName}
-                                    onChange={(value)=>setJdName(value)}                                    
-                                />
-                            </Form.Item> */}
                         </Space>
-
                         <Form.Item
                             label="Test"
                             name="test"

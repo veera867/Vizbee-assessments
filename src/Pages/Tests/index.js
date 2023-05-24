@@ -55,8 +55,11 @@ console.log("Tests", Tests)
                 }); 
             }    
         }
+         setTimeout(() => {
+            getTests();
+         }, 1000)
 
-        getTests();
+       
     },[]);
 
     // Delete Functionality

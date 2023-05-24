@@ -4,6 +4,7 @@ import { Button,message, Divider, Form, Input, Select } from 'antd';
 
 import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
 import '../Dashboard/dashboard.css';
+import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
 function CreateJob() {
     const navigate = useNavigate();
@@ -13,14 +14,27 @@ function CreateJob() {
     const [mskills,setMskills] = useState([]);
     const [oskills,setOskills] = useState([]);
     const [complexity,setComplexity] = useState();
+    const [jobDescription, setJobDescription] = useState()
+    const [totalPositions, setTotalPositions] = useState()
+    const [skillsData, setSkillsData] = useState()
 
     const [saveLoading,setSaveLoading] = useState(false);
 
-    console.log("mskills", mskills)
+    useEffect(()=> {
+        fetchSkillsData()
+        console.log("useEffect")
+    },[])
 
-    
-
-  
+    const fetchSkillsData = async() => {
+        console.log("fetch")
+        const response = await GetSkillsAPI()
+        console.log("response", response)
+        const selectOptions = response.data.skills.map(item => ({
+            value: item.SkillName,
+            label: item.SkillName
+        }))
+        setSkillsData(selectOptions)
+    }
 
     const handleSave = async () => {
         try{
@@ -29,7 +43,9 @@ function CreateJob() {
                 jdName: jdName,
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
-                complexity: complexity
+                complexity: complexity,
+                jobDescription:jobDescription,
+                totalPositions:totalPositions
             }
             const apiResponse = await CreateJobAPI(payload);
             console.log(apiResponse);
@@ -64,17 +80,11 @@ function CreateJob() {
         navigate(-1);
     }
 
-    const updateMSkills = (value) => {
-        // console.log("values", value)
-        // let arr = mskills;
-        // arr.push(value);
-        // console.log("arr", arr)
+    const updateMSkills = (value) => {       
         setMskills(value);
     }
 
-    const updateOSkills = (value) => {
-        // let arr = oskills;
-        // arr.push(value);
+    const updateOSkills = (value) => {       
         setOskills(value);
     }
 
@@ -140,20 +150,7 @@ function CreateJob() {
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 
@@ -174,20 +171,7 @@ function CreateJob() {
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 
@@ -222,6 +206,36 @@ function CreateJob() {
                                     }
                                 ]}
                             ></Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="No Of Positions"
+                            name="noOfPositions"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter Jd Name!',
+                                }
+                            ]}
+                        >
+                            <Input 
+                                value={totalPositions}
+                                onChange={(value)=>setTotalPositions(value.target.value)}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label="Job Description"
+                            name="jobDescription"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter Jd Name!',
+                                }
+                            ]}
+                        >
+                            <Input 
+                                value={jobDescription}
+                                onChange={(value)=>setJobDescription(value.target.value)}
+                            />
                         </Form.Item>
 
                         <div className="title-bar">

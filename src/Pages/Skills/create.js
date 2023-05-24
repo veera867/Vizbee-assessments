@@ -36,9 +36,9 @@ function CreateSkill() {
     //         importance: 'Beginner',
     //     },
     // 
-]
+    ]
     );
-
+    
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
     const [hasErr,setHasErr] = useState(false);
@@ -115,13 +115,14 @@ function CreateSkill() {
                 questionnaire : questions
             }
             const apiResponse = await CreateSkillsAPI(payload);
-            console.log(apiResponse);
+            console.log("apiResponse",apiResponse);
 
             //According to the status from API
             if(apiResponse.status === 200){
-                setQuestions(apiResponse.data);
+                // setQuestions(apiResponse.data);
                 setLoading(false);
-                navigate(-1)
+               
+               navigate(-1)
             } else {
                 setHasErr(true);
                 setErrMsg(apiResponse.message);

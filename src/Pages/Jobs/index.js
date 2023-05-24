@@ -76,8 +76,11 @@ function Jobs() {
                 }); 
             }    
         }
+        setTimeout(() =>{
+            getJobs();
+        }, 1000) 
 
-        getJobs();
+        
     },[]);
 
     // Delete Functionality
@@ -145,17 +148,17 @@ function Jobs() {
             key: 'optionalSkills',
         },
         {
-            title: 'Total Score',
-            dataIndex: 'totalScore',
-            key: 'totalScore',
+            title: 'Total No Of Positions',
+            dataIndex: 'totalPositions',
+            key: 'totalPositions',
         },
         {
-            title: 'Pass',
+            title: 'Selected Positions',
             dataIndex: 'pass',
             key: 'pass',
         },
         {
-            title: 'Fail',
+            title: 'Remaining Positions',
             dataIndex: 'fail',
             key: 'fail',
         },

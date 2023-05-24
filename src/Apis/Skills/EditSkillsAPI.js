@@ -13,7 +13,7 @@ const EditKSillsAPI = async (values) => {
     console.log("Edit request id : ",values.skillId);
 
     //This api has to be replaced.
-    const link = `/skills/edit/${values.skillId}`;
+    const link = `/skills/edit/${values}`;
 
     return await axios.post(link,values,axiosConfig)
     .then((result)=>{

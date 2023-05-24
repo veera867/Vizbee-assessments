@@ -4,7 +4,8 @@ import { Button,message, Divider, Form, Input, Select } from 'antd';
 
 import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
 import '../Dashboard/dashboard.css';
-
+import { useEffect } from 'react';
+import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI'
 function CreateTest() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
@@ -15,8 +16,25 @@ function CreateTest() {
     const [complexity,setComplexity] = useState();
 
     const [saveLoading,setSaveLoading] = useState(false);
+    const [skillsData, setSkillsData] = useState()
 
-    console.log("testName", testName)
+    
+
+    useEffect(()=> {
+        fetchSkillsData()
+        console.log("useEffect")
+    },[])
+
+    const fetchSkillsData = async() => {
+        console.log("fetch")
+        const response = await GetSkillsAPI()
+        console.log("response", response)
+        const selectOptions = response.data.skills.map(item => ({
+            value: item.SkillName,
+            label: item.SkillName
+        }))
+        setSkillsData(selectOptions)
+    }
 
     const handleSave = async () => {
         try{
@@ -134,20 +152,7 @@ function CreateTest() {
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 
@@ -168,20 +173,7 @@ function CreateTest() {
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 

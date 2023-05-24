@@ -233,7 +233,7 @@ const Assessment = () => {
             <div className="question-wrapper">
               <div className="time-wrapper">
                 <p className="timer">
-                  <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "90"}
+                  <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "60"}
                 </p>
               </div>
               <div className="row-flexer">

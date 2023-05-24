@@ -47,17 +47,19 @@ function Schedule() {
         setOptionalSkills(filterData[0].optionalSkills)
     }
 
-    const handleJDnumberSelect = (values) => {
-        setJdNumber(values)
+    const handleJdNameChange = (values) => {
+        console.log(jDData, "values", values)
+        setJdName(values)
         const data = jDData.filter(item => item.JobID == values)
         console.log("data", data)
-        const JdNameoptionsdata = data.map(item => ({
-            value: item.jdName,
-            label: item.jdName
+        const JdNumberoptionsdata = data.map(item => ({
+            value: item.JobID,
+            label: item.JobID
         }))
         setJdName(data[0].jdName)
-        setJdNameOptions(JdNameoptionsdata)
-        //    setJdName(data[0].jdName)
+        setJdNumberOptions(JdNumberoptionsdata)
+        // setJdNameOptions(JdNameoptionsdata)
+        setJdName(data[0].JobID)
     }
 
     useEffect(() => {
@@ -76,12 +78,12 @@ function Schedule() {
         }))
 
         const JdnameOptions = apiResponse.data.skills.map(item => ({
-            value: item.jdName,
+            value: item.JobID,
             label: item.jdName
 
         }))
         setJdNumberOptions(JdnumOptions)
-        // setJdNameOptions(JdnameOptions)
+        setJdNameOptions(JdnameOptions)
 
     }
 
@@ -181,7 +183,26 @@ function Schedule() {
                         onFinish={handleSave}
                     >
                         <Space direction="horizontal" size="middle" style={{ display: 'flex' }}>
-                           
+                        <Form.Item
+                                label="JD Name"
+                                name="JD Name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    }
+                                ]}
+                            >
+                                <Select
+                                    value={jdName}
+                                    onChange={handleJdNameChange}
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                    options={jdNameOptions}
+                                ></Select>
+                            </Form.Item>
+
                             <Form.Item
                                 label="JD Number"
                                 name="JD Number"
@@ -195,34 +216,14 @@ function Schedule() {
                                 <Select
                                     value={jdNumber}
                                     // onChange={(value)=>{setJdNumber(value)}}
-                                    onChange={handleJDnumberSelect}
+                                   // onChange={handleJDnumberSelect}
                                     style={{
                                         width: '100%'
                                     }}
                                     options={jdNumberOptions}
 
                                 ></Select>
-                            </Form.Item>
-
-                            <Form.Item
-                                label="JD Name"
-                                name="JD Name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please select!',
-                                    }
-                                ]}
-                            >
-                                <Select
-                                    value={jdName}
-                                    // onChange={(value)=>{setTest(value)}}
-                                    style={{
-                                        width: '100%'
-                                    }}
-                                    options={jdNameOptions}
-                                ></Select>
-                            </Form.Item>
+                            </Form.Item>                          
 
 
 

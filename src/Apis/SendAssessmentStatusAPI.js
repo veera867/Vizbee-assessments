@@ -10,9 +10,6 @@ let axiosConfig = {
 };
 
 const SendAssessmentStatusAPI = async (values) => {
-    console.log("payload : ",values);
-
-    //This api has to be replaced.
     const url = `/audio`;
 
     return await axios.post(url, values, axiosConfig)

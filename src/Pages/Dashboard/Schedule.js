@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button,message, Divider, Form, Input, Select, Space , DatePicker } from 'antd';
+import { Button, message, Divider, Form, Input, Select, Space, DatePicker } from 'antd';
 
 import './dashboard.css';
 import ScheduleAssessmentAPI from '../../Apis/Assessments/ScheduleAssessmentAPI';
@@ -11,81 +11,72 @@ function Schedule() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [jdNumber,setJdNumber] = useState();
-    const [jdName,setJdName] = useState();
-    const [test,setTest] = useState();
+    const [jdNumber, setJdNumber] = useState();
+    const [jdName, setJdName] = useState();
+    const [test, setTest] = useState();
     const [testId, setTestId] = useState()
-    const [date,setDate] = useState();
-    const [cmail,setCmail] = useState();
+    const [date, setDate] = useState();
+    const [cmail, setCmail] = useState();
     const [cName, setCName] = useState()
-    const [hmail,setHmail] = useState();
+    const [hmail, setHmail] = useState();
     const [jdNumberOptions, setJdNumberOptions] = useState()
     const [jdNameOptions, setJdNameOptions] = useState()
     const [testDataOptions, setTestDataOptions] = useState()
     const [jDData, setJDData] = useState()
     const [testData, setTestData] = useState()
+    console.log(hmail, "cmail", cmail)
 
-    const [saveLoading,setSaveLoading] = useState(false);
-
+    const [saveLoading, setSaveLoading] = useState(false);
+    const [mandatorySkills, setMandatorySkills] = useState()
+    const [optionalSkills, setOptionalSkills] = useState()
     const handleDateSelect = (value) => {
+
+        // const date = new Date(value);
         const date = new Date(value); 
-        //const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-        //const formattedDate = date.toLocaleString('en-GB', options);
+        const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');      
+        
+        setDate(formattedDate)
 
-        //let formattedDate = date.toISOString();
-        //console.log("formattedDate", formattedDate);
-
-        //Making T -> " "
-        //let formattedDate = date.toISOString().toString().replace("T","-");
-        //console.log("formattedDate", formattedDate);
-        //setDate(formattedDate)
-
-        //Making milliseconds and 'Z' -> ''
-        // sample : formattedDate 2023-05-27T07:14:40
-
-        let formattedDate =  date.toISOString().substring(0,19);
-        setDate(formattedDate);
-
-        console.log("formattedDate", formattedDate);
     }
 
     const handleTestSelectChange = (value) => {
         setTest(value)
-        const filterData = testData.filter(item => item.testName === value)
-        console.log("filterData", filterData)
+        const filterData = testData.filter(item => item.testName == value)
         setTestId(filterData[0].testId)
+        setMandatorySkills(filterData[0].mandatorySkills)
+        setOptionalSkills(filterData[0].optionalSkills)
     }
 
     const handleJDnumberSelect = (values) => {
         setJdNumber(values)
-        const data = jDData.filter(item => item.JobID === values)
+        const data = jDData.filter(item => item.JobID == values)
         console.log("data", data)
         const JdNameoptionsdata = data.map(item => ({
             value: item.jdName,
-            label:item.jdName
+            label: item.jdName
         }))
         setJdName(data[0].jdName)
         setJdNameOptions(JdNameoptionsdata)
-    //    setJdName(data[0].jdName)
+        //    setJdName(data[0].jdName)
     }
 
     useEffect(() => {
         fetchJobDashboardData()
     }, [])
- 
-    const fetchJobDashboardData = async() => {
-         const apiResponse = await LoadJobsAPI();
-         console.log("apiResponse", apiResponse)
-         setJDData(apiResponse.data.skills)
+
+    const fetchJobDashboardData = async () => {
+        const apiResponse = await LoadJobsAPI();
+        console.log("apiResponse", apiResponse)
+        setJDData(apiResponse.data.skills)
         //  setJdNumberOptions(apiResponse.data.skills)
         const JdnumOptions = apiResponse.data.skills.map(item => ({
-            value:item.JobID,
+            value: item.JobID,
             label: item.JobID
 
         }))
 
         const JdnameOptions = apiResponse.data.skills.map(item => ({
-            value:item.jdName,
+            value: item.jdName,
             label: item.jdName
 
         }))
@@ -96,58 +87,56 @@ function Schedule() {
 
     useEffect(() => {
         fetchTestData()
-    },[])
+    }, [])
 
-    const fetchTestData = async() => {
-        try{
-            const response = await LoadTestsAPI();
-            console.log("test response", response)
+    const fetchTestData = async () => {
+        const response = await LoadTestsAPI()
+        console.log("test response", response)
 
-            if(response.status === 200){
-                const testOptions = response.data.skills.map( item => ({
-                    value: item.testName,
-                    label: item.testName
-                }))
-                setTestDataOptions(testOptions);
-                setTestData(response.data.skills);
-            }
-        } catch(err) {
-            console.log(err);
-        }
+        const testOptions = response.data.skills.map(item => ({
+            value: item.testName,
+            label: item.testName
+        }))
+        setTestDataOptions(testOptions)
+        setTestData(response.data.skills)
     }
 
     const handleSave = async () => {
-        try{
+        try {
             setSaveLoading(true);
 
             const payload = {
-                jdName : jdName,
+                jdName: jdName,
                 jdNumber: jdNumber,
                 testName: test,
                 testId: testId,
                 candidateName: cName,
-                candidateEmail : cmail,
-                hrEmail : hmail,
-                scheduleDate: date
+                candidateEmail: cmail,
+                hrEmail: hmail,
+                scheduleDate: date,
+                mandatorySkills:mandatorySkills,
+                optionalSkills:optionalSkills
             }
             const apiResponse = await ScheduleAssessmentAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status == 200) {
+                console.log("aaaaaa")
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
                     content: apiResponse.message,
-                });           
+                });
+                
                 navigate(-1);
             } else {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
-            }    
+                });
+            }
         } catch (err) {
             setSaveLoading(false);
             console.log(err.message);
@@ -155,7 +144,7 @@ function Schedule() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
 
@@ -176,7 +165,7 @@ function Schedule() {
                 </div>
 
                 <Divider />
-                
+
                 <div className="content-wrapper form-center">
                     <Form
                         name="basic"
@@ -191,13 +180,8 @@ function Schedule() {
                         autoComplete="off"
                         onFinish={handleSave}
                     >
-                        <Space direction="horizontal" size="large" 
-                            style={{ 
-                                width:'100%',
-                                display: 'flex',
-                                justifyContent: 'space-between'
-                            }}
-                        >                            
+                        <Space direction="horizontal" size="middle" style={{ display: 'flex' }}>
+                           
                             <Form.Item
                                 label="JD Number"
                                 name="JD Number"
@@ -207,45 +191,58 @@ function Schedule() {
                                         message: 'Please select!',
                                     }
                                 ]}
-                                style={{
-                                    width: '100%',
-                                }}
                             >
-                            <Select
-                                value={jdNumber}
-                                // onChange={(value)=>{setJdNumber(value)}}
-                                onChange={handleJDnumberSelect}
-                                style={{
-                                    width : '100%'
-                                }}
-                                options={jdNumberOptions}
-                            
-                            ></Select>
-                        </Form.Item>
+                                <Select
+                                    value={jdNumber}
+                                    // onChange={(value)=>{setJdNumber(value)}}
+                                    onChange={handleJDnumberSelect}
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                    options={jdNumberOptions}
 
-                        <Form.Item
-                            label="JD Name"
-                            name="JD Name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                }
-                            ]}
-                            style={{
-                                width: '100%'
-                            }}
-                        >
-                            <Select
-                                value={jdName}
-                                // onChange={(value)=>{setTest(value)}}
-                                style={{
-                                    width : '100%'
-                                }}
-                                options={jdNameOptions}
-                            ></Select>
-                        </Form.Item>
+                                ></Select>
+                            </Form.Item>
+
+                            <Form.Item
+                                label="JD Name"
+                                name="JD Name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    }
+                                ]}
+                            >
+                                <Select
+                                    value={jdName}
+                                    // onChange={(value)=>{setTest(value)}}
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                    options={jdNameOptions}
+                                ></Select>
+                            </Form.Item>
+
+
+
+                            {/* <Form.Item
+                                label="JD Name"
+                                name="jdName"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter value!',
+                                    },
+                                ]}
+                            >
+                                <Input 
+                                    value={jdName}
+                                    onChange={(value)=>setJdName(value)}                                    
+                                />
+                            </Form.Item> */}
                         </Space>
+
                         <Form.Item
                             label="Test"
                             name="test"
@@ -261,7 +258,7 @@ function Schedule() {
                                 // onChange={(value)=>{setTest(value)}}
                                 onChange={handleTestSelectChange}
                                 style={{
-                                    width : '100%'
+                                    width: '100%'
                                 }}
                                 options={testDataOptions}
                             ></Select>
@@ -277,7 +274,7 @@ function Schedule() {
                                 },
                             ]}
                         >
-                            <DatePicker value={date} onChange={handleDateSelect} style={{width:'100%'}}/>
+                            <DatePicker value={date} onChange={handleDateSelect} style={{ width: '100%' }} />
                         </Form.Item>
 
                         <Form.Item
@@ -290,10 +287,10 @@ function Schedule() {
                                 },
                             ]}
                         >
-                            <Input 
+                            <Input
                                 placeholder='john'
                                 value={cName}
-                                onChange={(value)=>setCName(value.target.value)}
+                                onChange={(value) => setCName(value.target.value)}
                             />
                         </Form.Item>
 
@@ -307,10 +304,10 @@ function Schedule() {
                                 },
                             ]}
                         >
-                            <Input 
+                            <Input
                                 placeholder='john@gmail.com'
                                 value={cmail}
-                                onChange={(value)=>setCmail(value.target.value)}
+                                onChange={(value) => setCmail(value.target.value)}
                             />
                         </Form.Item>
 
@@ -324,10 +321,10 @@ function Schedule() {
                                 },
                             ]}
                         >
-                            <Input 
+                            <Input
                                 placeholder='virat@gmail.com'
                                 value={hmail}
-                                onChange={(value)=>setHmail(value.target.value)}
+                                onChange={(value) => setHmail(value.target.value)}
                             />
                         </Form.Item>
 
@@ -340,8 +337,8 @@ function Schedule() {
                                     <span></span>
                                     {
                                         saveLoading
-                                        ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                        : <Button type="primary" htmlType="submit">Save</Button>
+                                            ? <Button type="primary" htmlType="submit" loading>Save</Button>
+                                            : <Button type="primary" htmlType="submit">Save</Button>
                                     }
                                 </div>
                             </Form.Item>

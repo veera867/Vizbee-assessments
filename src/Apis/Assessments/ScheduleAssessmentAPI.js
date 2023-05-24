@@ -10,7 +10,6 @@ let axiosConfig = {
 };
 
 const ScheduleAssessmentAPI = async (values) => {
-    console.log("payload : ",values);
 
     //This api has to be replaced.
     const url = `/assessment-scheduler/schedule`;

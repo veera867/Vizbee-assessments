@@ -61,15 +61,15 @@ function CreateTest() {
     }
 
     const updateMSkills = (value) => {
-        let arr = mskills;
-        arr.push(value);
-        setMskills(arr);
+        // let arr = mskills;
+        // arr.push(value);
+        setMskills(value);
     }
 
     const updateOSkills = (value) => {
-        let arr = oskills;
-        arr.push(value);
-        setOskills(arr);
+        // let arr = oskills;
+        // arr.push(value);
+        setOskills(value);
     }
 
     return (

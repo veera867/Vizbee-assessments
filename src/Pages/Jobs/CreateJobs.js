@@ -16,6 +16,11 @@ function CreateJob() {
 
     const [saveLoading,setSaveLoading] = useState(false);
 
+    console.log("mskills", mskills)
+
+    
+
+  
 
     const handleSave = async () => {
         try{
@@ -59,11 +64,17 @@ function CreateJob() {
         navigate(-1);
     }
 
-    const updateMSkills = (value) => {        
+    const updateMSkills = (value) => {
+        // console.log("values", value)
+        // let arr = mskills;
+        // arr.push(value);
+        // console.log("arr", arr)
         setMskills(value);
     }
 
-    const updateOSkills = (value) => {      
+    const updateOSkills = (value) => {
+        // let arr = oskills;
+        // arr.push(value);
         setOskills(value);
     }
 

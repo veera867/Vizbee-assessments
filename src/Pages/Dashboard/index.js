@@ -10,41 +10,43 @@ function Dashboard() {
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [assessments,setAssessments] = useState([
+    const [assessments,setAssessments] = useState(
+        // [
         //dummy data for testing purpose only. Can be removed!!
-        {
-            jdNumber : 1,
-            candidate : 'Veera',
-            mandatorySkills : 'React',
-            optionalSkills : 'Java',
-            scheduleDate : '15/05/2023',
-            interviewStatus : 'Scheduled'
-        },
-        {
-            jdNumber : 2,
-            candidate : 'Shiva',
-            mandatorySkills : 'Java',
-            optionalSkills : '.NET',
-            scheduleDate : '10/05/2023',
-            interviewStatus : 'Completed'
-        },
-        {
-            jdNumber : 3,
-            candidate : 'Venkat',
-            mandatorySkills : 'React',
-            optionalSkills : 'Java',
-            scheduleDate : '14/05/2023',
-            interviewStatus : 'Scheduled'
-        },
-        {
-            jdNumber : 4,
-            candidate : 'John',
-            mandatorySkills : 'C++',
-            optionalSkills : 'C | DSA',
-            scheduleDate : '13/05/2023',
-            interviewStatus : 'Scheduled'
-        }
-    ]);
+        // {
+        //     jdNumber : 1,
+        //     candidate : 'Veera',
+        //     mandatorySkills : 'React',
+        //     optionalSkills : 'Java',
+        //     scheduleDate : '15/05/2023',
+        //     interviewStatus : 'Scheduled'
+        // },
+        // {
+        //     jdNumber : 2,
+        //     candidate : 'Shiva',
+        //     mandatorySkills : 'Java',
+        //     optionalSkills : '.NET',
+        //     scheduleDate : '10/05/2023',
+        //     interviewStatus : 'Completed'
+        // },
+        // {
+        //     jdNumber : 3,
+        //     candidate : 'Venkat',
+        //     mandatorySkills : 'React',
+        //     optionalSkills : 'Java',
+        //     scheduleDate : '14/05/2023',
+        //     interviewStatus : 'Scheduled'
+        // },
+        // {
+        //     jdNumber : 4,
+        //     candidate : 'John',
+        //     mandatorySkills : 'C++',
+        //     optionalSkills : 'C | DSA',
+        //     scheduleDate : '13/05/2023',
+        //     interviewStatus : 'Scheduled'
+        // }
+    // ]
+    );
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
@@ -59,8 +61,8 @@ function Dashboard() {
                 console.log(apiResponse);
     
                 //According to the status from API
-                if(apiResponse.status === 200){
-                    setAssessments(apiResponse.data);
+                if(apiResponse.status == 200){
+                    setAssessments(apiResponse.data.skills);
                     setLoading(false);
                 } else {
                     setHasErr(true);
@@ -82,8 +84,11 @@ function Dashboard() {
                 }); 
             }    
         }
-
-        getAssessments();
+      
+        setTimeout(() =>{
+            getAssessments(); 
+        }, 1000) 
+       
     },[]);
     
     const columns = [
@@ -93,9 +98,9 @@ function Dashboard() {
             key: 'jdNumber',
         },
         {
-            title: 'Candidate',
-            dataIndex: 'candidate',
-            key: 'candidate',
+            title: 'candidate Name',
+            dataIndex: 'candidateName',
+            key: 'candidateName',
         },
         {
             title: 'Mandatory Skills',

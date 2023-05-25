@@ -31,8 +31,17 @@ function AppLayout() {
     //To manage the sidebar drawer
     const [open, setOpen] = useState(false);
     const [screen,setScreen] = useState(false);
+    const [collapseActive,setCollapseActive] = useState(false);
 
     const [login,setLogin] = useState(true);
+
+    useEffect(()=>{
+        if(location.pathname.includes('skills') || location.pathname.includes('tests')){
+            setCollapseActive(true);
+        } else {
+            setCollapseActive(false);
+        }
+    },[]);
 
     useEffect(()=>{
         function handleResize() {
@@ -118,6 +127,7 @@ function AppLayout() {
 
                     <Collapse 
                         expandIconPosition={'end'} 
+                        defaultActiveKey={collapseActive ? ['1'] : ''}
                         ghost
                         expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                     >
@@ -173,6 +183,7 @@ function AppLayout() {
                         </Button>
                         <Collapse 
                             expandIconPosition={'end'} 
+                            defaultActiveKey={collapseActive ? ['1'] : ''}
                             ghost
                             expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                         >

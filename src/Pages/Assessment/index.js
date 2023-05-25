@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import React, { createRef } from "react";
 import { Row, Col, Button, Modal } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
@@ -24,9 +24,11 @@ const Assessment = () => {
   const [questions, setQuestions] = useState();
 
   const [audioChunks, setAudioChunks] = useState([]);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audio, setAudio] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
+
+  //const [mediaRecorder, setMediaRecorder] = useState(null);
+  //const [audio, setAudio] = useState(null);
+  //const [audioBlob, setAudioBlob] = useState(null);
 
   const [elapsedTime, setElapsedTime] = useState(0);
   const [elapsedMin, setElapsedMin] = useState(0);
@@ -34,17 +36,24 @@ const Assessment = () => {
   const [timeUp, setTimeUp] = useState(false);
   const [flag, setFlag] = useState(false);
 
-  const sendData = async (formData) => {
-    console.log("sendData", formData);
+  const sendData = async (audio) => {
+    console.log('audio : ',audio);
     try {
+    //const formData = new FormData();
+    //formData.append("audio", audio);
+    //formData.append('audiourl', audioUrl);
+    //console.log("Form Data is created : ",formData);
+
       //sample payload
       const payload = {
         question_id: questions[currentQuestion].QuestionID,
         question: questions[currentQuestion].Question,
         test_id: 1122,
-        audio: formData,
+        audio: audio,
         image: image ? image : "",
       };
+      console.log(payload);
+
       const apiResponse = await SendAssessmentStatusAPI(payload);
       console.log(apiResponse);
 
@@ -110,22 +119,46 @@ const Assessment = () => {
     setAnimation(true);
     setFlag(true);
     getImage()
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    setMediaRecorder(mediaRecorder);
-    mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
-    mediaRecorder.start();
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+
+      mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
+      mediaRecorder.start();
+    } catch (error) {
+      console.log("Error accessing media devices:", error);
+    }
   };
 
   const handleStopClick = () => {
     setIsRecording(false);
     setAnimation(false);
-    mediaRecorder.stop();
+    mediaRecorderRef.current.stop();
   };
 
   const handleDataAvailable = (event) => {
-    setAudioChunks((prev) => [...prev, event.data]);
+    console.log(event);
+    const blobData = new Blob([event.data], { type: event.data.type });
+
+    if (blobData.size > 0) {
+      setAudioChunks((prevChunks) => [...prevChunks, blobData]);
+    }
   };
+  
+  useEffect(()=>{
+    console.log('Audio chunks : ',audioChunks);
+  },[audioChunks])
+
+  const convertBlobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };  
 
   const handleNextClick = async () => {
     // Make API request to get next question and send current audio file
@@ -138,14 +171,23 @@ const Assessment = () => {
       type: "audio/webm",
     });
     console.log("audioBlob", audioBlob);
-    const formData = new FormData();
-    formData.append("audio", audioFile);
-    // formData.append('audiourl', audioUrl);
 
+    // Convert the audio Blob to a base64 string
+    const base64Audio = await convertBlobToBase64(blob);
+    
+    //const formData = new FormData();
+    //formData.append("audio", audioFile);
+    //formData.append('audiourl', audioUrl);
+    //console.log("Form Data is created : ",formData);
     // await sendData(audioBlob);
-    await sendData(formData);
 
-    if (currentQuestion < questions.length) {
+    //sending audio file
+    //await sendData(audioFile);
+
+    //sending base64
+    await sendData(base64Audio);
+
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prevQuestion) => prevQuestion + 1);
       setTimer(60);
     } else {
@@ -220,7 +262,7 @@ const Assessment = () => {
     },
   };
 
-  console.log("questions", image);
+  //console.log("questions", image);
 
   return (
     <>

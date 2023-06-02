@@ -1,14 +1,18 @@
-import { useState, useEffect,useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
 import { Row, Col, Button, Modal } from "antd";
+import { useLocation } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
 import "../../App.css";
 import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
 import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
+import FinalResultApi from '../../Apis/Assessments/finalResultApi'
+
 
 const Assessment = () => {
+  const location = useLocation()
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
   const [isRecording, setIsRecording] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -35,42 +39,39 @@ const Assessment = () => {
   const [animation, setAnimation] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [flag, setFlag] = useState(false);
+  const [nextQuestionFlag, setNextQuestionFlag] = useState(false)
+
+  const pathName = location.pathname;
+  const scheduleId = pathName.substring(pathName.lastIndexOf('/') + 1)
 
   const sendData = async (audio) => {
-    console.log('audio : ',audio);
-    try {
-    //const formData = new FormData();
-    //formData.append("audio", audio);
-    //formData.append('audiourl', audioUrl);
-    //console.log("Form Data is created : ",formData);
+    console.log('audio : ', audio);
+    // try {
+    const formData = new FormData();
 
-      //sample payload
-      const payload = {
-        question_id: questions[currentQuestion].QuestionID,
-        question: questions[currentQuestion].Question,
-        test_id: 1122,
-        audio: audio,
-        image: image ? image : "",
-      };
-      console.log(payload);
+    formData.append("question_id", questions[currentQuestion].QuestionID)
+    formData.append("question", questions[currentQuestion].Question)
+    formData.append("test_id", scheduleId)
+    formData.append("audio", audio);
+    formData.append("image", image)
 
-      const apiResponse = await SendAssessmentStatusAPI(payload);
-      console.log(apiResponse);
+    const apiResponse = await SendAssessmentStatusAPI(formData);
+    console.log(apiResponse);
 
-      //According to the status from API
-      if (apiResponse.status === 200) {
-        if (apiResponse.data.d.status === 200) {
-          console.log(apiResponse);
-          console.log(apiResponse.data.d.Data);
-        } else {
-          console.log("Error!!");
-        }
+    //According to the status from API
+    if (apiResponse.status === 200) {
+      if (apiResponse.data.d.status === 200) {
+        console.log(apiResponse);
+        console.log(apiResponse.data.d.Data);
       } else {
         console.log("Error!!");
       }
-    } catch (err) {
-      console.log(err.message);
+    } else {
+      console.log("Error!!");
     }
+    // } catch (err) {
+    //   console.log(err.message);
+    // }
   };
 
   useEffect(() => {
@@ -146,10 +147,10 @@ const Assessment = () => {
       setAudioChunks((prevChunks) => [...prevChunks, blobData]);
     }
   };
-  
-  useEffect(()=>{
-    console.log('Audio chunks : ',audioChunks);
-  },[audioChunks])
+
+  useEffect(() => {
+    console.log('Audio chunks : ', audioChunks);
+  }, [audioChunks])
 
   const convertBlobToBase64 = (blob) => {
     return new Promise((resolve, reject) => {
@@ -158,11 +159,13 @@ const Assessment = () => {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
-  };  
+  };
+  const handleNextClick = () => {
+    setNextQuestionFlag(true)
+  }
 
-  const handleNextClick = async () => {
-    // Make API request to get next question and send current audio file
-    // Update state with new question and reset timer
+  const handleNextConfirmClick = async () => {
+
     const blob = new Blob(audioChunks, { type: "audio/webm" });
     const audioUrl = URL.createObjectURL(blob);
     console.log("blob", blob, audioUrl);
@@ -171,23 +174,11 @@ const Assessment = () => {
       type: "audio/webm",
     });
     console.log("audioBlob", audioBlob);
-
-    // Convert the audio Blob to a base64 string
-    const base64Audio = await convertBlobToBase64(blob);
-    
-    //const formData = new FormData();
-    //formData.append("audio", audioFile);
-    //formData.append('audiourl', audioUrl);
-    //console.log("Form Data is created : ",formData);
-    // await sendData(audioBlob);
-
-    //sending audio file
-    //await sendData(audioFile);
-
-    //sending base64
-    await sendData(base64Audio);
+    setNextQuestionFlag(false)    
+    sendData(audioFile);
 
     if (currentQuestion < questions.length - 1) {
+      console.log("currentQuestion", currentQuestion, questions)
       setCurrentQuestion((prevQuestion) => prevQuestion + 1);
       setTimer(60);
     } else {
@@ -212,13 +203,23 @@ const Assessment = () => {
     // Make API request to submit exam and redirect to result page
     setShowConfirmation(false);
 
-    const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
-    const audioUrl = URL.createObjectURL(blob);
-    await sendData(audioUrl);
+    const payload = {
+      scheduleId: scheduleId
+    }
+    const apiResponse = await FinalResultApi(payload)
+    console.log("apiResponse", apiResponse)
+
+    // const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
+    // const audioUrl = URL.createObjectURL(blob);
+    // await sendData(audioUrl);
   };
+  const handleNextCancelClick = () => {
+    setNextQuestionFlag(false)
+  }
 
   const handleCancel = () => {
     setShowConfirmation(false);
+
   };
 
   const handleSkip = () => {
@@ -241,8 +242,8 @@ const Assessment = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const test_id = 1122;
-        const apiResponse = await LoadQuestionsAPI(test_id);
+        // const test_id = 1122;
+        const apiResponse = await LoadQuestionsAPI(scheduleId);
         console.log("response", apiResponse);
         setQuestions(apiResponse.data.questions);
       } catch (err) {
@@ -261,9 +262,6 @@ const Assessment = () => {
       facingMode: "user",
     },
   };
-
-  //console.log("questions", image);
-
   return (
     <>
       {/* <Button style={{ margin: "10px" }} onClick={getImage}>
@@ -272,109 +270,117 @@ const Assessment = () => {
       {/* <img style={{textAlign:"center"}} src={image} width="320" height="280"  alt="image"/> */}
       <div className="layout-outer">
         <div className="layout-inner flexer live-assessment">
-            <div className="question-wrapper">
-              <div className="question-card">
-                <div className="time-wrapper">
-                  <p className="timer">
-                    <ClockCircleOutlined className="icon-clock" /> Timer: { questions ? timer: "60"}
-                  </p>
-                </div>
-                <div className="row-flexer">
-                  <p>
-                    {questions && questions[currentQuestion].QuestionID}.{" "}
-                    {questions && questions[currentQuestion].Question}
-                  </p>
-                  {/* {questions && questions.map((item, index) => {
+          <div className="question-wrapper">
+            <div className="question-card">
+              <div className="time-wrapper">
+                <p className="timer">
+                  <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
+                </p>
+              </div>
+              <div className="row-flexer">
+                <p>
+                  {questions && questions[currentQuestion].QuestionID}.{" "}
+                  {questions && questions[currentQuestion].Question}
+                </p>
+                {/* {questions && questions.map((item, index) => {
                   return (
                     <>
                       <p className="question-text">{`${index + 1} ${item.Question}`}</p>
                     </>
                   );
                 })} */}
-                </div>
-                <div className="audio-animation">
-                  {animation ? (
-                    <div className="animation running">
-                      <span className="first"></span>
-                      <span className="second"></span>
-                      <span className="third"></span>
-                      <span className="fourth"></span>
-                      <span className="fifth"></span>
-                    </div>
-                  ) : (
-                    <div className="animation">
-                      <span className="first"></span>
-                      <span className="second"></span>
-                      <span className="third"></span>
-                      <span className="fourth"></span>
-                      <span className="fifth"></span>
-                    </div>
-                  )}
-                  <p>
-                    0{elapsedMin}:{elapsedTime}
-                  </p>
-                </div>
               </div>
-              <div className="button-wrapper">
-                {isRecording ? (
-                  <Button onClick={handleStopClick}>Stop</Button>
-                ) : timeUp ? (
-                  <Button onClick={handleRecordClick} disabled>
-                    Record
-                  </Button>
+              <div className="audio-animation">
+                {animation ? (
+                  <div className="animation running">
+                    <span className="first"></span>
+                    <span className="second"></span>
+                    <span className="third"></span>
+                    <span className="fourth"></span>
+                    <span className="fifth"></span>
+                  </div>
                 ) : (
-                  <Button onClick={handleRecordClick} >Record</Button>
+                  <div className="animation">
+                    <span className="first"></span>
+                    <span className="second"></span>
+                    <span className="third"></span>
+                    <span className="fourth"></span>
+                    <span className="fifth"></span>
+                  </div>
                 )}
-                {isRecording ? (
-                  <Button onClick={handleSkip} disabled>
-                    Skip
-                  </Button>
-                ) : elapsedTime > 0 ? (
-                  <Button onClick={handleSkip} disabled>
-                    Skip
-                  </Button>
-                ) : (
-                  <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
-                )}
-                {!isRecording && flag ? (
-                  <Button onClick={handleNextClick}>Next</Button>
-                ) : (
-                  <Button onClick={handleNextClick} >
-                    Next
-                  </Button>
-                )}
-                <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
+                <p>
+                  0{elapsedMin}:{elapsedTime}
+                </p>
               </div>
             </div>
-            {/*
+            <div className="button-wrapper">
+              {isRecording ? (
+                <Button onClick={handleStopClick}>Stop</Button>
+              ) : timeUp ? (
+                <Button onClick={handleRecordClick} disabled>
+                  Record
+                </Button>
+              ) : (
+                <Button onClick={handleRecordClick} disabled={questions ? false : true} >Record</Button>
+              )}
+              {isRecording ? (
+                <Button onClick={handleSkip} disabled>
+                  Skip
+                </Button>
+              ) : elapsedTime > 0 ? (
+                <Button onClick={handleSkip} disabled>
+                  Skip
+                </Button>
+              ) : (
+                <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
+              )}
+              {!isRecording && flag ? (
+                <Button onClick={handleNextClick}>Next</Button>
+              ) : (
+                <Button onClick={handleNextClick} disabled>
+                  Next
+                </Button>
+              )}
+              <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
+            </div>
+          </div>
+          {/*
               <audio src={audio} controls={true}></audio>
             */}
-            <Modal
-              title="Confirm submission"
-              open={showConfirmation}
-              onOk={handleConfirm}
-              onCancel={handleCancel}
-            >
-              <p>Are you sure you want to submit your exam?</p>
-            </Modal>
+          <Modal
+            title="Confirm submission"
+            open={showConfirmation}
+            onOk={handleConfirm}
+            onCancel={handleCancel}
+          >
+            <p>Are you sure you want to submit your exam?</p>
+          </Modal>
+          <Modal
+            title="Next Question"
+            open={nextQuestionFlag}
+            onOk={handleNextConfirmClick}
+            onCancel={handleNextCancelClick}
+          >
+            <p>Are you sure you want to Move to next Question?</p>
+          </Modal>
 
           <div className="right-wrapper">
             <div ref={ref}>
               <Row>
-                <Col  span={10}>               
+                <Col span={10}>
                   <Webcam {...webcamOptions} />
                 </Col>
               </Row>
-              </div>
-              <div className="instruction-box">
-                <h3>Instructions</h3>
+            </div>
+            <div className="instruction-box">
+              <h3>Instructions</h3>
 
-                <h5>
-                  1. Please Precsiely to the question as data is evaluated by bot. 
-                </h5>
-                <h5>2. Test your audio device before starting the discussion</h5>
-                <h5>3. Test Duration is 45 minutes</h5>
-              </div>
+              <h5>
+                1. Please Precsiely to the question as data is evaluated by bot.
+              </h5>
+              <h5>2. Test your audio device before starting the discussion</h5>
+              <h5>3. Test Duration is 45 minutes</h5>
+            </div>
           </div>
         </div>
       </div>

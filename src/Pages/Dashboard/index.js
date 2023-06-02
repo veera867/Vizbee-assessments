@@ -119,14 +119,14 @@ function Dashboard() {
         },
         {
             title: 'Interview Status',
-            dataIndex: 'interviewStatus',
-            key: 'interviewStatus',
+            dataIndex: 'status',
+            key: 'status',
         },
-        {
-            title: 'Report',
-            dataIndex: 'report',
-            key: 'report',
-        }
+        // {
+        //     title: 'Report',
+        //     dataIndex: 'report',
+        //     key: 'report',
+       // }
     ];
 
     return (

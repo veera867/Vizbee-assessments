@@ -10,11 +10,13 @@ let axiosConfig = {
 };
 
 const LoadQuestionsAPI = async (id) => {
-
+    const payload = {
+        test_id : id
+    }
     //This api has to be replaced.
-    const url = `/getquestions?test_id=${id}`;
+    const url = `/getquestions`;
 
-    return await axios.get(url,axiosConfig)
+    return await axios.post(url,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

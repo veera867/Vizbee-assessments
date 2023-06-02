@@ -152,16 +152,16 @@ function Jobs() {
             dataIndex: 'totalPositions',
             key: 'totalPositions',
         },
-        {
-            title: 'Selected Positions',
-            dataIndex: 'pass',
-            key: 'pass',
-        },
-        {
-            title: 'Remaining Positions',
-            dataIndex: 'fail',
-            key: 'fail',
-        },
+        // {
+        //     title: 'Selected Positions',
+        //     dataIndex: 'pass',
+        //     key: 'pass',
+        // },
+        // {
+        //     title: 'Remaining Positions',
+        //     dataIndex: 'fail',
+        //     key: 'fail',
+        // },
         {
             title: 'Action',
             dataIndex: '',

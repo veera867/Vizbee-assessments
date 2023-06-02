@@ -173,13 +173,13 @@ function CreateSkill() {
         try{
             if(editId === 0){
                 let temp = {
-                    slno : questions.length > 0 
+                    count : questions.length > 0 
                                 ? question.length === 1 
                                     ? questions.length+1 
                                     : question.length 
                                 : 1,
-                    question : question,
-                    answer : answer,
+                    Q : question,
+                    A : answer,
                     importance: importance,
                 };
                 setQuestions([...questions,temp]);
@@ -222,7 +222,7 @@ function CreateSkill() {
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try{
-            setQuestions(questions.filter(ques => ques.slno !== delId));
+            setQuestions(questions.filter(ques => ques.count !== delId));
             setConfirmLoading(false);
             setCnfmDel(false);
             setDelId(null);
@@ -242,23 +242,24 @@ function CreateSkill() {
         setCnfmDel(false);
         setDelId(null);
     }
-    console.log("questions", questions)
+
+   
     
     const columns = [
         {
             title: 'Sl. no',
-            dataIndex: 'slno',
-            key: 'slno',
+            dataIndex: 'count',
+            key: 'count',
         },
         {
             title: 'Question',
-            dataIndex: 'question',
-            key: 'question',
+            dataIndex: 'Q',
+            key: 'Q',
         },
         {
             title: 'Answer',
-            dataIndex: 'answer',
-            key: 'answer',
+            dataIndex: 'A',
+            key: 'A',
         },
         {
             title: 'Importance',

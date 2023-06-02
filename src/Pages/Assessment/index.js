@@ -323,7 +323,7 @@ const Assessment = () => {
                     Record
                   </Button>
                 ) : (
-                  <Button onClick={handleRecordClick}disabled={questions ? false : true} >Record</Button>
+                  <Button onClick={handleRecordClick} >Record</Button>
                 )}
                 {isRecording ? (
                   <Button onClick={handleSkip} disabled>
@@ -339,7 +339,7 @@ const Assessment = () => {
                 {!isRecording && flag ? (
                   <Button onClick={handleNextClick}>Next</Button>
                 ) : (
-                  <Button onClick={handleNextClick} disabled>
+                  <Button onClick={handleNextClick} >
                     Next
                   </Button>
                 )}

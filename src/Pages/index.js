@@ -5,7 +5,6 @@ import { CaretRightOutlined,CalendarFilled,FileProtectOutlined,
     SettingFilled,TrophyOutlined,FileDoneOutlined,PlayCircleOutlined } from '@ant-design/icons';
 
 import {Navigate , Routes , Route, useLocation} from 'react-router-dom';
-import Assessment from './Assessment';
 
 import '../App.css';
 import Skills from './Skills';
@@ -14,7 +13,6 @@ import SkillCreate from './Skills/create';
 import NewQuestionnaire from './Skills/NewQuestionnaire';
 import Schedule from './Dashboard/Schedule';
 import CreateTest from './Tests/CreateTest';
-import VerifyCode from './Assessment/VerifyCode';
 import EditSkill from './Skills/edit';
 import Tests from './Tests';
 import EditTests from './Tests/EditTests';
@@ -117,6 +115,7 @@ function AppLayout() {
                         Assessment Dashboard
                     </Button>
                     
+                    {/*
                     <Button type="link" 
                         icon={<PlayCircleOutlined />}
                         href="/app/assessment"
@@ -124,6 +123,7 @@ function AppLayout() {
                     >
                         Live Assessment
                     </Button>
+                    */}
 
                     <Collapse 
                         expandIconPosition={'end'} 
@@ -174,6 +174,7 @@ function AppLayout() {
                             Assessment Dashboard
                         </Button>
                         
+                        {/*
                         <Button type="link" 
                             icon={<PlayCircleOutlined />}
                             href="/app/assessment"
@@ -181,6 +182,8 @@ function AppLayout() {
                         >
                             Live Assessment
                         </Button>
+                        */}
+
                         <Collapse 
                             expandIconPosition={'end'} 
                             defaultActiveKey={collapseActive ? ['1'] : ''}
@@ -226,8 +229,11 @@ function AppLayout() {
                 <Route path="/jobs/new" element={<CreateJob />}></Route>
                 <Route path="/jobs/edit/:id" element={<EditJobs />}></Route>
 
+                {/*
                 <Route path="/assessment" element={<VerifyCode />}></Route>
                 <Route path="/assessment/:code" element={<Assessment />}></Route>
+                */}
+
             </Routes>
         </div>
 

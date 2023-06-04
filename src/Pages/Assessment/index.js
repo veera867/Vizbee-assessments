@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
-import { Row, Col, Button, Modal } from "antd";
+import { Layout, Row, Col, Button, Modal } from "antd";
 import { useLocation } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
@@ -8,11 +8,16 @@ import { useScreenshot } from "use-react-screenshot";
 import "../../App.css";
 import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
 import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
-import FinalResultApi from '../../Apis/Assessments/finalResultApi'
+import FinalResultApi from '../../Apis/Assessments/finalResultApi';
+
+const { Header } = Layout;
 
 
 const Assessment = () => {
-  const location = useLocation()
+  const location = useLocation();
+
+  const [login,setLogin] = useState(true);
+  
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
   const [isRecording, setIsRecording] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -262,8 +267,22 @@ const Assessment = () => {
       facingMode: "user",
     },
   };
+
   return (
-    <>
+    <Layout>
+      <Header>
+          <div className="header-wrapper">
+              <div className="logo-header">
+                  <img alt="logo" src="/apexon-logo.jpg"/>
+                  <h1>Apexon Assessment System</h1>
+              </div>
+              {
+                  login
+                  ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
+                  : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
+              }
+          </div>
+      </Header>
       {/* <Button style={{ margin: "10px" }} onClick={getImage}>
         <CameraOutlined /> Take Snapshot
       </Button> */}
@@ -384,7 +403,7 @@ const Assessment = () => {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

@@ -1,20 +1,40 @@
 import React,{useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button,message,Input, Space, Card, List } from 'antd';
+import { Layout, Button,message,Input, Space, Card, List } from 'antd';
+
+const { Header } = Layout;
 
 function VerifyCode() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
     const [code,setCode] = useState('');
+    const [login,setLogin] = useState(true);
+
 
     const handleRedirect = async () => {
-            navigate(`/app/assessment/${code}`);
+            navigate(`/assessment/${code}`);
     }
 
     return (
+        <Layout>
+        <Header>
+            <div className="header-wrapper">
+                <div className="logo-header">
+                    <img alt="logo" src="/apexon-logo.jpg"/>
+                    <h1>Apexon Assessment System</h1>
+                </div>
+                {
+                    login
+                    ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
+                    : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
+                }
+            </div>
+        </Header>
         <div className="layout-outer">
             {contextHolder}
+
+
             <div className="layout-inner">
                 <div className="content-wrapper form-center">
                     <Card
@@ -58,6 +78,7 @@ function VerifyCode() {
                 </div>
             </div>
         </div>
+        </Layout>
     )
 }
 

@@ -47,6 +47,8 @@ function CreateSkill() {
     const [skillName,setSkillName] = useState('');
     const [skillGroup,setSkillGroup] = useState('');
 
+    const [fetchLoading,setFetchLoading] = useState(false);
+
     //for delete confirm box
     const [cnfmDel,setCnfmDel] = useState(false);
     const [delId,setDelId] = useState(0);
@@ -75,10 +77,27 @@ function CreateSkill() {
         const payload = {
             skillName: skillName
         }
-        const apiResponse = await LoadAutoGenerateQuestions(payload)
-        console.log("apiResponse", apiResponse)
-        if(apiResponse.status == 200){
-            setQuestions(apiResponse.data.questions)
+
+        try{
+            setFetchLoading(true);
+            const apiResponse = await LoadAutoGenerateQuestions(payload);
+            console.log("apiResponse", apiResponse);
+            if(apiResponse.status === 200){
+                setQuestions(apiResponse.data.questions);
+                setFetchLoading(false);
+            } else {
+                setFetchLoading(false);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });                  
+            }
+        } catch (err) {
+            setFetchLoading(false);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            }); 
         }
     }
     
@@ -121,8 +140,7 @@ function CreateSkill() {
             if(apiResponse.status === 200){
                 // setQuestions(apiResponse.data);
                 setLoading(false);
-               
-               navigate(-1)
+                navigate(-1)
             } else {
                 setHasErr(true);
                 setErrMsg(apiResponse.message);
@@ -288,7 +306,7 @@ function CreateSkill() {
                     <div className="button-holder">
                         <Button danger onClick={handleCancel}>Cancel</Button>
                         <span></span>
-                        <Button type="primary" onClick={handleSave}>Save</Button>
+                        <Button type="primary" onClick={handleSave} disabled={fetchLoading}>Save</Button>
                     </div>
                 </div>
 
@@ -336,7 +354,7 @@ function CreateSkill() {
                             />
                         </label>                        
                         <span></span>
-                        <Button type="primary" onClick={handleAutoGenerate}>Auto Generate</Button>
+                        <Button type="primary" onClick={handleAutoGenerate} disabled={fetchLoading}>Auto Generate</Button>
                     </div>
                 </div>
                 <div className="content-wrapper">
@@ -366,7 +384,7 @@ function CreateSkill() {
                 onCancel={handleEditCancel}
             >
                 <Divider />
-                <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+                <Space direction="vertical" size="middle" style={{ display: 'flex',width:'100%' }}>
                     {/* <label for="slno">Sl No : </label>
                     <Input 
                         placeholder="Sl No"

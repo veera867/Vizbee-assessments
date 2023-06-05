@@ -158,11 +158,7 @@ console.log("Tests", Tests)
                 <Divider />
                 
                 <div className="content-wrapper">
-                    {
-                        loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={Tests} columns={columns} />
-                    }
+                    <Table dataSource={Tests} columns={columns} loading={loading}/>
                 </div>
             </div>
             <Modal

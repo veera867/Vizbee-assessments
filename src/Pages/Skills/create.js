@@ -361,7 +361,7 @@ function CreateSkill() {
                     {
                         loading
                         ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={questions} columns={columns} />
+                        : <Table dataSource={questions} columns={columns} loading={fetchLoading}/>
                     }
                 </div>
             </div>

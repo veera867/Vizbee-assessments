@@ -376,11 +376,7 @@ function EditSkill() {
                     </div>
                 </div>
                 <div className="content-wrapper">
-                    {
-                        loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={questions} columns={columns} />
-                    }
+                    <Table dataSource={questions} columns={columns} loading={loading}/>
                 </div>
             </div>
 

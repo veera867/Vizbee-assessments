@@ -191,11 +191,7 @@ function Jobs() {
                 <Divider />
                 
                 <div className="content-wrapper">
-                    {
-                        loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={jobs} columns={columns} />
-                    }
+                    <Table dataSource={jobs} columns={columns} loading={loading}/>
                 </div>
             </div>
             <Modal

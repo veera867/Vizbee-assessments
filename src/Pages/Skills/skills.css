@@ -22,8 +22,11 @@
 }
 .layout-inner.live-assessment{
     padding: 0;
+    margin-bottom: 0;
     background-color: transparent;
     border: none;
+
+    justify-content: space-around;
 }
 .title-bar{
     width: 100%;

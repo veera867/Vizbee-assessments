@@ -144,11 +144,7 @@ function Dashboard() {
                 <Divider />
                 
                 <div className="content-wrapper">
-                    {
-                        loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={assessments} columns={columns} />
-                    }
+                    <Table dataSource={assessments} columns={columns} loading={loading}/>
                 </div>
             </div>
         </div>

@@ -203,11 +203,7 @@ function Skills() {
                 <Divider />
                 
                 <div className="content-wrapper">
-                    {
-                        loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={skills} columns={columns} />
-                    }
+                    <Table dataSource={skills} columns={columns} loading={loading}/>
                 </div>
             </div>
             <Modal

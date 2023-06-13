@@ -46,6 +46,12 @@ function Schedule() {
         setOptionalSkills(filterData[0].optionalSkills)
     }
 
+    const handleEmailChange = (e) => {
+        const value  = e.taget.value;
+        const emaiList = value.split(',').map((email) => email.trim())
+        setCmail(emaiList)
+    }
+
     const handleJdNameChange = (values) => {
         console.log(jDData, "values", values)
         setJdNumber(values)
@@ -58,7 +64,7 @@ function Schedule() {
         setJdName(data[0].jdName)
         setJdNumberOptions(JdNumberoptionsdata)
         // setJdNameOptions(JdNameoptionsdata)
-        setJdName(data[0].JobID)
+        // setJdName(data[0].JobID)
     }
 
     useEffect(() => {
@@ -327,6 +333,7 @@ function Schedule() {
                             <Input
                                 placeholder='john@gmail.com'
                                 value={cmail}
+                                // onChange={handleEmailChange}
                                 onChange={(value) => setCmail(value.target.value)}
                             />
                         </Form.Item>

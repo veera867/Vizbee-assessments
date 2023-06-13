@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
-import { Layout, Row, Col, Button, Modal } from "antd";
+import { Layout, Row, Col, Button, Modal, Typography } from "antd";
 import { useLocation } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
@@ -15,9 +15,10 @@ const { Header } = Layout;
 
 const Assessment = () => {
   const location = useLocation();
+  const assessementCode = location.state;
+  console.log("assessementCode", assessementCode)
+  const [login, setLogin] = useState(true);
 
-  const [login,setLogin] = useState(true);
-  
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
   const [isRecording, setIsRecording] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -45,6 +46,7 @@ const Assessment = () => {
   const [timeUp, setTimeUp] = useState(false);
   const [flag, setFlag] = useState(false);
   const [nextQuestionFlag, setNextQuestionFlag] = useState(false)
+  const [endTest, setEndTest] = useState(false)
 
   const pathName = location.pathname;
   const scheduleId = pathName.substring(pathName.lastIndexOf('/') + 1)
@@ -56,7 +58,7 @@ const Assessment = () => {
 
     formData.append("question_id", questions[currentQuestion].QuestionID)
     formData.append("question", questions[currentQuestion].Question)
-    formData.append("test_id", scheduleId)
+    formData.append("test_id", assessementCode)
     formData.append("audio", audio);
     formData.append("image", image)
 
@@ -130,7 +132,6 @@ const Assessment = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-
       mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
       mediaRecorder.start();
     } catch (error) {
@@ -141,7 +142,7 @@ const Assessment = () => {
   const handleStopClick = () => {
     setIsRecording(false);
     setAnimation(false);
-    mediaRecorderRef.current.stop();
+    mediaRecorderRef?.current?.stop();
   };
 
   const handleDataAvailable = (event) => {
@@ -179,7 +180,7 @@ const Assessment = () => {
       type: "audio/webm",
     });
     console.log("audioBlob", audioBlob);
-    setNextQuestionFlag(false)    
+    setNextQuestionFlag(false)
     sendData(audioFile);
 
     if (currentQuestion < questions.length - 1) {
@@ -209,10 +210,13 @@ const Assessment = () => {
     setShowConfirmation(false);
 
     const payload = {
-      scheduleId: scheduleId
+      scheduleId: assessementCode
     }
     const apiResponse = await FinalResultApi(payload)
     console.log("apiResponse", apiResponse)
+    if (apiResponse.status == 200) {
+      setEndTest(true)
+    }
 
     // const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
     // const audioUrl = URL.createObjectURL(blob);
@@ -248,7 +252,7 @@ const Assessment = () => {
     async function fetchData() {
       try {
         // const test_id = 1122;
-        const apiResponse = await LoadQuestionsAPI(scheduleId);
+        const apiResponse = await LoadQuestionsAPI(assessementCode);
         console.log("response", apiResponse);
         setQuestions(apiResponse.data.questions);
       } catch (err) {
@@ -271,138 +275,142 @@ const Assessment = () => {
   return (
     <Layout>
       <Header>
-          <div className="header-wrapper">
-              <div className="logo-header">
-                  <img alt="logo" src="/apexon-logo.jpg"/>
-                  <h1>Apexon Assessment System</h1>
-              </div>
-              {
-                  login
-                  ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
-                  : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
-              }
+        <div className="header-wrapper">
+          <div className="logo-header">
+            <img alt="logo" src="/apexon-logo.jpg" />
+            <h1>Apexon Assessment System</h1>
           </div>
+          {
+            login
+              ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
+              : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
+          }
+        </div>
       </Header>
-      {/* <Button style={{ margin: "10px" }} onClick={getImage}>
-        <CameraOutlined /> Take Snapshot
-      </Button> */}
-      {/* <img style={{textAlign:"center"}} src={image} width="320" height="280"  alt="image"/> */}
-      <div className="layout-outer">
-        <div className="layout-inner flexer live-assessment">
-          <div className="question-wrapper">
-            <div className="question-card">
-              <div className="time-wrapper">
-                <p className="timer">
-                  <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
-                </p>
-              </div>
-              <div className="row-flexer">
-                <p>
-                  {questions && questions[currentQuestion].QuestionID}.{" "}
-                  {questions && questions[currentQuestion].Question}
-                </p>
-                {/* {questions && questions.map((item, index) => {
+      {endTest ?
+        <>
+          <Typography > Test is Completed Successfully!
+            Hr will update you soon.. </Typography>
+          <Typography >Thank you for your Time!! </Typography>
+        </>
+        :
+        <div className="layout-outer">
+          <div className="layout-inner flexer live-assessment">
+            <div className="question-wrapper">
+              <div className="question-card">
+                <div className="time-wrapper">
+                  <p className="timer">
+                    <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
+                  </p>
+                </div>
+                <div className="row-flexer">
+                  <p>
+                    {questions && questions[currentQuestion].QuestionID}.{" "}
+                    {questions && questions[currentQuestion].Question}
+                  </p>
+                  {/* {questions && questions.map((item, index) => {
                   return (
                     <>
                       <p className="question-text">{`${index + 1} ${item.Question}`}</p>
                     </>
                   );
                 })} */}
+                </div>
+                <div className="audio-animation">
+                  {animation ? (
+                    <div className="animation running">
+                      <span className="first"></span>
+                      <span className="second"></span>
+                      <span className="third"></span>
+                      <span className="fourth"></span>
+                      <span className="fifth"></span>
+                    </div>
+                  ) : (
+                    <div className="animation">
+                      <span className="first"></span>
+                      <span className="second"></span>
+                      <span className="third"></span>
+                      <span className="fourth"></span>
+                      <span className="fifth"></span>
+                    </div>
+                  )}
+                  <p>
+                    0{elapsedMin}:{elapsedTime}
+                  </p>
+                </div>
               </div>
-              <div className="audio-animation">
-                {animation ? (
-                  <div className="animation running">
-                    <span className="first"></span>
-                    <span className="second"></span>
-                    <span className="third"></span>
-                    <span className="fourth"></span>
-                    <span className="fifth"></span>
-                  </div>
+              <div className="button-wrapper">
+                {isRecording ? (
+                  <Button onClick={handleStopClick}>Stop</Button>
+                ) : timeUp ? (
+                  <Button onClick={handleRecordClick} disabled>
+                    Record
+                  </Button>
                 ) : (
-                  <div className="animation">
-                    <span className="first"></span>
-                    <span className="second"></span>
-                    <span className="third"></span>
-                    <span className="fourth"></span>
-                    <span className="fifth"></span>
-                  </div>
+                  <Button onClick={handleRecordClick} disabled={questions ? false : true} >Record</Button>
                 )}
-                <p>
-                  0{elapsedMin}:{elapsedTime}
-                </p>
+                {isRecording ? (
+                  <Button onClick={handleSkip} disabled>
+                    Skip
+                  </Button>
+                ) : elapsedTime > 0 ? (
+                  <Button onClick={handleSkip} disabled>
+                    Skip
+                  </Button>
+                ) : (
+                  <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
+                )}
+                {!isRecording && flag ? (
+                  <Button onClick={handleNextClick}>Next</Button>
+                ) : (
+                  <Button onClick={handleNextClick} disabled>
+                    Next
+                  </Button>
+                )}
+                <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
               </div>
             </div>
-            <div className="button-wrapper">
-              {isRecording ? (
-                <Button onClick={handleStopClick}>Stop</Button>
-              ) : timeUp ? (
-                <Button onClick={handleRecordClick} disabled>
-                  Record
-                </Button>
-              ) : (
-                <Button onClick={handleRecordClick} disabled={questions ? false : true} >Record</Button>
-              )}
-              {isRecording ? (
-                <Button onClick={handleSkip} disabled>
-                  Skip
-                </Button>
-              ) : elapsedTime > 0 ? (
-                <Button onClick={handleSkip} disabled>
-                  Skip
-                </Button>
-              ) : (
-                <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
-              )}
-              {!isRecording && flag ? (
-                <Button onClick={handleNextClick}>Next</Button>
-              ) : (
-                <Button onClick={handleNextClick} disabled>
-                  Next
-                </Button>
-              )}
-              <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
-            </div>
-          </div>
-          {/*
+            {/*
               <audio src={audio} controls={true}></audio>
             */}
-          <Modal
-            title="Confirm submission"
-            open={showConfirmation}
-            onOk={handleConfirm}
-            onCancel={handleCancel}
-          >
-            <p>Are you sure you want to submit your exam?</p>
-          </Modal>
-          <Modal
-            title="Next Question"
-            open={nextQuestionFlag}
-            onOk={handleNextConfirmClick}
-            onCancel={handleNextCancelClick}
-          >
-            <p>Are you sure you want to Move to next Question?</p>
-          </Modal>
+            <Modal
+              title="Confirm submission"
+              open={showConfirmation}
+              onOk={handleConfirm}
+              onCancel={handleCancel}
+            >
+              <p>Are you sure you want to submit your exam?</p>
+            </Modal>
+            <Modal
+              title="Next Question"
+              open={nextQuestionFlag}
+              onOk={handleNextConfirmClick}
+              onCancel={handleNextCancelClick}
+            >
+              <p>Are you sure you want to Move to next Question?</p>
+            </Modal>
 
-          <div className="right-wrapper">
-            <div ref={ref}>
-              <Row>
-                <Col span={10}>
-                  <Webcam {...webcamOptions} />
-                </Col>
-              </Row>
-            </div>
-            <div className="instruction-box">
-              <h3>Instructions</h3>
+            <div className="right-wrapper">
+              <div ref={ref}>
+                <Row>
+                  <Col span={10}>
+                    <Webcam {...webcamOptions} />
+                  </Col>
+                </Row>
+              </div>
+              <div className="instruction-box">
+                <h3>Instructions</h3>
 
-              <h5>
-                1. Please Precsiely to the question as data is evaluated by bot.
-              </h5>
-              <h5>2. Test your audio device before starting the discussion</h5>
-              <h5>3. Test Duration is 45 minutes</h5>
+                <h5>
+                  1. Please Precsiely to the question as data is evaluated by bot.
+                </h5>
+                <h5>2. Test your audio device before starting the discussion</h5>
+                <h5>3. Test Duration is 45 minutes</h5>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      }
     </Layout>
   );
 };

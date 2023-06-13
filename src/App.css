@@ -76,7 +76,7 @@
 }
 .instruction-box{
   width: 240px;
-  height: 400px;
+  /* height: 400px; */
   background-color: #9BA4B5;
   padding: 1rem;
 }

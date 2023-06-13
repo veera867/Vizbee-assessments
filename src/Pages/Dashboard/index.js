@@ -1,13 +1,16 @@
 import React,{useState,useEffect} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
+import { useLocation } from 'react-router-dom';
 import { Table ,Button,message, Spin, Divider  } from 'antd';
 
 import LoadAssessmentsAPI from '../../Apis/Assessments/LoadAssessmentsAPI';
 
 import './dashboard.css';
 
-function Dashboard() {
-
+const Dashboard = () => {
+    const location = useLocation()
+    const filterJobData = location.state
+    // console.log("filterJobData", filterJobData)
     const [messageApi, contextHolder] = message.useMessage();
 
     const [assessments,setAssessments] = useState(
@@ -62,6 +65,8 @@ function Dashboard() {
     
                 //According to the status from API
                 if(apiResponse.status == 200){
+                    const dupData = apiResponse.data.skills.filter(item => item.jdName === filterJobData.JobID)
+                    console.log("dupData", dupData)
                     setAssessments(apiResponse.data.skills);
                     setLoading(false);
                 } else {
@@ -93,9 +98,9 @@ function Dashboard() {
     
     const columns = [
         {
-            title: 'JD Number',
-            dataIndex: 'jdNumber',
-            key: 'jdNumber',
+            title: 'JD Name',
+            dataIndex: 'jdName',
+            key: 'jdName',
         },
         {
             title: 'candidate Name',
@@ -122,6 +127,17 @@ function Dashboard() {
             dataIndex: 'status',
             key: 'status',
         },
+          {
+            title: 'Max Score',
+            dataIndex: 'max_score',
+             key: 'max_score',
+       }, 
+        {
+            title: 'Actual Score',
+             dataIndex: 'act_Score',
+             key: 'act_Score',
+        }
+
         // {
         //     title: 'Report',
         //     dataIndex: 'report',

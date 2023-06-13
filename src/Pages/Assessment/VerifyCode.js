@@ -13,7 +13,7 @@ function VerifyCode() {
 
 
     const handleRedirect = async () => {
-            navigate(`/assessment/${code}`);
+            navigate(`/assessment/${code}`, {state: code} );
     }
 
     return (

@@ -5,32 +5,33 @@ import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
 import DeleteJobAPI from '../../Apis/Jobs/DeleteJobAPI';
 import '../Skills/skills.css';
+import { useNavigate } from 'react-router-dom';
 
 function Jobs() {
-
+    const navigate = useNavigate()
     const [messageApi, contextHolder] = message.useMessage();
 
     const [jobs,setJobs] = useState([
-        /*
-        {
-            jdId : 1,
-            jdName: 'Developer',
-            mandatorySkills: ['Html','Java'],
-            optionalSkills: ['React'],
-            totalScore: 85,
-            pass: 'Pass',
-            fail: '',
-        },
-        {
-            jdId : 2,
-            jdName: 'Testing',
-            mandatorySkills: ['Regression','Java'],
-            optionalSkills: ['Selenium'],
-            totalScore: 45,
-            pass: '',
-            fail: 'Fail',
-        }
-        */
+        
+        // {
+        //     jdId : 1,
+        //     jdName: 'Developer',
+        //     mandatorySkills: ['Html','Java'],
+        //     optionalSkills: ['React'],
+        //     totalScore: 85,
+        //     pass: 'Pass',
+        //     fail: '',
+        // },
+        // {
+        //     jdId : 2,
+        //     jdName: 'Testing',
+        //     mandatorySkills: ['Regression','Java'],
+        //     optionalSkills: ['Selenium'],
+        //     totalScore: 45,
+        //     pass: '',
+        //     fail: 'Fail',
+        // }
+        
     ]);
 
     //error boundaries and loaders
@@ -167,7 +168,7 @@ function Jobs() {
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EyeFilled />} href={`/app/asmt-dashboard/`} />
+                <Button icon={<EyeFilled />} onClick={() => navigate('/app/asmt-dashboard/', {state:record})} />
                 <span></span>
                 <Button icon={<EditFilled />} href={`jobs/edit/${record.jdId}`}></Button>
                 <span></span>

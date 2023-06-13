@@ -9,7 +9,8 @@ import './dashboard.css';
 
 const Dashboard = () => {
     const location = useLocation()
-    const filterJobData = location.state
+    const filterJobData = location.state;
+    console.log(filterJobData);
     // console.log("filterJobData", filterJobData)
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -64,8 +65,13 @@ const Dashboard = () => {
                 console.log(apiResponse);
     
                 //According to the status from API
-                if(apiResponse.status == 200){
-                    const dupData = apiResponse.data.skills.filter(item => item.jdName === filterJobData.JobID)
+                if(apiResponse.status === 200){
+                    let dupData;
+                    if(filterJobData !== null || filterJobData?.jobID !== undefined){
+                        dupData = apiResponse.data.skills.filter(item => item.testId === filterJobData?.JobID);
+                    }else {
+                        dupData = apiResponse.data.skills;
+                    }
                     console.log("dupData", dupData)
                     setAssessments(apiResponse.data.skills);
                     setLoading(false);

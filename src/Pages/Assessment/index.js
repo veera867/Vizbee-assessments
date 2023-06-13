@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
 import { Layout, Row, Col, Button, Modal, Typography } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
@@ -14,7 +14,9 @@ const { Header } = Layout;
 
 
 const Assessment = () => {
+  const navigate = useNavigate();
   const location = useLocation();
+  
   const assessementCode = location.state;
   console.log("assessementCode", assessementCode)
   const [login, setLogin] = useState(true);
@@ -214,8 +216,9 @@ const Assessment = () => {
     }
     const apiResponse = await FinalResultApi(payload)
     console.log("apiResponse", apiResponse)
-    if (apiResponse.status == 200) {
-      setEndTest(true)
+    if (apiResponse.status === 200) {
+      setEndTest(true);
+      navigate(`/assessment/greetings`);
     }
 
     // const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });

@@ -6,6 +6,7 @@ import './custom-theme.less';
 import AuthLayout from './Pages/Auth';
 import VerifyCode from './Pages/Assessment/VerifyCode';
 import Assessment from './Pages/Assessment';
+import Greeting from './Pages/Assessment/Greeting';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
 
       <Route path="/assessment" element={<VerifyCode />}></Route>
       <Route path="/assessment/:code" element={<Assessment />}></Route>
+      <Route path="/assessment/greetings" element={<Greeting />}></Route>
     </Routes>
 )
 }

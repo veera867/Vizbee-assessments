@@ -16,6 +16,8 @@ function CreateJob() {
     const [complexity,setComplexity] = useState();
     const [jobDescription, setJobDescription] = useState()
     const [totalPositions, setTotalPositions] = useState()
+
+    const [skillsDataList,setSkillsDataList] = useState();
     const [skillsData, setSkillsData] = useState()
 
     const [saveLoading,setSaveLoading] = useState(false);
@@ -36,7 +38,8 @@ function CreateJob() {
                     value: item.SkillName,
                     label: item.SkillName
                 }))
-                setSkillsData(selectOptions)
+                setSkillsData(selectOptions);
+                setSkillsDataList(selectOptions);
             } else {
                 messageApi.open({
                     type: 'error',
@@ -95,6 +98,16 @@ function CreateJob() {
     const handleCancel = () => {
         navigate(-1);
     }
+
+    //to capture the mskills and update the skillsData list
+    useEffect(()=>{
+        const filteredOptions = skillsDataList?.filter(item => mskills === item.skillName);
+        setSkillsData(filteredOptions);
+
+        if(mskills === oskills){
+            setOskills(null);
+        }
+    },[mskills]);
 
     const updateMSkills = (value) => {       
         setMskills(value);
@@ -162,7 +175,7 @@ function CreateJob() {
                             <Select
                                 value={mskills}
                                 onChange={updateMSkills}
-                                mode="multiple"
+                                //mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
@@ -173,16 +186,10 @@ function CreateJob() {
                         <Form.Item
                             label="Optional Skills"
                             name="optionalSkills"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
                         >
                             <Select
                                 value={oskills}
-                                mode="multiple"
+                                //mode="multiple"
                                 onChange={updateOSkills}
                                 style={{
                                     width : '100%'

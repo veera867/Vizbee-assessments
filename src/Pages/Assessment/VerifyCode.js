@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button,message,Input, Space, Card, List } from 'antd';
+import VerifyCodeAPI from '../../Apis/Assessments/verifyCodeAPI';
 
 const { Header } = Layout;
 
@@ -9,11 +10,26 @@ function VerifyCode() {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [code,setCode] = useState('');
-    const [login,setLogin] = useState(true);
-
 
     const handleRedirect = async () => {
-        navigate(`/assessment/${code}`, {state: code} );
+        try{
+            const apiResponse = await VerifyCodeAPI(code);
+
+            if(apiResponse.status === 200){
+                navigate(`/assessment/${code}`, {state: code} );
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });                  
+            }
+        } catch (err) {
+            console.log(err);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });                  
+        }
     }
 
     return (
@@ -24,11 +40,6 @@ function VerifyCode() {
                     <img alt="logo" src="/apexon-logo.jpg"/>
                     <h1>Apexon Assessment System</h1>
                 </div>
-                {
-                    login
-                    ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
-                    : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
-                }
             </div>
         </Header>
         <div className="layout-outer">

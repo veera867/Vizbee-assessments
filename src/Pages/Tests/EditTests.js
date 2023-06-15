@@ -5,6 +5,7 @@ import { Button,message, Divider, Form, Input, Select } from 'antd';
 import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
 import GetTestWithID from '../../Apis/Tests/GetTestWithID';
 import '../Dashboard/dashboard.css';
+import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
 function EditTests() {
     const {id} = useParams();
@@ -23,7 +24,43 @@ function EditTests() {
     const [oskills,setOskills] = useState();
     const [complexity,setComplexity] = useState();
 
+    const [skillsDataList,setSkillsDataList] = useState();
+    const [skillsData, setSkillsData] = useState()
+
     const [saveLoading,setSaveLoading] = useState(false);
+
+    useEffect(()=> {
+        fetchSkillsData()
+        console.log("useEffect")
+    },[])
+
+    const fetchSkillsData = async() => {
+        console.log("fetch")
+        try{
+            const response = await GetSkillsAPI()
+            console.log("response", response)
+
+            if(response.status === 200){
+                const selectOptions = response.data.skills.map(item => ({
+                    value: item.SkillName,
+                    label: item.SkillName
+                }))
+                setSkillsData(selectOptions);
+                setSkillsDataList(selectOptions);
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: response.message,
+                });                  
+            }
+        } catch (err) {
+            console.log(err);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });                  
+        }
+    }
 
     useEffect(()=>{
         async function GetSkillDetails(){
@@ -108,16 +145,22 @@ function EditTests() {
         navigate(-1);
     }
 
-    const updateMSkills = (value) => {
-        let arr = mskills;
-        arr.push(value);
-        setMskills(arr);
+    //to capture the mskills and update the skillsData list
+    useEffect(()=>{
+        const filteredOptions = skillsDataList?.filter(item => mskills === item.skillName);
+        setSkillsData(filteredOptions);
+
+        if(mskills === oskills){
+            setOskills(null);
+        }
+    },[mskills]);
+
+    const updateMSkills = (value) => {       
+        setMskills(value);
     }
 
-    const updateOSkills = (value) => {
-        let arr = oskills;
-        arr.push(value);
-        setOskills(arr);
+    const updateOSkills = (value) => {       
+        setOskills(value);
     }
 
     return (
@@ -189,58 +232,26 @@ function EditTests() {
                             <Select
                                 value={mskills}
                                 onChange={(value)=>updateMSkills(value)}
-                                mode="multiple"
+                                //mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 
                         <Form.Item
                             label="Optional Skills"
                             name="optionalSkills"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
                         >
                             <Select
                                 value={oskills}
                                 onChange={(value)=>updateOSkills(value)}
-                                mode="multiple"
+                                //mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
-                                options={[
-                                    {
-                                        value: 'React',
-                                        label: 'React'
-                                    },
-                                    {
-                                        value: 'Html',
-                                        label: 'Html'
-                                    },
-                                    {
-                                        value: 'Java',
-                                        label: 'Java'
-                                    }
-                                ]}
+                                options={skillsData}
                             ></Select>
                         </Form.Item>
 

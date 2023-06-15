@@ -16,9 +16,9 @@ function CreateTest() {
     const [complexity,setComplexity] = useState();
 
     const [saveLoading,setSaveLoading] = useState(false);
-    const [skillsData, setSkillsData] = useState()
 
-    
+    const [skillsDataList,setSkillsDataList] = useState();
+    const [skillsData, setSkillsData] = useState();
 
     useEffect(()=> {
         fetchSkillsData()
@@ -26,14 +26,30 @@ function CreateTest() {
     },[])
 
     const fetchSkillsData = async() => {
-        console.log("fetch")
-        const response = await GetSkillsAPI()
-        console.log("response", response)
-        const selectOptions = response.data.skills.map(item => ({
-            value: item.SkillName,
-            label: item.SkillName
-        }))
-        setSkillsData(selectOptions)
+        try{
+            const response = await GetSkillsAPI()
+            console.log("response", response)
+
+            if(response.status === 200){
+                const selectOptions = response.data.skills.map(item => ({
+                    value: item.SkillName,
+                    label: item.SkillName
+                }))
+                setSkillsData(selectOptions);
+                setSkillsDataList(selectOptions);
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: response.message,
+                });                  
+            }
+        } catch (err) {
+            console.log(err);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });                  
+        }
     }
 
     const handleSave = async () => {
@@ -73,6 +89,16 @@ function CreateTest() {
             }); 
         }
     }
+
+    //to capture the mskills and update the skillsData list
+    useEffect(()=>{
+        const filteredOptions = skillsDataList?.filter(item => mskills === item.skillName);
+        setSkillsData(filteredOptions);
+
+        if(mskills === oskills){
+            setOskills(null);
+        }
+    },[mskills]);    
 
     const handleCancel = () => {
         navigate(-1);
@@ -148,7 +174,7 @@ function CreateTest() {
                             <Select
                                 value={mskills}
                                 onChange={(value)=>updateMSkills(value)}
-                                mode="multiple"
+                                //mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
@@ -159,16 +185,10 @@ function CreateTest() {
                         <Form.Item
                             label="Optional Skills"
                             name="optionalSkills"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
                         >
                             <Select
                                 value={oskills}
-                                mode="multiple"
+                                //mode="multiple"
                                 onChange={(value)=>updateOSkills(value)}
                                 style={{
                                     width : '100%'

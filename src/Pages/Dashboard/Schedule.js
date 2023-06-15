@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, message, Divider, Form, Input, Select, Space, DatePicker } from 'antd';
+import { Button, message, Divider, Form, Input, Select, Space, DatePicker, TimePicker } from 'antd';
 
 import './dashboard.css';
 import ScheduleAssessmentAPI from '../../Apis/Assessments/ScheduleAssessmentAPI';
@@ -24,7 +24,13 @@ function Schedule() {
     const [testDataOptions, setTestDataOptions] = useState()
     const [jDData, setJDData] = useState()
     const [testData, setTestData] = useState()
-    console.log(hmail, "cmail", cmail)
+    //console.log(hmail, "cmail", cmail)
+
+    //usermail from localstore has to be fetched here and displayed
+    useEffect(()=>{
+        let hrmail = localStorage.getItem('usermail');
+        setHmail(hrmail);
+    },[]);
 
     const [saveLoading, setSaveLoading] = useState(false);
     const [mandatorySkills, setMandatorySkills] = useState()
@@ -32,8 +38,13 @@ function Schedule() {
 
     const handleDateSelect = (value) => {
         // const date = new Date(value);
+        //console.log(value);
         const date = new Date(value); 
-        const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');      
+        let timeString = date.toTimeString().substring(0,5);
+        let dateString = date.toISOString().substring(0,10);
+
+        const formattedDate = dateString+' '+timeString;    
+        console.log(formattedDate);
         
         setDate(formattedDate)
     }
@@ -291,7 +302,7 @@ function Schedule() {
                         </Form.Item>
 
                         <Form.Item
-                            label="Schedule Date"
+                            label="Schedule Date and Time"
                             name="Schedule Date"
                             rules={[
                                 {
@@ -300,7 +311,16 @@ function Schedule() {
                                 },
                             ]}
                         >
-                            <DatePicker value={date} onChange={handleDateSelect} style={{ width: '100%' }} />
+                            {/*<DatePicker value={date} onChange={handleDateSelect} style={{ width: '100%' }}/>*/}
+                            <DatePicker
+                                showTime
+                                format="YYYY-MM-DD HH:mm"
+                                placeholder="ex. 12/06/2023 08:30"
+                                value={date}
+                                onChange={handleDateSelect}
+                                onOk={handleDateSelect}
+                                style={{ width: '100%' }}
+                            />
                         </Form.Item>
 
                         <Form.Item

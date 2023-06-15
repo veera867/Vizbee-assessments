@@ -19,7 +19,6 @@ const Assessment = () => {
   
   const assessementCode = location.state;
   console.log("assessementCode", assessementCode)
-  const [login, setLogin] = useState(true);
 
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
   const [isRecording, setIsRecording] = useState(false);
@@ -283,11 +282,6 @@ const Assessment = () => {
             <img alt="logo" src="/apexon-logo.jpg" />
             <h1>Apexon Assessment System</h1>
           </div>
-          {
-            login
-              ? <Button type="link" className="auth-link" href='/auth/login'>Signout</Button>
-              : <Button type="link" className="auth-link" href='/auth/login'>Login</Button>
-          }
         </div>
       </Header>
       {endTest ?

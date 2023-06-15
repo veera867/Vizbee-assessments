@@ -92,12 +92,15 @@ function CreateTest() {
 
     //to capture the mskills and update the skillsData list
     useEffect(()=>{
-        const filteredOptions = skillsDataList?.filter(item => mskills !== item.value);
+        const filteredOptions = skillsDataList?.filter(
+            (item) => !mskills.includes(item.value)
+        );
         setSkillsData(filteredOptions);
 
-        if(mskills === oskills){
-            setOskills(null);
-        }
+        const filteredOskills = oskills.filter(
+            (item) => !mskills.includes(item)
+        );
+        setOskills(filteredOskills);      
     },[mskills]);    
 
     const handleCancel = () => {

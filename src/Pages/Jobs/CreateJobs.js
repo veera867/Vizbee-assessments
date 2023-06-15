@@ -101,14 +101,16 @@ function CreateJob() {
 
     //to capture the mskills and update the skillsData list
     useEffect(()=>{
-        console.log(skillsDataList, "mskills", mskills)
-        const filteredOptions = skillsDataList?.filter(item => mskills !== item.label);
+        const filteredOptions = skillsDataList?.filter(
+            (item) => !mskills.includes(item.value)
+        );
         setSkillsData(filteredOptions);
         console.log("useEffect", filteredOptions)
 
-        if(mskills == oskills){
-            setOskills(null);
-        }
+        const filteredOskills = oskills.filter(
+            (item) => !mskills.includes(item)
+        );
+        setOskills(filteredOskills);      
     },[mskills]);
 
     const updateMSkills = (value) => {   

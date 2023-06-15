@@ -105,6 +105,7 @@ function CreateJob() {
             (item) => !mskills.includes(item.value)
         );
         setSkillsData(filteredOptions);
+        console.log("useEffect", filteredOptions)
 
         const filteredOskills = oskills.filter(
             (item) => !mskills.includes(item)
@@ -112,7 +113,8 @@ function CreateJob() {
         setOskills(filteredOskills);      
     },[mskills]);
 
-    const updateMSkills = (value) => {       
+    const updateMSkills = (value) => {   
+        console.log("updateMSkills", value)    
         setMskills(value);
     }
 

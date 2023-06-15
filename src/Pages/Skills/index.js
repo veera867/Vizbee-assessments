@@ -181,7 +181,7 @@ function Skills() {
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EditFilled />} href={`skills/edit/${record.skillId}`}></Button>
+                <Button icon={<EditFilled />} href={`skills/edit/${record.SkillID}`}></Button>
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,

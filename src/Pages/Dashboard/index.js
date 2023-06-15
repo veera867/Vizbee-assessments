@@ -133,13 +133,13 @@ const Dashboard = () => {
             dataIndex: 'status',
             key: 'status',
         },
-          {
-            title: 'Max Score',
-            dataIndex: 'max_score',
-             key: 'max_score',
-       }, 
+    //       {
+    //         title: 'Max Score',
+    //         dataIndex: 'max_score',
+    //          key: 'max_score',
+    //    }, 
         {
-            title: 'Actual Score',
+            title: 'Score',
              dataIndex: 'act_Score',
              key: 'act_Score',
         }

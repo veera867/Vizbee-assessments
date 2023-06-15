@@ -1,6 +1,5 @@
-import React,{useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Layout, Button,message,Input, Space, Card, List } from 'antd';
+import React from 'react';
+import { Layout, Result } from 'antd';
 
 const { Header } = Layout;
 
@@ -19,9 +18,13 @@ function Greeting() {
         <div className="layout-outer">
             <div className="layout-inner">
                 <div className="content-wrapper form-center">
-                    <h1>Thank You!</h1>
-                    <br></br>
-                    <h3>You can close this window now!</h3>
+                    <Result 
+                        status='success'
+                        title='Thank you!'
+                        extra={
+                            <p>Your test is successfully submitted!</p>
+                        }
+                    />
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
-import { Layout, Row, Col, Button, Modal, Typography } from "antd";
+import { Layout, Row, Col, Button, Modal, Typography, message, Spin, Result, Progress } from "antd";
 import { useLocation,useNavigate } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
@@ -16,12 +16,21 @@ const { Header } = Layout;
 const Assessment = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [messageApi, contextHolder] = message.useMessage();
   
   const assessementCode = location.state;
-  console.log("assessementCode", assessementCode)
+
+  const [loading,setLoading] = useState(false);
+  const [hasErr,setHasErr] = useState(false);
+  const [errMsg,setErrMsg] = useState('');
 
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
+
   const [isRecording, setIsRecording] = useState(false);
+  const [timeUp, setTimeUp] = useState(false);
+  const [flag, setFlag] = useState(false);
+
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const ref = createRef(null);
@@ -44,13 +53,10 @@ const Assessment = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [elapsedMin, setElapsedMin] = useState(0);
   const [animation, setAnimation] = useState(false);
-  const [timeUp, setTimeUp] = useState(false);
-  const [flag, setFlag] = useState(false);
   const [nextQuestionFlag, setNextQuestionFlag] = useState(false)
-  const [endTest, setEndTest] = useState(false)
 
-  const pathName = location.pathname;
-  const scheduleId = pathName.substring(pathName.lastIndexOf('/') + 1)
+  //const pathName = location.pathname;
+  //const scheduleId = pathName.substring(pathName.lastIndexOf('/') + 1)
 
   const sendData = async (audio) => {
     console.log('audio : ', audio);
@@ -68,12 +74,8 @@ const Assessment = () => {
 
     //According to the status from API
     if (apiResponse.status === 200) {
-      if (apiResponse.data.d.status === 200) {
         console.log(apiResponse);
-        console.log(apiResponse.data.d.Data);
-      } else {
-        console.log("Error!!");
-      }
+        console.log(apiResponse.data.message);
     } else {
       console.log("Error!!");
     }
@@ -216,7 +218,6 @@ const Assessment = () => {
     const apiResponse = await FinalResultApi(payload)
     console.log("apiResponse", apiResponse)
     if (apiResponse.status === 200) {
-      setEndTest(true);
       navigate(`/assessment/greetings`);
     }
 
@@ -240,6 +241,7 @@ const Assessment = () => {
     setElapsedTime(0);
     setAudioChunks([]);
     setFlag(false);
+    setTimeUp(false);
 
     if (currentQuestion < 9) {
       setCurrentQuestion((prevQuestion) => prevQuestion + 1);
@@ -253,12 +255,32 @@ const Assessment = () => {
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
         // const test_id = 1122;
         const apiResponse = await LoadQuestionsAPI(assessementCode);
         console.log("response", apiResponse);
-        setQuestions(apiResponse.data.questions);
+        if(apiResponse.status === 200){
+          setQuestions(apiResponse.data.questions);
+          setLoading(false);
+        }else{
+          messageApi.open({
+            type: 'error',
+            content: apiResponse.message,
+          });
+
+          setLoading(false);
+          setHasErr(true);
+          setErrMsg('Unable to fetch the questions, please relogin by closing this window');
+        }
       } catch (err) {
         console.log(err.message);
+        messageApi.open({
+          type: 'error',
+          content: err.message,
+        });
+        setLoading(false);
+        setHasErr(true);
+        setErrMsg('Unable to fetch the questions, please relogin by closing this window');
       }
     }
 
@@ -276,6 +298,8 @@ const Assessment = () => {
 
   return (
     <Layout>
+      <contextHolder />
+
       <Header>
         <div className="header-wrapper">
           <div className="logo-header">
@@ -284,18 +308,31 @@ const Assessment = () => {
           </div>
         </div>
       </Header>
-      {endTest ?
-        <>
-          <Typography > Test is Completed Successfully!
-            Hr will update you soon.. </Typography>
-          <Typography >Thank you for your Time!! </Typography>
-        </>
+      {loading
+        ? <div className='layout-outer'>
+            <div className='layout-inner flexer live-assessment'>
+              <Spin />
+            </div>
+          </div>
+        : hasErr 
+        ? <div className='layout-outer'>
+          <div className='layout-inner flexer live-assessment'>
+            <Result 
+              status='error'
+              title='Something went wrong.'
+              extra={
+                <p>{errMsg}</p>
+              }
+            />
+          </div>
+        </div>
         :
         <div className="layout-outer">
           <div className="layout-inner flexer live-assessment">
             <div className="question-wrapper">
               <div className="question-card">
                 <div className="time-wrapper">
+                  <Progress type='circle' percent={currentQuestion * 10} size={40}/>
                   <p className="timer">
                     <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
                   </p>

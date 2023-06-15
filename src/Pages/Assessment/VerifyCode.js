@@ -12,6 +12,9 @@ function VerifyCode() {
     const [code,setCode] = useState('');
 
     const handleRedirect = async () => {
+        navigate(`/assessment/${code}`, {state: code} );
+
+        /*
         try{
             const apiResponse = await VerifyCodeAPI(code);
 
@@ -30,6 +33,7 @@ function VerifyCode() {
                 content: err.message,
             });                  
         }
+        */
     }
 
     return (

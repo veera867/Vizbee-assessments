@@ -101,15 +101,18 @@ function CreateJob() {
 
     //to capture the mskills and update the skillsData list
     useEffect(()=>{
-        const filteredOptions = skillsDataList?.filter(item => mskills === item.skillName);
+        console.log(skillsDataList, "mskills", mskills)
+        const filteredOptions = skillsDataList?.filter(item => mskills !== item.label);
         setSkillsData(filteredOptions);
+        console.log("useEffect", filteredOptions)
 
-        if(mskills === oskills){
+        if(mskills == oskills){
             setOskills(null);
         }
     },[mskills]);
 
-    const updateMSkills = (value) => {       
+    const updateMSkills = (value) => {   
+        console.log("updateMSkills", value)    
         setMskills(value);
     }
 
@@ -175,7 +178,7 @@ function CreateJob() {
                             <Select
                                 value={mskills}
                                 onChange={updateMSkills}
-                                //mode="multiple"
+                                mode="multiple"
                                 style={{
                                     width : '100%'
                                 }}
@@ -189,7 +192,7 @@ function CreateJob() {
                         >
                             <Select
                                 value={oskills}
-                                //mode="multiple"
+                                mode="multiple"
                                 onChange={updateOSkills}
                                 style={{
                                     width : '100%'

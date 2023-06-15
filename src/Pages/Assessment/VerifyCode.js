@@ -12,24 +12,25 @@ function VerifyCode() {
     const [code,setCode] = useState('');
 
     const handleRedirect = async () => {
-        try{
-            const apiResponse = await VerifyCodeAPI(code);
+        navigate(`/assessment/${code}`, {state: code} );
+        // try{
+        //     const apiResponse = await VerifyCodeAPI(code);
 
-            if(apiResponse.status === 200){
-                navigate(`/assessment/${code}`, {state: code} );
-            } else {
-                messageApi.open({
-                    type: 'error',
-                    content: apiResponse.message,
-                });                  
-            }
-        } catch (err) {
-            console.log(err);
-            messageApi.open({
-                type: 'error',
-                content: err.message,
-            });                  
-        }
+        //      if(apiResponse.status == 200){           
+        //         navigate(`/assessment/${code}`, {state: code} );
+        //     } else {
+        //         messageApi.open({
+        //             type: 'error',
+        //             content: apiResponse.message,
+        //         });                  
+        //     }
+        // } catch (err) {
+        //     console.log(err);
+        //     messageApi.open({
+        //         type: 'error',
+        //         content: err.message,
+        //     });                  
+        // }
     }
 
     return (

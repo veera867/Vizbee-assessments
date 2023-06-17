@@ -1,9 +1,11 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { Layout, Result } from 'antd';
 
 const { Header } = Layout;
 
 function Greeting() {
+    const {type} = useParams();
 
     return (
         <Layout>
@@ -18,13 +20,23 @@ function Greeting() {
         <div className="layout-outer">
             <div className="layout-inner">
                 <div className="content-wrapper form-center">
-                    <Result 
-                        status='success'
-                        title='Thank you!'
-                        extra={
-                            <p>Your test is successfully submitted!</p>
-                        }
-                    />
+                    {
+                        type === 'success'
+                        ? <Result 
+                            status='success'
+                            title='Thank you!'
+                            extra={
+                                <p>Your test is successfully submitted!</p>
+                            }
+                        />
+                        : <Result 
+                            status='error'
+                            title='Something went wrong!'
+                            extra={
+                                <p>Don't worry we saved your responses!</p>
+                            }
+                        />
+                    }
                 </div>
             </div>
         </div>

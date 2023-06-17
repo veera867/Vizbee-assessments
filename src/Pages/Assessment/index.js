@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
-import { Layout, Row, Col, Button, Modal, Typography, message, Spin, Result, Progress } from "antd";
+import { Layout, Row, Col, Button, Modal, message, Spin, Result, Progress } from "antd";
 import { useLocation,useNavigate } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
-import "../../App.css";
+
 import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
 import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
 import FinalResultApi from '../../Apis/Assessments/finalResultApi';
 
-const { Header } = Layout;
+import "../../App.css";
 
+const { Header } = Layout;
 
 const Assessment = () => {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ const Assessment = () => {
   const [flag, setFlag] = useState(false);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmLoading,setConfirmLoading] = useState(false);
+  const [finishLoading,setFinishLoading] = useState(false);
 
   const ref = createRef(null);
   const [image, setImagetakeScreenshot] = useScreenshot();
@@ -42,6 +45,7 @@ const Assessment = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questions, setQuestions] = useState();
+  const [questionsStatus,setQuestionsStatus] = useState([]);
 
   const [audioChunks, setAudioChunks] = useState([]);
   const mediaRecorderRef = useRef(null);
@@ -60,28 +64,65 @@ const Assessment = () => {
 
   const sendData = async (audio) => {
     console.log('audio : ', audio);
-    // try {
-    const formData = new FormData();
+    try{
+      const formData = new FormData();
 
-    formData.append("question_id", questions[currentQuestion].QuestionID)
-    formData.append("question", questions[currentQuestion].Question)
-    formData.append("test_id", assessementCode)
-    formData.append("audio", audio);
-    formData.append("image", image)
+      formData.append("question_id", questions[currentQuestion].QuestionID)
+      formData.append("question", questions[currentQuestion].Question)
+      formData.append("test_id", assessementCode)
+      formData.append("audio", audio);
+      formData.append("image", image)
 
-    const apiResponse = await SendAssessmentStatusAPI(formData);
-    console.log(apiResponse);
+      const apiResponse = await SendAssessmentStatusAPI(formData);
+      console.log(apiResponse);
+    
+      //According to the status from API
+      if (apiResponse.status === 200) {
+          console.log(apiResponse);
+          console.log(apiResponse.data.message);
 
-    //According to the status from API
-    if (apiResponse.status === 200) {
-        console.log(apiResponse);
-        console.log(apiResponse.data.message);
-    } else {
-      console.log("Error!!");
+          
+          if (currentQuestion < questions.length - 1) {
+            questionsStatus[currentQuestion].status='success';
+            setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+            setTimer(60);
+          } else {
+            setShowConfirmation(true);
+          }
+          setNextQuestionFlag(false);
+          setConfirmLoading(false);
+          messageApi.open({
+            type: 'success',
+            content: 'Your response saved!',
+          });  
+
+          setAudioChunks([]);
+          setIsRecording(false);
+          setElapsedMin(0);
+          setElapsedTime(0);
+          setAnimation(false);
+          setTimeUp(false);
+          setFlag(false);      
+      } else {
+        console.log("Error!!");
+        setNextQuestionFlag(false);
+        setConfirmLoading(false);
+
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.message,
+        });
+      }
+    } catch (err) {
+        console.log(err.message);
+        setNextQuestionFlag(false);
+        setConfirmLoading(false);
+
+        messageApi.open({
+          type: 'error',
+          content: err.message,
+        })
     }
-    // } catch (err) {
-    //   console.log(err.message);
-    // }
   };
 
   useEffect(() => {
@@ -100,7 +141,7 @@ const Assessment = () => {
       setIsRecording(false);
       setAnimation(false);
       setTimeUp(true);
-      setFlag(true);
+      //setFlag(true);
       clearInterval(interval);
     }
 
@@ -175,6 +216,7 @@ const Assessment = () => {
 
   const handleNextConfirmClick = async () => {
 
+    setConfirmLoading(true);
     const blob = new Blob(audioChunks, { type: "audio/webm" });
     const audioUrl = URL.createObjectURL(blob);
     console.log("blob", blob, audioUrl);
@@ -183,23 +225,7 @@ const Assessment = () => {
       type: "audio/webm",
     });
     console.log("audioBlob", audioBlob);
-    setNextQuestionFlag(false)
     sendData(audioFile);
-
-    if (currentQuestion < questions.length - 1) {
-      console.log("currentQuestion", currentQuestion, questions)
-      setCurrentQuestion((prevQuestion) => prevQuestion + 1);
-      setTimer(60);
-    } else {
-      setShowConfirmation(true);
-    }
-    setAudioChunks([]);
-    setIsRecording(false);
-    setElapsedMin(0);
-    setElapsedTime(0);
-    setAnimation(false);
-    setTimeUp(false);
-    setFlag(false);
   };
 
   const handleFinishClick = () => {
@@ -210,15 +236,25 @@ const Assessment = () => {
 
   const handleConfirm = async () => {
     // Make API request to submit exam and redirect to result page
-    setShowConfirmation(false);
-
     const payload = {
       scheduleId: assessementCode
     }
-    const apiResponse = await FinalResultApi(payload)
-    console.log("apiResponse", apiResponse)
-    if (apiResponse.status === 200) {
-      navigate(`/assessment/greetings`);
+
+    setFinishLoading(true);
+    try{
+      const apiResponse = await FinalResultApi(payload);
+      console.log("apiResponse", apiResponse);
+      setFinishLoading(false);
+      setShowConfirmation(false);
+      if (apiResponse.status === 200) {
+        navigate(`/assessment/greetings/success`);
+      } else {
+        navigate(`/assessment/greetings/error`);
+      }
+    } catch (err) {
+      setFinishLoading(false);
+      setShowConfirmation(false);
+      navigate(`/assessment/greetings:error`);
     }
 
     // const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
@@ -243,13 +279,24 @@ const Assessment = () => {
     setFlag(false);
     setTimeUp(false);
 
-    if (currentQuestion < 9) {
+    if (currentQuestion < questions.length-1) {
+      questionsStatus[currentQuestion].status='skip';
       setCurrentQuestion((prevQuestion) => prevQuestion + 1);
       setTimer(60);
     } else {
       setShowConfirmation(true);
     }
   };
+
+  useEffect(()=>{
+    let statusArr = [];
+    questions?.map((item,index) => statusArr.push({
+      id: index,
+      status: ''
+    }));
+
+    setQuestionsStatus(statusArr);
+  },[questions]);
 
   //For initial data loading as questions
   useEffect(() => {
@@ -288,8 +335,8 @@ const Assessment = () => {
   }, []);
 
   const webcamOptions = {
-    height: 180,
-    width: 240,
+    height: 200,
+    width: 300,
     screenshotFormat: "image/jpeg",
     videoConstraints: {
       facingMode: "user",
@@ -298,8 +345,7 @@ const Assessment = () => {
 
   return (
     <Layout>
-      <contextHolder />
-
+      {contextHolder}
       <Header>
         <div className="header-wrapper">
           <div className="logo-header">
@@ -330,13 +376,17 @@ const Assessment = () => {
         <div className="layout-outer">
           <div className="layout-inner flexer live-assessment">
             <div className="question-wrapper">
-              <div className="question-card">
                 <div className="time-wrapper">
-                  <Progress type='circle' percent={currentQuestion * 10} size={40}/>
+                  <Progress 
+                    steps={questions?.length} 
+                    percent={((currentQuestion+1) / questions?.length)* 100} 
+                    size={[20,5]}
+                  />
                   <p className="timer">
                     <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
                   </p>
                 </div>
+              <div className="question-card">
                 <div className="row-flexer">
                   <p>
                     {questions && questions[currentQuestion].QuestionID}.{" "}
@@ -411,6 +461,7 @@ const Assessment = () => {
               title="Confirm submission"
               open={showConfirmation}
               onOk={handleConfirm}
+              confirmLoading={finishLoading}
               onCancel={handleCancel}
             >
               <p>Are you sure you want to submit your exam?</p>
@@ -420,6 +471,7 @@ const Assessment = () => {
               open={nextQuestionFlag}
               onOk={handleNextConfirmClick}
               onCancel={handleNextCancelClick}
+              confirmLoading={confirmLoading}
             >
               <p>Are you sure you want to Move to next Question?</p>
             </Modal>
@@ -432,14 +484,17 @@ const Assessment = () => {
                   </Col>
                 </Row>
               </div>
-              <div className="instruction-box">
-                <h3>Instructions</h3>
-
-                <h5>
-                  1. Please Precsiely to the question as data is evaluated by bot.
-                </h5>
-                <h5>2. Test your audio device before starting the discussion</h5>
-                <h5>3. Test Duration is 45 minutes</h5>
+              <div className="status-box">
+                {
+                  questionsStatus.map(item =>
+                    <div className={`
+                      status-shower 
+                      ${item.status === 'success' ? 'success' : item.status === 'skip' ? 'skip' : ''}
+                    `}>
+                      {item.id + 1}
+                    </div>
+                  )
+                }
               </div>
             </div>
           </div>

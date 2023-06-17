@@ -72,18 +72,41 @@
   justify-content: space-around;
 }
 .right-wrapper{
-  padding-top: 1rem;
-}
-.instruction-box{
-  width: 240px;
-  /* height: 400px; */
-  background-color: #9BA4B5;
   padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  border: 1px solid rgba(211, 210, 210, 0.88);
+  background-color: #FFFFFF;
 }
-.instruction-box h3{
-  text-align: center;
-  padding: 0;
-  margin: 0;
+.right-wrapper .status-box{
+  width: 300px;
+  margin-top: 1rem;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+.status-box .status-shower{
+  width: 70px;
+  height: 60px;
+  border: 1px solid rgba(211, 210, 210, 0.88);
+  margin-right: 5px;
+  margin-bottom: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.status-shower.success{
+  background-color: rgb(210, 249, 210);
+}
+.status-shower.skip{
+  background-color: rgb(249, 206, 206);
 }
 
 .content-wrapper{

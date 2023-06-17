@@ -17,7 +17,7 @@ function App() {
 
       <Route path="/assessment" element={<VerifyCode />}></Route>
       <Route path="/assessment/:code" element={<Assessment />}></Route>
-      <Route path="/assessment/greetings" element={<Greeting />}></Route>
+      <Route path="/assessment/greetings/:type" element={<Greeting />}></Route>
     </Routes>
 )
 }

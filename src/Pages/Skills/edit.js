@@ -17,7 +17,29 @@ function EditSkill() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [questions, setQuestions] = useState([]);
+    const [questions, setQuestions] = useState(
+         [
+        //dummy data for testing purpose only. Can be removed!!
+        // {
+        //     slno: 1,
+        //     question: 'What is Python?',
+        //     answer: 'Python is a porgramming language.',
+        //     importance: 'Beginner',
+        // },
+        // {
+        //     slno: 2,
+        //     question: 'What is Java?',
+        //     answer: 'Java is a porgramming language.',
+        //     importance: 'Intermediate',
+        // },
+        // {
+        //     slno: 3,
+        //     question: 'What is JavaScript?',
+        //     answer: 'JavaScript is a porgramming language.',
+        //     importance: 'Beginner',
+        // },
+    ]
+    );
 
     //error boundaries and loaders
     const [loading, setLoading] = useState(false);
@@ -28,12 +50,11 @@ function EditSkill() {
     const [skillName, setSkillName] = useState('');
     const [skillGroup, setSkillGroup] = useState('');
 
+    console.log(questions,"skillId", skillId,skillName, skillGroup)
     //for delete confirm box
     const [cnfmDel, setCnfmDel] = useState(false);
     const [delId, setDelId] = useState(0);
     const [confirmLoading, setConfirmLoading] = useState(false);
-
-    const [saveLoading,setSaveLoading] = useState(false);
 
     //for edit popup box
     const [openEdit, setOpenEdit] = useState(false);
@@ -47,96 +68,18 @@ function EditSkill() {
     const fileInputRef = useRef(null);
 
     useEffect(() => {
-        //dummy data for testing purpose only. Can be removed!!
-        const dummy = {
-            "status": "success",
-            "message": "specific skill  is success",
-            "SkillID": 612064758,
-            "SkillName": "python",
-            "SkillGroup": "Data Science",
-            "ListOfQuestions": [
-                {
-                    "count": "1",
-                    "Q": "What is the difference between a list and a tuple in Python?",
-                    "A": "A list is a collection of items that can be modified, while a tuple is an immutable collection of items.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "2",
-                    "Q": "What is a dictionary in Python?",
-                    "A": "A dictionary is an unordered collection of key-value pairs. It is used to store data in a key-value format, where keys are unique and values can be any Python object.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "3",
-                    "Q": "What is an exception in Python?",
-                    "A": "An exception is an error that occurs during the execution of a program. Python provides a number of built-in exceptions to help debug errors and to handle errors gracefully.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "4",
-                    "Q": "What is the difference between a for loop and a while loop?",
-                    "A": "A for loop is used to iterate over a sequence of items, while a while loop is used to execute code until a certain condition is met.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "5",
-                    "Q": "What is a function in Python?",
-                    "A": "A function is a block of organized, reusable code that is used to perform a single, related action. Functions provide better modularity for your application and a high degree of code reusing.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "6",
-                    "Q": "What is the difference between local and global variables in Python?",
-                    "A": "A local variable is only visible in the scope in which it is declared, while a global variable is visible throughout the entire program.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "7",
-                    "Q": "What is the purpose of the break statement in Python?",
-                    "A": "The break statement is used to terminate the execution of a loop. It allows the program to \"break out\" of the loop and continue executing the code after the loop.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "8",
-                    "Q": "What is the purpose of the continue statement in Python?",
-                    "A": "The continue statement is used to skip the rest of the code in a loop and move on to the next iteration. This is useful when you want to skip certain parts of the loop body.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "9",
-                    "Q": "What is the purpose of the pass statement in Python?",
-                    "A": "The pass statement is used as a placeholder for code that has not yet been written. It is also used to prevent syntax errors when the code is not yet complete.",
-                    "importance": "intermediate"
-                },
-                {
-                    "count": "10",
-                    "Q": "What is the difference between shallow and deep copy in Python?",
-                    "A": "A shallow copy only copies the reference to an object, while a deep copy creates a new object and copies all of its contents.",
-                    "importance": "intermediate"
-                }
-            ]
-        }
-
-        setSkillId(dummy.SkillID);
-        setSkillName(dummy.SkillName);
-        setSkillGroup(dummy.SkillGroup);
-        setQuestions(dummy.ListOfQuestions);
-        setLoading(false);        
-        /*
         async function GetSkillDetails() {
             setLoading(true);
             try {
                 const apiResponse = await GetSkillWithID(id !== undefined || id !== null ? id : 0);
-                console.log(apiResponse);
+                console.log("apiResponse",apiResponse);
 
                 //According to the status from API
-                if (apiResponse.status === 200) {
-                    setSkillId(apiResponse.data.SelectkillId);
+                if (apiResponse.status == 200) {
+                    setSkillId(apiResponse.data.SkillID);
                     setSkillName(apiResponse.data.SkillName);
                     setSkillGroup(apiResponse.data.SkillGroup);
                     setQuestions(apiResponse.data.ListOfQuestions);
-
                     setLoading(false);
                 } else {
                     setHasErr(true);
@@ -161,7 +104,6 @@ function EditSkill() {
 
         setSkillId(id);
         GetSkillDetails();
-        */
     }, []);
 
     const handleCancel = () => {
@@ -175,61 +117,47 @@ function EditSkill() {
     const handleCSVUpload = (e) => {
         const file = e.target.files[0];
 
-        try{
-            // Create a FileReader object
-            const reader = new FileReader();
-            
-            // Define the onload function
-            reader.onload = (event) => {
-                const csvData = event.target.result;
-                
-                // Process the CSV data and extract the necessary information
-                const extractedData = processCSVData(csvData);
-                
-                // Update the state with the extracted data
-                setQuestions([...questions, ...extractedData]);
-                
-                messageApi.open({
-                    type: 'success',
-                    content: 'CSV file uploaded successfully.',
-                });
-            };
-            // Read the contents of the file as text
-            reader.readAsText(file);
-        } catch (err) {
-            console.log(err);
+        // Create a FileReader object
+        const reader = new FileReader();
+
+        // Define the onload function
+        reader.onload = (event) => {
+            const csvData = event.target.result;
+
+            // Process the CSV data and extract the necessary information
+            const extractedData = processCSVData(csvData);
+
+            // Update the state with the extracted data
+            setQuestions([...questions, ...extractedData]);
+
             messageApi.open({
-                type: 'error',
-                content: err.message,
-            })
-        }
+                type: 'success',
+                content: 'CSV file uploaded successfully.',
+            });
+        };
+        // Read the contents of the file as text
+        reader.readAsText(file);
     };
 
     const handleSave = async () => {
         try {
-            setSaveLoading(true);
             const payload = {
-                SkillID: skillId,
-                SkillName: skillName,
-                SkillGroup: skillGroup,
-                ListOfQuestions: questions
+                skillId: skillId,
+                skillName: skillName,
+                skillGroup: skillGroup,
+                questionnaire: questions
             }
             const apiResponse = await CreateSkillsAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
             if (apiResponse.status === 200) {
-                //setQuestions(apiResponse.data.ListOfQuestions);
-                messageApi.open({
-                    type: 'success',
-                    content: 'Saved successfully!'
-                })
-                navigate(-1);
-                setSaveLoading(false);
+                // setQuestions(apiResponse?.data);
+                setLoading(false);
             } else {
                 setHasErr(true);
                 setErrMsg(apiResponse.message);
-                setSaveLoading(false);
+                setLoading(false);
 
                 messageApi.open({
                     type: 'error',
@@ -238,7 +166,7 @@ function EditSkill() {
             }
         } catch (err) {
             console.log(err.message);
-            setSaveLoading(false);
+            setLoading(false);
 
             messageApi.open({
                 type: 'error',
@@ -249,10 +177,10 @@ function EditSkill() {
 
     //Edit Functionality
     const handleEdit = async (record) => {
-        setEditId(record.count);
+        setEditId(record.slno);
         setCurrentEditModel(record);
-        setQuestion(record.Q);
-        setAnswer(record.A);
+        setQuestion(record.question);
+        setAnswer(record.answer);
         setImportance(record.importance);
 
         setOpenEdit(true);
@@ -260,14 +188,14 @@ function EditSkill() {
     const handleEdit2 = () => {
         setEditId(0);
         setCurrentEditModel({
-            count: 0,
-            Q : '',
-            A : '',
-            importance: 'beginner',
+            slno: 0,
+            question: '',
+            answer: '',
+            importance: 'Beginner',
         });
         setQuestion('');
         setAnswer('');
-        setImportance('beginner');
+        setImportance('Beginner');
 
         setOpenEdit(true);
     }
@@ -276,19 +204,21 @@ function EditSkill() {
         try {
             if (editId === 0) {
                 let temp = {
-                    count : questions.length > 0
-                        ? String(Number(questions[questions.length - 1].count) + 1)
-                        : '1',
-                    Q : question,
-                    A : answer,
+                    count: questions.length > 0
+                        ? question.length === 1
+                            ? questions.length + 1
+                            : question.length
+                        : 1,
+                    Q: question,
+                    A: answer,
                     importance: importance,
                 };
                 setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if (ques.count === editId) {
-                        ques.Q = question;
-                        ques.A = answer;
+                    if (ques.slno === editId) {
+                        ques.question = question;
+                        ques.answer = answer;
                         ques.importance = importance;
                     }
 
@@ -312,14 +242,13 @@ function EditSkill() {
     }
     const handleEditCancel = () => {
         setOpenEdit(false);
-        setCurrentEditModel({});
         setEditId(null);
     }
 
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.count);
+        setDelId(record.slno);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
@@ -376,7 +305,7 @@ function EditSkill() {
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
-        }
+        }        
     ];
 
     return (
@@ -387,9 +316,9 @@ function EditSkill() {
                     <h1>Edit Skill</h1>
 
                     <div className="button-holder">
-                        <Button danger onClick={handleCancel} disabled={saveLoading}>Cancel</Button>
+                        <Button danger onClick={handleCancel}>Cancel</Button>
                         <span></span>
-                        <Button type="primary" onClick={handleSave} disabled={saveLoading}>Save</Button>
+                        <Button type="primary" onClick={handleSave}>Save</Button>
                     </div>
                 </div>
 
@@ -451,7 +380,7 @@ function EditSkill() {
                             />
                         </label>
                         <span></span>
-                        {/*<Button type="primary" onClick={() => { }}>Auto Generate</Button>*/}
+                        <Button type="primary" onClick={() => { }}>Auto Generate</Button>
                     </div>
                 </div>
                 <div className="content-wrapper">
@@ -481,8 +410,8 @@ function EditSkill() {
                     <label htmlFor="slno">Sl No : </label>
                     <Input
                         placeholder="Sl No"
-                        defaultValue={currentEditModel.count}
-                        value={currentEditModel.count}
+                        defaultValue={editId}
+                        value={editId}
                         name="slno"
                         disabled
                     ></Input>
@@ -490,7 +419,7 @@ function EditSkill() {
                     <label htmlFor="question">Question : </label>
                     <Input
                         placeholder="Question"
-                        defaultValue={currentEditModel.Q}
+                        defaultValue={currentEditModel.question}
                         value={question}
                         onChange={(e) => setQuestion(e.target.value)}
                         name="question"
@@ -499,7 +428,7 @@ function EditSkill() {
                     <label htmlFor="answer">Answer : </label>
                     <Input
                         placeholder="Answer"
-                        defaultValue={currentEditModel.A}
+                        defaultValue={currentEditModel.answer}
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         name="answer"
@@ -507,23 +436,21 @@ function EditSkill() {
 
                     <label htmlFor="importance">Importance : </label>
                     <Select
-                        defaultValue={currentEditModel.importance}
-                        value={importance}
                         onChange={(value) => setImportance(value)}
                         style={{
                             width: '100%'
                         }}
                         options={[
                             {
-                                value: 'beginner',
+                                value: 'Beginner',
                                 label: 'Beginner'
                             },
                             {
-                                value: 'intermediate',
+                                value: 'Intermediate',
                                 label: 'Intermediate'
                             },
                             {
-                                value: 'pro',
+                                value: 'Pro',
                                 label: 'Pro'
                             }
                         ]}

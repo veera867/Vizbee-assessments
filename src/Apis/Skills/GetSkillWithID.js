@@ -11,10 +11,13 @@ let axiosConfig = {
 
 const GetSkillWithID = async (id) => {
 
+    const payload = {
+        SkillID:id
+    }
     //This api has to be replaced.
-    const link = `/skills/list/${id}`;
+    const link = `/getparticularskill`;
 
-    return await axios.get(link,axiosConfig)
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

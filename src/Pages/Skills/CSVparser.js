@@ -11,9 +11,9 @@ const processCSVData = (csvData) => {
     // and create an object for each row in the CSV
     for (const row of parsedData) {
         const extractedRow = {
-          count: row[0], // Assuming the first column contains slno
-          Q: row[1], // Assuming the second column contains the question
-          A: row[2], // Assuming the third column contains the answer
+          slno: row[0], // Assuming the first column contains slno
+          question: row[1], // Assuming the second column contains the question
+          answer: row[2], // Assuming the third column contains the answer
           importance: row[3], // Assuming the fourth column contains the importance
         };
         extractedData.push(extractedRow);

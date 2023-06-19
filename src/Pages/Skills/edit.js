@@ -1,10 +1,10 @@
-import React,{useState,useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { Tooltip } from 'antd';
 import processCSVData from './CSVparser';
 
-import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
-import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
+import { PlusOutlined, EditFilled, DeleteFilled, CloudUploadOutlined } from '@ant-design/icons';
+import { Table, Modal, Button, message, Spin, Input, Space, Divider, Select } from 'antd';
 
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
 import GetSkillWithID from '../../Apis/Skills/GetSkillWithID';
@@ -12,67 +12,118 @@ import GetSkillWithID from '../../Apis/Skills/GetSkillWithID';
 import './skills.css';
 
 function EditSkill() {
-    const {id} = useParams();
+    const { id } = useParams();
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [questions,setQuestions] = useState([
+    const [questions, setQuestions] = useState([
         //dummy data for testing purpose only. Can be removed!!
         {
-            slno : 1,
-            question : 'What is Python?',
-            answer : 'Python is a porgramming language.',
-            importance: 'Beginner',
-        },
-        {
-            slno : 2,
-            question : 'What is Java?',
-            answer : 'Java is a porgramming language.',
-            importance: 'Intermediate',
-        },
-        {
-            slno : 3,
-            question : 'What is JavaScript?',
-            answer : 'JavaScript is a porgramming language.',
-            importance: 'Beginner',
-        },
+            "status": "success",
+            "message": "specific skill  is success",
+            "SkillID": 612064758,
+            "SkillName": "python",
+            "SkillGroup": "Data Science",
+            "ListOfQuestions": [
+                {
+                    "count": "1",
+                    "Q": "What is the difference between a list and a tuple in Python?",
+                    "A": "A list is a collection of items that can be modified, while a tuple is an immutable collection of items.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "2",
+                    "Q": "What is a dictionary in Python?",
+                    "A": "A dictionary is an unordered collection of key-value pairs. It is used to store data in a key-value format, where keys are unique and values can be any Python object.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "3",
+                    "Q": "What is an exception in Python?",
+                    "A": "An exception is an error that occurs during the execution of a program. Python provides a number of built-in exceptions to help debug errors and to handle errors gracefully.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "4",
+                    "Q": "What is the difference between a for loop and a while loop?",
+                    "A": "A for loop is used to iterate over a sequence of items, while a while loop is used to execute code until a certain condition is met.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "5",
+                    "Q": "What is a function in Python?",
+                    "A": "A function is a block of organized, reusable code that is used to perform a single, related action. Functions provide better modularity for your application and a high degree of code reusing.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "6",
+                    "Q": "What is the difference between local and global variables in Python?",
+                    "A": "A local variable is only visible in the scope in which it is declared, while a global variable is visible throughout the entire program.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "7",
+                    "Q": "What is the purpose of the break statement in Python?",
+                    "A": "The break statement is used to terminate the execution of a loop. It allows the program to \"break out\" of the loop and continue executing the code after the loop.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "8",
+                    "Q": "What is the purpose of the continue statement in Python?",
+                    "A": "The continue statement is used to skip the rest of the code in a loop and move on to the next iteration. This is useful when you want to skip certain parts of the loop body.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "9",
+                    "Q": "What is the purpose of the pass statement in Python?",
+                    "A": "The pass statement is used as a placeholder for code that has not yet been written. It is also used to prevent syntax errors when the code is not yet complete.",
+                    "importance": "intermediate"
+                },
+                {
+                    "count": "10",
+                    "Q": "What is the difference between shallow and deep copy in Python?",
+                    "A": "A shallow copy only copies the reference to an object, while a deep copy creates a new object and copies all of its contents.",
+                    "importance": "intermediate"
+                }
+            ]
+        }
     ]);
 
     //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
-    const [hasErr,setHasErr] = useState(false);
-    const [errMsg,setErrMsg] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [hasErr, setHasErr] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
 
-    const [skillId,setSkillId] = useState(0);
-    const [skillName,setSkillName] = useState('');
-    const [skillGroup,setSkillGroup] = useState('');
+    const [skillId, setSkillId] = useState(0);
+    const [skillName, setSkillName] = useState('');
+    const [skillGroup, setSkillGroup] = useState('');
 
     //for delete confirm box
-    const [cnfmDel,setCnfmDel] = useState(false);
-    const [delId,setDelId] = useState(0);
-    const [confirmLoading,setConfirmLoading] = useState(false);
+    const [cnfmDel, setCnfmDel] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     //for edit popup box
-    const [openEdit,setOpenEdit] = useState(false);
-    const [editId,setEditId] = useState(0);
-    const [editLoading,setEditLoading] = useState(false);
-    const [currentEditModel,setCurrentEditModel] = useState({});
-    const [question,setQuestion] = useState('');
-    const [answer,setAnswer] = useState('');
-    const [importance,setImportance] = useState('');
+    const [openEdit, setOpenEdit] = useState(false);
+    const [editId, setEditId] = useState(0);
+    const [editLoading, setEditLoading] = useState(false);
+    const [currentEditModel, setCurrentEditModel] = useState({});
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [importance, setImportance] = useState('');
 
     const fileInputRef = useRef(null);
 
-    useEffect(()=>{
-        async function GetSkillDetails(){
+    useEffect(() => {
+        async function GetSkillDetails() {
             setLoading(true);
-            try{
+            try {
                 const apiResponse = await GetSkillWithID(id !== undefined || id !== null ? id : 0);
                 console.log(apiResponse);
-    
+
                 //According to the status from API
-                if(apiResponse.status === 200){
+                if (apiResponse.status === 200) {
                     setSkillId(apiResponse.data.skillId);
                     setSkillName(apiResponse.data.skillName);
                     setSkillGroup(apiResponse.data.skillGroup);
@@ -86,8 +137,8 @@ function EditSkill() {
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
-                    });                  
-                }    
+                    });
+                }
             } catch (err) {
                 console.log(err.message);
                 setLoading(false);
@@ -95,13 +146,13 @@ function EditSkill() {
                 messageApi.open({
                     type: 'error',
                     content: err.message,
-                }); 
-            }    
+                });
+            }
         }
 
         setSkillId(id);
         GetSkillDetails();
-    },[]);
+    }, []);
 
     const handleCancel = () => {
         navigate(-1);
@@ -110,7 +161,7 @@ function EditSkill() {
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
-    
+
     const handleCSVUpload = (e) => {
         const file = e.target.files[0];
 
@@ -120,13 +171,13 @@ function EditSkill() {
         // Define the onload function
         reader.onload = (event) => {
             const csvData = event.target.result;
-            
+
             // Process the CSV data and extract the necessary information
             const extractedData = processCSVData(csvData);
-            
+
             // Update the state with the extracted data
             setQuestions([...questions, ...extractedData]);
-            
+
             messageApi.open({
                 type: 'success',
                 content: 'CSV file uploaded successfully.',
@@ -137,18 +188,18 @@ function EditSkill() {
     };
 
     const handleSave = async () => {
-        try{
+        try {
             const payload = {
-                skillId : skillId,
-                skillName : skillName,
-                skillGroup : skillGroup,
-                questionnaire : questions
+                skillId: skillId,
+                skillName: skillName,
+                skillGroup: skillGroup,
+                questionnaire: questions
             }
             const apiResponse = await CreateSkillsAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setQuestions(apiResponse.data);
                 setLoading(false);
             } else {
@@ -159,8 +210,8 @@ function EditSkill() {
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
-            }    
+                });
+            }
         } catch (err) {
             console.log(err.message);
             setLoading(false);
@@ -168,7 +219,7 @@ function EditSkill() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
 
@@ -182,12 +233,12 @@ function EditSkill() {
 
         setOpenEdit(true);
     }
-    const handleEdit2 = () =>{
+    const handleEdit2 = () => {
         setEditId(0);
         setCurrentEditModel({
-            slno : 0,
-            question : '',
-            answer : '',
+            slno: 0,
+            question: '',
+            answer: '',
             importance: 'Beginner',
         });
         setQuestion('');
@@ -198,27 +249,27 @@ function EditSkill() {
     }
     const handleEditOk = async () => {
         setEditLoading(true);
-        try{
-            if(editId === 0){
+        try {
+            if (editId === 0) {
                 let temp = {
-                    slno : questions.length > 0 
-                                ? question.length === 1 
-                                    ? questions.length+1 
-                                    : question.length 
-                                : 1,
-                    question : question,
-                    answer : answer,
+                    slno: questions.length > 0
+                        ? question.length === 1
+                            ? questions.length + 1
+                            : question.length
+                        : 1,
+                    question: question,
+                    answer: answer,
                     importance: importance,
                 };
-                setQuestions([...questions,temp]);
+                setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if(ques.slno === editId){
+                    if (ques.slno === editId) {
                         ques.question = question;
                         ques.answer = answer;
                         ques.importance = importance;
                     }
-    
+
                     return null;
                 })
             }
@@ -234,8 +285,8 @@ function EditSkill() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleEditCancel = () => {
         setOpenEdit(false);
@@ -249,7 +300,7 @@ function EditSkill() {
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
-        try{
+        try {
             setQuestions(questions.filter(ques => ques.slno !== delId));
 
             setConfirmLoading(false);
@@ -264,14 +315,14 @@ function EditSkill() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleDelCancel = () => {
         setCnfmDel(false);
         setDelId(null);
     }
-    
+
     const columns = [
         {
             title: 'Sl. no',
@@ -302,7 +353,7 @@ function EditSkill() {
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
-        }        
+        }
     ];
 
     return (
@@ -323,30 +374,30 @@ function EditSkill() {
 
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                     <label htmlFor="skillId">Skill Id : </label>
-                    <Input 
+                    <Input
                         placeholder="Skill Id"
                         value={skillId}
                         disabled
                         name="skillId"
-                        style={{maxWidth:'500px'}}
+                        style={{ maxWidth: '500px' }}
                     ></Input>
 
                     <label htmlFor="skillName">Skill Name : </label>
-                    <Input 
+                    <Input
                         placeholder="Skill Name"
                         value={skillName}
                         onChange={(e) => setSkillName(e.target.value)}
                         name="skillName"
-                        style={{maxWidth:'500px'}}
+                        style={{ maxWidth: '500px' }}
                     ></Input>
 
                     <label htmlFor="skillGroup">Skill Group : </label>
-                    <Input 
+                    <Input
                         placeholder="Skill Group"
                         value={skillGroup}
                         onChange={(e) => setSkillGroup(e.target.value)}
                         name="skillGroup"
-                        style={{maxWidth:'500px'}}
+                        style={{ maxWidth: '500px' }}
                     ></Input>
                 </Space>
 
@@ -354,14 +405,19 @@ function EditSkill() {
                     <h1>{''}</h1>
 
                     <div className="button-holder">
-                        <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
+                        <Tooltip title="Add Questions">
+                        <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />} />
+                        </Tooltip>
                         <span></span>
                         <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
-                            <Button type="primary" 
-                                shape="circle" 
-                                icon={<CloudUploadOutlined />} 
-                                onClick={handleUploadClick} 
-                            />
+                            <Tooltip title="Csv File Upload">
+                                <Button type="primary"
+                                    shape="circle"
+                                    icon={<CloudUploadOutlined />}
+                                    onClick={handleUploadClick}
+                                />
+                            </Tooltip>
+
                             <input
                                 type="file"
                                 id="csv-upload"
@@ -370,13 +426,13 @@ function EditSkill() {
                                 ref={fileInputRef}
                                 onChange={handleCSVUpload}
                             />
-                        </label>                        
+                        </label>
                         <span></span>
-                        <Button type="primary" onClick={()=>{}}>Auto Generate</Button>
+                        <Button type="primary" onClick={() => { }}>Auto Generate</Button>
                     </div>
                 </div>
                 <div className="content-wrapper">
-                    <Table dataSource={questions} columns={columns} loading={loading}/>
+                    <Table dataSource={questions} columns={columns} loading={loading} />
                 </div>
             </div>
 
@@ -400,7 +456,7 @@ function EditSkill() {
                 <Divider />
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                     <label htmlFor="slno">Sl No : </label>
-                    <Input 
+                    <Input
                         placeholder="Sl No"
                         defaultValue={editId}
                         value={editId}
@@ -409,7 +465,7 @@ function EditSkill() {
                     ></Input>
 
                     <label htmlFor="question">Question : </label>
-                    <Input 
+                    <Input
                         placeholder="Question"
                         defaultValue={currentEditModel.question}
                         value={question}
@@ -418,7 +474,7 @@ function EditSkill() {
                     ></Input>
 
                     <label htmlFor="answer">Answer : </label>
-                    <Input 
+                    <Input
                         placeholder="Answer"
                         defaultValue={currentEditModel.answer}
                         value={answer}
@@ -428,9 +484,9 @@ function EditSkill() {
 
                     <label htmlFor="importance">Importance : </label>
                     <Select
-                        onChange={(value)=>setImportance(value)}
+                        onChange={(value) => setImportance(value)}
                         style={{
-                            width : '100%'
+                            width: '100%'
                         }}
                         options={[
                             {

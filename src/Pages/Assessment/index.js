@@ -14,7 +14,10 @@ import "../../App.css";
 
 const { Header } = Layout;
 
-const Assessment = () => {
+const Assessment = () => { 
+  const [fileSize, setFileSize] = useState(0);
+
+ 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,7 +74,7 @@ const Assessment = () => {
       formData.append("question", questions[currentQuestion].Question)
       formData.append("test_id", assessementCode)
       formData.append("audio", audio);
-      formData.append("image", image)
+      formData.append("image", image)      
 
       const apiResponse = await SendAssessmentStatusAPI(formData);
       console.log(apiResponse);
@@ -210,7 +213,7 @@ const Assessment = () => {
       reader.readAsDataURL(blob);
     });
   };
-  const handleNextClick = () => {
+  const handleNextClick = () => {    
     setNextQuestionFlag(true)
   }
 

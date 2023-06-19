@@ -9,7 +9,8 @@ function VerifyCode() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [code,setCode] = useState('');
+    const [code,setCode] = useState();
+    console.log("code", code)
 
     const handleRedirect = async () => {
         navigate(`/assessment/${code}`, {state: code} );

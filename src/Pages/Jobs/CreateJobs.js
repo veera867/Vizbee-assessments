@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button,message, Divider, Form, Input, Select } from 'antd';
+import { Button, message, Divider, Form, Input, Select } from 'antd';
 
 import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
 import '../Dashboard/dashboard.css';
@@ -10,30 +10,30 @@ function CreateJob() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [jdName,setJdName] = useState();
-    const [mskills,setMskills] = useState([]);
-    const [oskills,setOskills] = useState([]);
-    const [complexity,setComplexity] = useState();
+    const [jdName, setJdName] = useState();
+    const [mskills, setMskills] = useState([]);
+    const [oskills, setOskills] = useState([]);
+    const [complexity, setComplexity] = useState();
     const [jobDescription, setJobDescription] = useState()
     const [totalPositions, setTotalPositions] = useState()
 
-    const [skillsDataList,setSkillsDataList] = useState();
+    const [skillsDataList, setSkillsDataList] = useState();
     const [skillsData, setSkillsData] = useState()
 
-    const [saveLoading,setSaveLoading] = useState(false);
+    const [saveLoading, setSaveLoading] = useState(false);
 
-    useEffect(()=> {
+    useEffect(() => {
         fetchSkillsData()
         console.log("useEffect")
-    },[])
+    }, [])
 
-    const fetchSkillsData = async() => {
+    const fetchSkillsData = async () => {
         console.log("fetch")
-        try{
+        try {
             const response = await GetSkillsAPI()
             console.log("response", response)
 
-            if(response.status === 200){
+            if (response.status === 200) {
                 const selectOptions = response.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
@@ -44,54 +44,54 @@ function CreateJob() {
                 messageApi.open({
                     type: 'error',
                     content: response.message,
-                });                  
+                });
             }
         } catch (err) {
             console.log(err);
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });                  
+            });
         }
     }
 
     const handleSave = async () => {
-        try{
+        try {
             setSaveLoading(true);
             const payload = {
                 jdName: jdName,
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
                 complexity: complexity,
-                jobDescription:jobDescription,
-                totalPositions:totalPositions
+                jobDescription: jobDescription,
+                totalPositions: totalPositions
             }
             const apiResponse = await CreateJobAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
                     content: apiResponse.message,
-                });           
+                });
                 navigate(-1);
             } else {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
-            }    
+                });
+            }
         } catch (err) {
             console.log(err.message);
             setSaveLoading(false);
-            
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
 
@@ -100,7 +100,7 @@ function CreateJob() {
     }
 
     //to capture the mskills and update the skillsData list
-    useEffect(()=>{
+    useEffect(() => {
         const filteredOptions = skillsDataList?.filter(
             (item) => !mskills.includes(item.value)
         );
@@ -110,15 +110,15 @@ function CreateJob() {
         const filteredOskills = oskills.filter(
             (item) => !mskills.includes(item)
         );
-        setOskills(filteredOskills);      
-    },[mskills]);
+        setOskills(filteredOskills);
+    }, [mskills]);
 
-    const updateMSkills = (value) => {   
-        console.log("updateMSkills", value)    
+    const updateMSkills = (value) => {
+        console.log("updateMSkills", value)
         setMskills(value);
     }
 
-    const updateOSkills = (value) => {       
+    const updateOSkills = (value) => {
         setOskills(value);
     }
 
@@ -135,7 +135,7 @@ function CreateJob() {
                 </div>
 
                 <Divider />
-                
+
                 <div className="content-wrapper form-center">
                     <Form
                         name="basic"
@@ -160,9 +160,9 @@ function CreateJob() {
                                 }
                             ]}
                         >
-                            <Input 
+                            <Input
                                 value={jdName}
-                                onChange={(value)=>setJdName(value.target.value)}
+                                onChange={(value) => setJdName(value.target.value)}
                             />
                         </Form.Item>
 
@@ -182,7 +182,7 @@ function CreateJob() {
                                 onChange={updateMSkills}
                                 mode="multiple"
                                 style={{
-                                    width : '100%'
+                                    width: '100%'
                                 }}
                                 options={skillsData}
                             ></Select>
@@ -197,7 +197,7 @@ function CreateJob() {
                                 mode="multiple"
                                 onChange={updateOSkills}
                                 style={{
-                                    width : '100%'
+                                    width: '100%'
                                 }}
                                 options={skillsData}
                             ></Select>
@@ -215,9 +215,9 @@ function CreateJob() {
                         >
                             <Select
                                 value={complexity}
-                                onChange={(value)=>{setComplexity(value)}}
+                                onChange={(value) => { setComplexity(value) }}
                                 style={{
-                                    width : '100%'
+                                    width: '100%'
                                 }}
                                 options={[
                                     {
@@ -230,7 +230,7 @@ function CreateJob() {
                                     },
                                     {
                                         value: 'Pro',
-                                        label: 'Pro'
+                                         label: 'Pro'
                                     }
                                 ]}
                             ></Select>
@@ -245,9 +245,9 @@ function CreateJob() {
                                 }
                             ]}
                         >
-                            <Input 
+                            <Input
                                 value={totalPositions}
-                                onChange={(value)=>setTotalPositions(value.target.value)}
+                                onChange={(value) => setTotalPositions(value.target.value)}
                             />
                         </Form.Item>
                         <Form.Item
@@ -260,12 +260,15 @@ function CreateJob() {
                                 }
                             ]}
                         >
-                            <Input 
+                            {/* <Input 
                                 value={jobDescription}
                                 onChange={(value)=>setJobDescription(value.target.value)}
+                            /> */}
+                            <Input.TextArea rows={4}
+                                value={jobDescription}
+                                onChange={(value) => setJobDescription(value.target.value)}
                             />
                         </Form.Item>
-
                         <div className="title-bar">
                             <h1>{''}</h1>
 
@@ -275,8 +278,8 @@ function CreateJob() {
                                     <span></span>
                                     {
                                         saveLoading
-                                        ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                        : <Button type="primary" htmlType="submit">Save</Button>
+                                            ? <Button type="primary" htmlType="submit" loading>Saving</Button>
+                                            : <Button type="primary" htmlType="submit">Save</Button>
                                     }
                                 </div>
                             </Form.Item>

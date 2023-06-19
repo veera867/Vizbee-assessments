@@ -13,24 +13,13 @@ function Jobs() {
 
     const [jobs,setJobs] = useState([
         
-        // {
-        //     jdId : 1,
-        //     jdName: 'Developer',
-        //     mandatorySkills: ['Html','Java'],
-        //     optionalSkills: ['React'],
-        //     totalScore: 85,
-        //     pass: 'Pass',
-        //     fail: '',
-        // },
-        // {
-        //     jdId : 2,
-        //     jdName: 'Testing',
-        //     mandatorySkills: ['Regression','Java'],
-        //     optionalSkills: ['Selenium'],
-        //     totalScore: 45,
-        //     pass: '',
-        //     fail: 'Fail',
-        // }
+        {
+            "JobID": 619212406,
+            "jdName": "sai",
+            "mandatorySkills": "['python']",
+            "optionalSkills": "['React']",
+            "totalPositions": "2"
+        }
         
     ]);
 

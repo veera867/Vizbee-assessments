@@ -15,41 +15,42 @@ const Dashboard = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [assessments,setAssessments] = useState(
-        // [
-        //dummy data for testing purpose only. Can be removed!!
-        // {
-        //     jdNumber : 1,
-        //     candidate : 'Veera',
-        //     mandatorySkills : 'React',
-        //     optionalSkills : 'Java',
-        //     scheduleDate : '15/05/2023',
-        //     interviewStatus : 'Scheduled'
-        // },
-        // {
-        //     jdNumber : 2,
-        //     candidate : 'Shiva',
-        //     mandatorySkills : 'Java',
-        //     optionalSkills : '.NET',
-        //     scheduleDate : '10/05/2023',
-        //     interviewStatus : 'Completed'
-        // },
-        // {
-        //     jdNumber : 3,
-        //     candidate : 'Venkat',
-        //     mandatorySkills : 'React',
-        //     optionalSkills : 'Java',
-        //     scheduleDate : '14/05/2023',
-        //     interviewStatus : 'Scheduled'
-        // },
-        // {
-        //     jdNumber : 4,
-        //     candidate : 'John',
-        //     mandatorySkills : 'C++',
-        //     optionalSkills : 'C | DSA',
-        //     scheduleDate : '13/05/2023',
-        //     interviewStatus : 'Scheduled'
-        // }
-    // ]
+        [
+        {
+            "ScheduleID": 619212545,
+            "jdNumber": 524093836,
+            "jdName": "sai",
+            "testName": "pptp",
+            "testId": 619212452,
+            "candidateName": "sai",
+            "candidateEmail": "careers.apexon@gmail.com",
+            "hrEmail": "careers.apexon@gmail.com",
+            "scheduleDate": "2023-06-23T21:33:00Z",
+            "mandatorySkills": "['python']",
+            "optionalSkills": "['React']",
+            "status": null,
+            "max_score": null,
+            "act_Score": null,
+            "percentage": null
+        },
+        {
+            "ScheduleID": 619212853,
+            "jdNumber": 619212406,
+            "jdName": "sai",
+            "testName": "pptp",
+            "testId": 619212452,
+            "candidateName": "sd",
+            "candidateEmail": "shivendrakumar.tiwari@apexon.com",
+            "hrEmail": "shivendrakumar.tiwari@apexon.com",
+            "scheduleDate": "2023-06-20T21:28:00Z",
+            "mandatorySkills": "['python']",
+            "optionalSkills": "['React']",
+            "status": null,
+            "max_score": null,
+            "act_Score": null,
+            "percentage": null
+        }
+    ]
     );
 
     //error boundaries and loaders
@@ -162,9 +163,7 @@ const Dashboard = () => {
                         <Button type="primary" href={`/app/asmt-dashboard/schedule`}>Schedule Assessment</Button>
                     </div>
                 </div>
-
                 <Divider />
-                
                 <div className="content-wrapper">
                     <Table dataSource={assessments} columns={columns} loading={loading}/>
                 </div>

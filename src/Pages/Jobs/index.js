@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {PlusOutlined,EditFilled,DeleteFilled,EyeFilled} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
+import { stringify } from 'csv-stringify';
 
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
 import DeleteJobAPI from '../../Apis/Jobs/DeleteJobAPI';
@@ -164,7 +165,7 @@ function Jobs() {
 
     useEffect(() => {
         if(isModalOpenForEyeIcon){
-            getParticularAssesmentData(selectedRowId)
+            getParticularAssesmentData(selectedRowId);
         }
     },[isModalOpenForEyeIcon])
 
@@ -180,12 +181,55 @@ function Jobs() {
         console.log("rowData", rowData)
         // setSelectedRowData(rowData)
         setIsModalOpenForEyeIcon(true)
-       
+
     }
 
     const handleEyeCancel = () => {
         setIsModalOpenForEyeIcon(false)
     }
+
+    const convertToCSV = (data) => {
+        const csvData = [];
+        const headers = Object.keys(data[0]);
+        
+        csvData.push(headers); // Add headers as the first row
+
+        data.forEach((row) => {
+            const rowData = [];
+            headers.forEach((header) => {
+                rowData.push(row[header]);
+            });
+            csvData.push(rowData);
+        });
+    
+        return csvData;
+    };      
+
+    const handleDownloadCSV = () => {
+        const csvData = convertToCSV(selectedRowData);
+
+        stringify(csvData, (err, output) => {
+            if (err) {
+                console.error('Error converting data to CSV:', err);
+                return;
+            }
+
+            // Create a Blob from the CSV data
+            const blob = new Blob([output], { type: 'text/csv;charset=utf-8;' });
+
+            // Create a temporary link element to trigger the download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = 'table_data.csv';
+
+            // Simulate a click on the link to trigger the download
+            link.click();
+
+            // Clean up the temporary URL
+            URL.revokeObjectURL(url);
+        });
+    };      
 
     const assessmentDashboardColumns = [
         {
@@ -274,7 +318,7 @@ function Jobs() {
             render: (record) => <div className="button-holder">
                 <Button icon={<EyeFilled />} onClick={() => handleEyeClick(record)} />
                 <span></span>
-                <Button icon={<EditFilled />} href={`jobs/edit/${record.jdId}`}></Button>
+                <Button icon={<EditFilled />} href={`jobs/edit/${record.JobID}`}></Button>
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
@@ -314,6 +358,7 @@ function Jobs() {
                 open={isModalOpenForEyeIcon}
                 width="1000px"
                 onCancel={handleEyeCancel}
+                footer={<Button onClick={handleDownloadCSV}>Download as CSV</Button>}
             >
                 <Table  dataSource={selectedRowData} columns={assessmentDashboardColumns}/>
             </Modal>

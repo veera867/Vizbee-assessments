@@ -6,7 +6,7 @@ import processCSVData from './CSVparser';
 import { PlusOutlined, EditFilled, DeleteFilled, CloudUploadOutlined } from '@ant-design/icons';
 import { Table, Modal, Button, message, Spin, Input, Space, Divider, Select } from 'antd';
 
-import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
+import UpdateSkillsAPI from '../../Apis/Skills/EditSkillsAPI';
 import GetSkillWithID from '../../Apis/Skills/GetSkillWithID';
 
 import './skills.css';
@@ -17,29 +17,7 @@ function EditSkill() {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [questions, setQuestions] = useState(
-         [
-        //dummy data for testing purpose only. Can be removed!!
-        // {
-        //     slno: 1,
-        //     question: 'What is Python?',
-        //     answer: 'Python is a porgramming language.',
-        //     importance: 'Beginner',
-        // },
-        // {
-        //     slno: 2,
-        //     question: 'What is Java?',
-        //     answer: 'Java is a porgramming language.',
-        //     importance: 'Intermediate',
-        // },
-        // {
-        //     slno: 3,
-        //     question: 'What is JavaScript?',
-        //     answer: 'JavaScript is a porgramming language.',
-        //     importance: 'Beginner',
-        // },
-    ]
-    );
+    const [questions, setQuestions] = useState([]);
 
     //error boundaries and loaders
     const [loading, setLoading] = useState(false);
@@ -50,11 +28,12 @@ function EditSkill() {
     const [skillName, setSkillName] = useState('');
     const [skillGroup, setSkillGroup] = useState('');
 
-    console.log(questions,"skillId", skillId,skillName, skillGroup)
     //for delete confirm box
     const [cnfmDel, setCnfmDel] = useState(false);
     const [delId, setDelId] = useState(0);
     const [confirmLoading, setConfirmLoading] = useState(false);
+
+    const [saveLoading,setSaveLoading] = useState(false);
 
     //for edit popup box
     const [openEdit, setOpenEdit] = useState(false);
@@ -67,16 +46,15 @@ function EditSkill() {
 
     const fileInputRef = useRef(null);
 
-    useEffect(() => {
+    useEffect(() => {   
         async function GetSkillDetails() {
             setLoading(true);
             try {
                 const apiResponse = await GetSkillWithID(id !== undefined || id !== null ? id : 0);
-                console.log("apiResponse",apiResponse);
-
+                console.log(apiResponse);
                 //According to the status from API
-                if (apiResponse.status == 200) {
-                    setSkillId(apiResponse.data.SkillID);
+                if (apiResponse.status === 200) {
+                    setSkillId(apiResponse.data.SelectkillId);
                     setSkillName(apiResponse.data.SkillName);
                     setSkillGroup(apiResponse.data.SkillGroup);
                     setQuestions(apiResponse.data.ListOfQuestions);
@@ -94,16 +72,15 @@ function EditSkill() {
             } catch (err) {
                 console.log(err.message);
                 setLoading(false);
-
                 messageApi.open({
                     type: 'error',
                     content: err.message,
                 });
             }
         }
-
         setSkillId(id);
         GetSkillDetails();
+        
     }, []);
 
     const handleCancel = () => {
@@ -117,47 +94,61 @@ function EditSkill() {
     const handleCSVUpload = (e) => {
         const file = e.target.files[0];
 
-        // Create a FileReader object
-        const reader = new FileReader();
-
-        // Define the onload function
-        reader.onload = (event) => {
-            const csvData = event.target.result;
-
-            // Process the CSV data and extract the necessary information
-            const extractedData = processCSVData(csvData);
-
-            // Update the state with the extracted data
-            setQuestions([...questions, ...extractedData]);
-
+        try{
+            // Create a FileReader object
+            const reader = new FileReader();
+            
+            // Define the onload function
+            reader.onload = (event) => {
+                const csvData = event.target.result;
+                
+                // Process the CSV data and extract the necessary information
+                const extractedData = processCSVData(csvData);
+                
+                // Update the state with the extracted data
+                setQuestions([...questions, ...extractedData]);
+                
+                messageApi.open({
+                    type: 'success',
+                    content: 'CSV file uploaded successfully.',
+                });
+            };
+            // Read the contents of the file as text
+            reader.readAsText(file);
+        } catch (err) {
+            console.log(err);
             messageApi.open({
-                type: 'success',
-                content: 'CSV file uploaded successfully.',
-            });
-        };
-        // Read the contents of the file as text
-        reader.readAsText(file);
+                type: 'error',
+                content: err.message,
+            })
+        }
     };
 
     const handleSave = async () => {
         try {
+            setSaveLoading(true);
             const payload = {
                 skillId: skillId,
                 skillName: skillName,
                 skillGroup: skillGroup,
                 questionnaire: questions
             }
-            const apiResponse = await CreateSkillsAPI(payload);
+            const apiResponse = await UpdateSkillsAPI(payload);
             console.log(apiResponse);
 
             //According to the status from API
             if (apiResponse.status === 200) {
-                // setQuestions(apiResponse?.data);
-                setLoading(false);
+                //setQuestions(apiResponse.data.ListOfQuestions);
+                messageApi.open({
+                    type: 'success',
+                    content: 'Saved successfully!'
+                })
+                navigate(-1);
+                setSaveLoading(false);
             } else {
                 setHasErr(true);
                 setErrMsg(apiResponse.message);
-                setLoading(false);
+                setSaveLoading(false);
 
                 messageApi.open({
                     type: 'error',
@@ -166,7 +157,7 @@ function EditSkill() {
             }
         } catch (err) {
             console.log(err.message);
-            setLoading(false);
+            setSaveLoading(false);
 
             messageApi.open({
                 type: 'error',
@@ -177,10 +168,10 @@ function EditSkill() {
 
     //Edit Functionality
     const handleEdit = async (record) => {
-        setEditId(record.slno);
+        setEditId(record.count);
         setCurrentEditModel(record);
-        setQuestion(record.question);
-        setAnswer(record.answer);
+        setQuestion(record.Q);
+        setAnswer(record.A);
         setImportance(record.importance);
 
         setOpenEdit(true);
@@ -188,14 +179,14 @@ function EditSkill() {
     const handleEdit2 = () => {
         setEditId(0);
         setCurrentEditModel({
-            slno: 0,
-            question: '',
-            answer: '',
-            importance: 'Beginner',
+            count: 0,
+            Q : '',
+            A : '',
+            importance: 'beginner',
         });
         setQuestion('');
         setAnswer('');
-        setImportance('Beginner');
+        setImportance('beginner');
 
         setOpenEdit(true);
     }
@@ -204,21 +195,19 @@ function EditSkill() {
         try {
             if (editId === 0) {
                 let temp = {
-                    count: questions.length > 0
-                        ? question.length === 1
-                            ? questions.length + 1
-                            : question.length
-                        : 1,
-                    Q: question,
-                    A: answer,
+                    count : questions.length > 0
+                        ? String(Number(questions[questions.length - 1].count) + 1)
+                        : '1',
+                    Q : question,
+                    A : answer,
                     importance: importance,
                 };
                 setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if (ques.slno === editId) {
-                        ques.question = question;
-                        ques.answer = answer;
+                    if (ques.count === editId) {
+                        ques.Q = question;
+                        ques.A = answer;
                         ques.importance = importance;
                     }
 
@@ -242,19 +231,26 @@ function EditSkill() {
     }
     const handleEditCancel = () => {
         setOpenEdit(false);
+        setCurrentEditModel({});
         setEditId(null);
     }
 
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.slno);
+        setDelId(record.count);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try {
-            setQuestions(questions.filter(ques => ques.count !== delId));
-
+          const questionsArragement = questions.filter(ques => ques.count !== delId);
+            const questionsNumberArragement = questionsArragement.map((item, index) =>({
+                count: index + 1,
+                A: item.A,
+                Q: item.Q,
+                importance: item.importance
+            }))
+            setQuestions(questionsNumberArragement)
             setConfirmLoading(false);
             setCnfmDel(false);
             setDelId(null);
@@ -316,9 +312,9 @@ function EditSkill() {
                     <h1>Edit Skill</h1>
 
                     <div className="button-holder">
-                        <Button danger onClick={handleCancel}>Cancel</Button>
+                        <Button danger onClick={handleCancel} disabled={saveLoading}>Cancel</Button>
                         <span></span>
-                        <Button type="primary" onClick={handleSave}>Save</Button>
+                        <Button type="primary" onClick={handleSave} disabled={saveLoading}>Update</Button>
                     </div>
                 </div>
 
@@ -380,7 +376,7 @@ function EditSkill() {
                             />
                         </label>
                         <span></span>
-                        <Button type="primary" onClick={() => { }}>Auto Generate</Button>
+                        {/*<Button type="primary" onClick={() => { }}>Auto Generate</Button>*/}
                     </div>
                 </div>
                 <div className="content-wrapper">
@@ -410,8 +406,8 @@ function EditSkill() {
                     <label htmlFor="slno">Sl No : </label>
                     <Input
                         placeholder="Sl No"
-                        defaultValue={editId}
-                        value={editId}
+                        defaultValue={currentEditModel.count}
+                        value={currentEditModel.count}
                         name="slno"
                         disabled
                     ></Input>
@@ -419,7 +415,7 @@ function EditSkill() {
                     <label htmlFor="question">Question : </label>
                     <Input
                         placeholder="Question"
-                        defaultValue={currentEditModel.question}
+                        defaultValue={currentEditModel.Q}
                         value={question}
                         onChange={(e) => setQuestion(e.target.value)}
                         name="question"
@@ -428,7 +424,7 @@ function EditSkill() {
                     <label htmlFor="answer">Answer : </label>
                     <Input
                         placeholder="Answer"
-                        defaultValue={currentEditModel.answer}
+                        defaultValue={currentEditModel.A}
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         name="answer"
@@ -436,21 +432,23 @@ function EditSkill() {
 
                     <label htmlFor="importance">Importance : </label>
                     <Select
+                        defaultValue={currentEditModel.importance}
+                        value={importance}
                         onChange={(value) => setImportance(value)}
                         style={{
                             width: '100%'
                         }}
                         options={[
                             {
-                                value: 'Beginner',
+                                value: 'beginner',
                                 label: 'Beginner'
                             },
                             {
-                                value: 'Intermediate',
+                                value: 'intermediate',
                                 label: 'Intermediate'
                             },
                             {
-                                value: 'Pro',
+                                value: 'pro',
                                 label: 'Pro'
                             }
                         ]}

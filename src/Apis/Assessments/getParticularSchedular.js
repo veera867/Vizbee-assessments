@@ -2,20 +2,22 @@ import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
-        //"Content-Type" : "multipart/form-data",
+        //"Content-Type" : "application/json",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
     }
 };
 
-const UpdateSkillsAPI = async (values) => {
-    console.log("Edit request id : ",values.skillId);
+const GetSpecificSchdules = async (id) => {
+    const payload = {
+        jobId:id
+    }
 
     //This api has to be replaced.
-    const link = `updateskill`;
+    const link = `getspecificschedules`;
 
-    return await axios.post(link,values,axiosConfig)
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })
@@ -26,4 +28,4 @@ const UpdateSkillsAPI = async (values) => {
     })
 }
 
-export default UpdateSkillsAPI;
+export default GetSpecificSchdules;

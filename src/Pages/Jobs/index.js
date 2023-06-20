@@ -6,6 +6,7 @@ import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
 import DeleteJobAPI from '../../Apis/Jobs/DeleteJobAPI';
 import '../Skills/skills.css';
 import { useNavigate } from 'react-router-dom';
+import GetSpecificSchdules from '../../Apis/Assessments/getParticularSchedular';
 
 function Jobs() {
     const navigate = useNavigate()
@@ -13,13 +14,13 @@ function Jobs() {
 
     const [jobs,setJobs] = useState([
         
-        {
-            "JobID": 619212406,
-            "jdName": "sai",
-            "mandatorySkills": "['python']",
-            "optionalSkills": "['React']",
-            "totalPositions": "2"
-        }
+        // {
+        //     "JobID": 619212406,
+        //     "jdName": "sai",
+        //     "mandatorySkills": "['python']",
+        //     "optionalSkills": "['React']",
+        //     "totalPositions": "2"
+        // }
         
     ]);
 
@@ -71,6 +72,7 @@ function Jobs() {
     const [confirmLoading,setConfirmLoading] = useState(false);
     const [isModalOpenForEyeIcon, setIsModalOpenForEyeIcon] = useState(false)
     const [selectedRowData, setSelectedRowData] = useState()
+    const [selectedRowId, setSelectedRowId] = useState()
     
     console.log("jobs", jobs)
     useEffect(()=>{
@@ -160,9 +162,23 @@ function Jobs() {
         setDelId(null);
     }
 
+    useEffect(() => {
+        if(isModalOpenForEyeIcon){
+            getParticularAssesmentData(selectedRowId)
+        }
+    },[isModalOpenForEyeIcon])
+
+    const getParticularAssesmentData = async() =>{
+        const apiResponse = await GetSpecificSchdules(selectedRowId)
+        setSelectedRowData(apiResponse?.data?.schedules)
+        console.log("getParticularAssesmentData", apiResponse)
+    }
+
     const handleEyeClick = async(rowData) => {
+
+        setSelectedRowId(rowData.JobID)
         console.log("rowData", rowData)
-        setSelectedRowData(rowData)
+        // setSelectedRowData(rowData)
         setIsModalOpenForEyeIcon(true)
        
     }
@@ -256,7 +272,7 @@ function Jobs() {
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                <Button icon={<EyeFilled />} onClick={() => handleEyeClick(assesmentDashboardData.filter(item => item.jdNumber == record.JobID))} />
+                <Button icon={<EyeFilled />} onClick={() => handleEyeClick(record)} />
                 <span></span>
                 <Button icon={<EditFilled />} href={`jobs/edit/${record.jdId}`}></Button>
                 <span></span>

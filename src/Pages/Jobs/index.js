@@ -1,7 +1,8 @@
 import React,{useState,useEffect} from 'react';
 import {PlusOutlined,EditFilled,DeleteFilled,EyeFilled} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
-import { stringify } from 'csv-stringify';
+//import { stringify } from 'csv-stringify';
+import { CSVLink } from 'react-csv';
 
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
 import DeleteJobAPI from '../../Apis/Jobs/DeleteJobAPI';
@@ -188,6 +189,7 @@ function Jobs() {
         setIsModalOpenForEyeIcon(false)
     }
 
+    /*
     const convertToCSV = (data) => {
         const csvData = [];
         const headers = Object.keys(data[0]);
@@ -229,7 +231,8 @@ function Jobs() {
             // Clean up the temporary URL
             URL.revokeObjectURL(url);
         });
-    };      
+    };  
+    */    
 
     const assessmentDashboardColumns = [
         {
@@ -358,7 +361,11 @@ function Jobs() {
                 open={isModalOpenForEyeIcon}
                 width="1000px"
                 onCancel={handleEyeCancel}
-                footer={<Button onClick={handleDownloadCSV}>Download as CSV</Button>}
+                footer={
+                    <CSVLink data={selectedRowData} filename="output.csv">
+                        Download CSV
+                    </CSVLink>
+                }
             >
                 <Table  dataSource={selectedRowData} columns={assessmentDashboardColumns}/>
             </Modal>

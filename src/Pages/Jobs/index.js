@@ -26,42 +26,42 @@ function Jobs() {
         
     ]);
 
-    const assesmentDashboardData = [
-        {
-            "ScheduleID": 619212545,
-            "jdNumber": 619212407,
-            "jdName": "sai",
-            "testName": "pptp",
-            "testId": 619212452,
-            "candidateName": "sai",
-            "candidateEmail": "careers.apexon@gmail.com",
-            "hrEmail": "careers.apexon@gmail.com",
-            "scheduleDate": "2023-06-23T21:33:00Z",
-            "mandatorySkills": "['python']",
-            "optionalSkills": "['React']",
-            "status": null,
-            "max_score": null,
-            "act_Score": null,
-            "percentage": null
-        },
-        {
-            "ScheduleID": 619212853,
-            "jdNumber": 619212406,
-            "jdName": "sai",
-            "testName": "pptp",
-            "testId": 619212452,
-            "candidateName": "sd",
-            "candidateEmail": "shivendrakumar.tiwari@apexon.com",
-            "hrEmail": "shivendrakumar.tiwari@apexon.com",
-            "scheduleDate": "2023-06-20T21:28:00Z",
-            "mandatorySkills": "['python']",
-            "optionalSkills": "['React']",
-            "status": null,
-            "max_score": null,
-            "act_Score": null,
-            "percentage": null
-        }
-    ]
+    // const assesmentDashboardData = [
+    //     {
+    //         "ScheduleID": 619212545,
+    //         "jdNumber": 619212407,
+    //         "jdName": "sai",
+    //         "testName": "pptp",
+    //         "testId": 619212452,
+    //         "candidateName": "sai",
+    //         "candidateEmail": "careers.apexon@gmail.com",
+    //         "hrEmail": "careers.apexon@gmail.com",
+    //         "scheduleDate": "2023-06-23T21:33:00Z",
+    //         "mandatorySkills": "['python']",
+    //         "optionalSkills": "['React']",
+    //         "status": null,
+    //         "max_score": null,
+    //         "act_Score": null,
+    //         "percentage": null
+    //     },
+    //     {
+    //         "ScheduleID": 619212853,
+    //         "jdNumber": 619212406,
+    //         "jdName": "sai",
+    //         "testName": "pptp",
+    //         "testId": 619212452,
+    //         "candidateName": "sd",
+    //         "candidateEmail": "shivendrakumar.tiwari@apexon.com",
+    //         "hrEmail": "shivendrakumar.tiwari@apexon.com",
+    //         "scheduleDate": "2023-06-20T21:28:00Z",
+    //         "mandatorySkills": "['python']",
+    //         "optionalSkills": "['React']",
+    //         "status": null,
+    //         "max_score": null,
+    //         "act_Score": null,
+    //         "percentage": null
+    //     }
+    // ]
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);

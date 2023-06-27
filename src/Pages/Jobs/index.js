@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {PlusOutlined,EditFilled,DeleteFilled,EyeFilled} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
-//import { stringify } from 'csv-stringify';
+// import { stringify } from 'csv-stringify';
 import { CSVLink } from 'react-csv';
 
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
@@ -360,13 +360,13 @@ function Jobs() {
                 title="Filter Data"
                 open={isModalOpenForEyeIcon}
                 width="1000px"
-                onCancel={handleEyeCancel}
-                footer={
-                    <CSVLink data={selectedRowData} filename="output.csv">
-                        Download CSV
-                    </CSVLink>
-                }
+                onCancel={handleEyeCancel}                
             >
+                
+                    {/* <CSVLink data={selectedRowData} filename="output.csv">
+                        Download CSV
+                    </CSVLink> */}
+                
                 <Table  dataSource={selectedRowData} columns={assessmentDashboardColumns}/>
             </Modal>
         </div>

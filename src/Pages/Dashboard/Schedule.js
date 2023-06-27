@@ -236,7 +236,7 @@ function Schedule() {
                                 ></Select>
                             </Form.Item>
 
-                            <Form.Item
+                            {/* <Form.Item
                                 label="JD Number"
                                 name="JD Number"
                                 rules={[
@@ -259,7 +259,7 @@ function Schedule() {
                                     options={jdNumberOptions}
 
                                 ></Select>
-                            </Form.Item>                          
+                            </Form.Item>                           */}
 
 
 

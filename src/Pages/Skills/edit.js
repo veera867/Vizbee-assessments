@@ -54,7 +54,7 @@ function EditSkill() {
                 console.log(apiResponse);
                 //According to the status from API
                 if (apiResponse.status === 200) {
-                    setSkillId(apiResponse.data.SelectkillId);
+                    setSkillId(apiResponse.data.SkillID);
                     setSkillName(apiResponse.data.SkillName);
                     setSkillGroup(apiResponse.data.SkillGroup);
                     setQuestions(apiResponse.data.ListOfQuestions);

@@ -1,57 +1,22 @@
 import React,{useState,useEffect} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Table ,Button,message, Spin, Divider  } from 'antd';
+import {EyeFilled} from '@ant-design/icons';
 
 import LoadAssessmentsAPI from '../../Apis/Assessments/LoadAssessmentsAPI';
 
 import './dashboard.css';
 
 const Dashboard = () => {
+    const navigate = useNavigate()
     const location = useLocation()
     const filterJobData = location.state;
     console.log(filterJobData);
     // console.log("filterJobData", filterJobData)
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [assessments,setAssessments] = useState(
-        [
-        {
-            "ScheduleID": 619212545,
-            "jdNumber": 524093836,
-            "jdName": "sai",
-            "testName": "pptp",
-            "testId": 619212452,
-            "candidateName": "sai",
-            "candidateEmail": "careers.apexon@gmail.com",
-            "hrEmail": "careers.apexon@gmail.com",
-            "scheduleDate": "2023-06-23T21:33:00Z",
-            "mandatorySkills": "['python']",
-            "optionalSkills": "['React']",
-            "status": null,
-            "max_score": null,
-            "act_Score": null,
-            "percentage": null
-        },
-        {
-            "ScheduleID": 619212853,
-            "jdNumber": 619212406,
-            "jdName": "sai",
-            "testName": "pptp",
-            "testId": 619212452,
-            "candidateName": "sd",
-            "candidateEmail": "shivendrakumar.tiwari@apexon.com",
-            "hrEmail": "shivendrakumar.tiwari@apexon.com",
-            "scheduleDate": "2023-06-20T21:28:00Z",
-            "mandatorySkills": "['python']",
-            "optionalSkills": "['React']",
-            "status": null,
-            "max_score": null,
-            "act_Score": null,
-            "percentage": null
-        }
-    ]
-    );
+    const [assessments,setAssessments] = useState([]);
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
@@ -140,10 +105,18 @@ const Dashboard = () => {
     //          key: 'max_score',
     //    }, 
         {
-            title: 'Score',
-             dataIndex: 'act_Score',
-             key: 'act_Score',
-        }
+            title: 'Percentage',
+             dataIndex: 'percentage',
+             key: 'percentage',
+        },
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'x',
+            render: (record) => <div className="button-holder">
+                 <Button icon={<EyeFilled />} onClick={() => navigate("/app/asmt-dashboard/reports", {state:record})} />                            
+            </div>
+        } 
 
         // {
         //     title: 'Report',
@@ -151,6 +124,11 @@ const Dashboard = () => {
         //     key: 'report',
        // }
     ];
+
+    const handleEyeClick = (record) => {
+        console.log("handleEyeClick",record)
+        navigate("asmt-dashboard/reports", {state:record})
+    }
 
     return (
         <div className="layout-outer">

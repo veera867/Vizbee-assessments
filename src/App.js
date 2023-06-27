@@ -7,12 +7,14 @@ import AuthLayout from './Pages/Auth';
 import VerifyCode from './Pages/Assessment/VerifyCode';
 import Assessment from './Pages/Assessment';
 import Greeting from './Pages/Assessment/Greeting';
+import UserRegister from '../src/Pages/Auth/register/register'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/auth/login" />} />
-      <Route path="/auth/*" element={<AuthLayout />}></Route>
+      <Route path="/auth/*" element={<AuthLayout />}></Route> 
+      <Route path='/auth/register' element={<UserRegister />} ></Route>
       <Route path="/app/*" element={<AppLayout />}></Route>
 
       <Route path="/assessment" element={<VerifyCode />}></Route>

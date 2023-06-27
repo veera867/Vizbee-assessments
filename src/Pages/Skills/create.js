@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
+import { Tooltip } from 'antd';
 
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
 import LoadAutoGenerateQuestions from '../../Apis/Skills/LoadAutoGenerateQuestions'
@@ -336,14 +337,18 @@ function CreateSkill() {
                     <h1>{''}</h1>
 
                     <div className="button-holder">
+                    <Tooltip title="Add Questions">
                         <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
+                    </Tooltip>
                         <span></span>
                         <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
+                        <Tooltip title="Csv File Upload">
                             <Button type="primary" 
                                 shape="circle" 
                                 icon={<CloudUploadOutlined />} 
                                 onClick={handleUploadClick} 
                             />
+                        </Tooltip>
                             <input
                                 type="file"
                                 id="csv-upload"

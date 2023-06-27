@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Login';
-
+import UserRegister from './register/register'
 import './index.css';
 
 function AuthLayout() {
@@ -10,7 +10,7 @@ function AuthLayout() {
             <div className="auth_component">
                 <Routes>
                     <Route path="/" element={<Navigate to="/auth/login" />} />
-                    <Route path="/login" element={<Login />}></Route>
+                    <Route path="/login" element={<Login />}></Route>                   
                 </Routes>
             </div>
         </div>

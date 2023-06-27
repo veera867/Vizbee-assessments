@@ -2,20 +2,22 @@ import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
-        // "Content-Type" : "multipart/form-data",
+        //"Content-Type" : "application/json",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
     }
 };
 
-const LoginAPI = async (values) => {
-    console.log("payload : ",values);
+const GetAssessmentReports = async (id) => {
+    const payload = {
+        jobId:id
+    }
 
     //This api has to be replaced.
-    const url = `api/superuser-login/`;
+    const link = `assessment-report`;
 
-    return await axios.post(url,values,axiosConfig)
+    return await axios.get(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })
@@ -26,4 +28,4 @@ const LoginAPI = async (values) => {
     })
 }
 
-export default LoginAPI;
+export default GetAssessmentReports;

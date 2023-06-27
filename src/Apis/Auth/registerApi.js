@@ -9,11 +9,11 @@ let axiosConfig = {
     }
 };
 
-const LoginAPI = async (values) => {
+const UserRegistrationApi = async (values) => {
     console.log("payload : ",values);
 
     //This api has to be replaced.
-    const url = `api/superuser-login/`;
+    const url = `register`;
 
     return await axios.post(url,values,axiosConfig)
     .then((result)=>{
@@ -26,4 +26,4 @@ const LoginAPI = async (values) => {
     })
 }
 
-export default LoginAPI;
+export default UserRegistrationApi;

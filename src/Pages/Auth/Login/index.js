@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import {Form,Input,Button,message} from 'antd';
+import { Form, Input, Button, message, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import UserRegister from '../register/register';
 
-import { A11y,Autoplay } from 'swiper';
+import { A11y, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
@@ -18,48 +19,45 @@ import LoginAPI from '../../../Apis/Auth/LoginAPI';
 function Login() {
     const navigate = useNavigate();
 
-    const [mail,setMail] = useState('');
-    const [password,setPassword] = useState('');
+    const [mail, setMail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [messageApi, contextHolder] = message.useMessage();
+    const [visible, setVisible] = useState(false)
 
     const handleSave = async () => {
         setLoading(true);
-        try{
+        try {
             const payload = {
-                'email': mail,
+                'username': mail,
                 'password': password
             }
             const apiResponse = await LoginAPI(payload);
-            console.log("apiResponse",apiResponse);
+            console.log("apiResponse", apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setLoading(false);
                 messageApi.open({
                     type: 'success',
                     content: apiResponse.message,
-                });          
-                
+                });
+
                 //Auto redirection
-                setTimeout(()=>{
+                setTimeout(() => {
                     navigate("/app/jobs");
-                },1000);
+                }, 1000);
             } else {
                 setLoading(false);
 
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });      
-                
-                //Auto redirection remove this
-                setTimeout(()=>{
-                    navigate("/app/jobs");
-                },1000);
-            }    
+                });
+               
+            }
         } catch (err) {
             console.log(err.message);
             setLoading(false);
@@ -67,37 +65,44 @@ function Login() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
 
-            //Auto redirection remove this
-            setTimeout(()=>{
-                navigate("/app/jobs");
-            },1000);
-        }    
+           
+        }
+    }
+
+    const handleRegister = () => {
+        // setVisible(true)
+        navigate('/auth/register')
+    }
+
+    const handleNextCancelClick = () =>{
+        setVisible(false)
     }
 
     return (
         <div className="login_layout">
             {contextHolder}
             <div className='left_wrapper'>
-                <Swiper 
+                {/* <LoginFormComponent /> */}
+                <Swiper
                     className="imageCarousel"
-                    modules={[A11y,Autoplay]}
+                    modules={[A11y, Autoplay]}
                     autoplay={{
                         delay: 2000,
                         disableOnInteraction: false,
-                    }}          
+                    }}
                     spaceBetween={0}
                     slidesPerView={1}
                 >
                     <SwiperSlide className="carousel imgHolder">
-                        <img src="/assets/login-img-1.jpg" alt="carousel-img-1"/>
+                        <img src="/assets/login-img-1.jpg" alt="carousel-img-1" />
                     </SwiperSlide>
                     <SwiperSlide className="carousel imgHolder">
-                        <img src="/assets/apexon.png" alt="carousel-img-2"/>
+                        <img src="/assets/apexon.png" alt="carousel-img-2" />
                     </SwiperSlide>
                     <SwiperSlide className="carousel imgHolder">
-                        <img src="/assets/login-img-3.jpg" alt="carousel-img-3"/>
+                        <img src="/assets/login-img-3.jpg" alt="carousel-img-3" />
                     </SwiperSlide>
                 </Swiper>
             </div>
@@ -105,7 +110,7 @@ function Login() {
                 <div className='login_box'>
                     <div className='title_box'>
                         <div className='header-logo-wrapper'>
-                            <img alt="logo" src="/apexon-logo.jpg"/>
+                            <img alt="logo" src="/apexon-logo.jpg" />
                             <h1>Apexon</h1>
                         </div>
                         <span>Login to access your account.</span>
@@ -125,18 +130,19 @@ function Login() {
                         onFinish={handleSave}
                     >
                         <Form.Item
-                            label="Email"
+                            label="UserName"
                             name="email"
                             rules={[
                                 {
+
                                     required: true,
-                                    message: 'Please enter Email ID!',
+                                    message: 'Please enter User Name!',
                                 }
                             ]}
                         >
-                            <Input 
+                            <Input
                                 value={mail}
-                                onChange={(value)=>setMail(value.target.value)}
+                                onChange={(value) => setMail(value.target.value)}
                             />
                         </Form.Item>
 
@@ -150,29 +156,41 @@ function Login() {
                                 }
                             ]}
                         >
-                            <Input.Password 
+                            <Input.Password
                                 value={password}
-                                onChange={(value)=>setPassword(value.target.value)}
+                                onChange={(value) => setPassword(value.target.value)}
                             />
                         </Form.Item>
 
                         <Form.Item
                             style={{
                                 width: '100%',
-                            }}                            
+                            }}
                         >
-                            <Button 
-                                type="primary" 
+                            <Button
+                                type="primary"
                                 htmlType="submit"
                                 style={{
                                     width: '100%',
-                                }} 
+                                }}
                                 loading={loading}
                             >
                                 Login
                             </Button>
                         </Form.Item>
+                        <Button type="link" onClick={handleRegister} >Create New User</Button>
+                        {/* <Modal
+                            title="Next Question"
+                            open={visible}
+                            // onOk={handleNextConfirmClick}
+                             onCancel={handleNextCancelClick}
+                            // confirmLoading={confirmLoading}
+                        >
+                          <UserRegister />
+                        </Modal> */}
+                        
                     </Form>
+
                 </div>
             </div>
         </div>

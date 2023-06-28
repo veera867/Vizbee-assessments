@@ -26,6 +26,15 @@ function Schedule() {
     const [testData, setTestData] = useState()
     //console.log(hmail, "cmail", cmail)
 
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     //usermail from localstore has to be fetched here and displayed
     useEffect(()=>{
         let hrmail = localStorage.getItem('usermail');

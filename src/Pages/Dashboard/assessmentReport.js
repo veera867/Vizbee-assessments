@@ -16,6 +16,15 @@ const AssesmentReport = () => {
     const [responseData, setResponseData] = useState()
     const [loading, setLoading] = useState(false);
 
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     const fetchAssessmentReportsData = async (jdNumber) => {
         setLoading(true)
         const apiResponse = await GetAssessmentReports(jdNumber)

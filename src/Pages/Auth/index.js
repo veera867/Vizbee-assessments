@@ -10,7 +10,8 @@ function AuthLayout() {
             <div className="auth_component">
                 <Routes>
                     <Route path="/" element={<Navigate to="/auth/login" />} />
-                    <Route path="/login" element={<Login />}></Route>                   
+                    <Route path="/login" element={<Login />}></Route> 
+                    <Route path="/register" element={<UserRegister />}></Route>                                     
                 </Routes>
             </div>
         </div>

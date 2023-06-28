@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button,message, Divider, Form, Input, Select } from 'antd';
 
 import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
 import '../Dashboard/dashboard.css';
-import { useEffect } from 'react';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI'
 function CreateTest() {
     const navigate = useNavigate();
@@ -19,6 +18,15 @@ function CreateTest() {
 
     const [skillsDataList,setSkillsDataList] = useState();
     const [skillsData, setSkillsData] = useState();
+
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
 
     useEffect(()=> {
         fetchSkillsData()

@@ -22,6 +22,15 @@ function CreateJob() {
 
     const [saveLoading, setSaveLoading] = useState(false);
 
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     useEffect(() => {
         fetchSkillsData()
         console.log("useEffect")

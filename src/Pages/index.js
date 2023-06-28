@@ -78,7 +78,8 @@ const AppLayout = () => {
         // if(apiResponse.status == 200){
         //     navigate("/auth/login")
         // }
-        navigate("/auth/login")
+        navigate("/auth/login");
+        localStorage.removeItem('authtoken')
     }
 
     return (

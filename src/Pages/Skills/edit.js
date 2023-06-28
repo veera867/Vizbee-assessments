@@ -46,6 +46,15 @@ function EditSkill() {
 
     const fileInputRef = useRef(null);
 
+        //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     useEffect(() => {   
         async function GetSkillDetails() {
             setLoading(true);

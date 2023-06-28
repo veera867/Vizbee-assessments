@@ -1,4 +1,5 @@
 import React,{useState,useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import {PlusOutlined,EditFilled,DeleteFilled} from '@ant-design/icons';
 import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
 
@@ -9,6 +10,7 @@ import '../Skills/skills.css';
 
 function Tests() {
 
+    const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
     const [Tests,setTests] = useState([]);
@@ -22,7 +24,16 @@ function Tests() {
     const [cnfmDel,setCnfmDel] = useState(false);
     const [delId,setDelId] = useState(0);
     const [confirmLoading,setConfirmLoading] = useState(false);
-console.log("Tests", Tests)
+
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     useEffect(()=>{
         async function getTests(){
             setLoading(true);

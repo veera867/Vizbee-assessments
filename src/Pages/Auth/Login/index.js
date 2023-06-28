@@ -45,6 +45,10 @@ function Login() {
                     content: apiResponse.message,
                 });
 
+                //on sucess I have to get authtoken
+                //store it in localstorage
+                localStorage.setItem("authtoken",apiResponse.authToken);
+
                 //Auto redirection
                 setTimeout(() => {
                     navigate("/app/jobs");
@@ -56,7 +60,6 @@ function Login() {
                     type: 'error',
                     content: apiResponse.message,
                 });
-               
             }
         } catch (err) {
             console.log(err.message);
@@ -66,14 +69,12 @@ function Login() {
                 type: 'error',
                 content: err.message,
             });
-
-           
         }
     }
 
     const handleRegister = () => {
         // setVisible(true)
-        navigate('/auth/register')
+        navigate('/auth/register');
     }
 
     const handleNextCancelClick = () =>{
@@ -178,15 +179,21 @@ function Login() {
                                 Login
                             </Button>
                         </Form.Item>
-                        <Button type="link" onClick={handleRegister} >Create New User</Button>
+                        <Button 
+                            type="link" 
+                            onClick={handleRegister} 
+                            style={{
+                                width: '100%',
+                            }}
+                        >Create New User</Button>
                         {/* <Modal
                             title="Next Question"
                             open={visible}
                             // onOk={handleNextConfirmClick}
-                             onCancel={handleNextCancelClick}
+                                onCancel={handleNextCancelClick}
                             // confirmLoading={confirmLoading}
                         >
-                          <UserRegister />
+                            <UserRegister />
                         </Modal> */}
                         
                     </Form>

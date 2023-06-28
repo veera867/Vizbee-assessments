@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import {PlusOutlined,EditFilled,DeleteFilled} from '@ant-design/icons';
-import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
+import { Table,Modal ,Button,message, Divider  } from 'antd';
 
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 import DeleteSkillsAPI from '../../Apis/Skills/DeleteSkillsAPI';
@@ -9,6 +10,7 @@ import './skills.css';
 
 function Skills() {
 
+    const navigate= useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
     const [skills,setSkills] = useState([
@@ -78,6 +80,15 @@ function Skills() {
     const [cnfmDel,setCnfmDel] = useState(false);
     const [delId,setDelId] = useState(0);
     const [confirmLoading,setConfirmLoading] = useState(false);
+
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
 
     useEffect(()=>{
         async function getSkills(){

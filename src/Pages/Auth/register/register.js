@@ -45,6 +45,10 @@ const UserRegister = () => {
                     content: apiResponse.message,
                 });
 
+                //on sucess I have to get authtoken
+                //store it in localstorage
+                localStorage.setItem("authtoken",apiResponse.authToken);
+
                 //Auto redirection
                 setTimeout(() => {
                     navigate("/auth/login")
@@ -58,7 +62,6 @@ const UserRegister = () => {
                 });
 
                 //Auto redirection remove this
-               
             }
         } catch (err) {
             console.log(err.message);
@@ -216,7 +219,7 @@ const UserRegister = () => {
                                     <Input.Password />
                                 </Form.Item>
                             </Col>
-                            <Col span={10} offset={10}>
+                            <Col span={24}>
                                 <Form.Item>
                                     <Button 
                                     type="primary" 

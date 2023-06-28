@@ -23,6 +23,15 @@ const Dashboard = () => {
     const [hasErr,setHasErr] = useState(false);
     const [errMsg,setErrMsg] = useState('');
 
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
+
     useEffect(()=>{
         async function getAssessments(){
             setLoading(true);

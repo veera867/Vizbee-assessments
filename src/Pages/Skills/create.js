@@ -1,4 +1,4 @@
-import React,{useState, useRef} from 'react';
+import React,{useState, useRef, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
@@ -65,6 +65,15 @@ function CreateSkill() {
     const [importance,setImportance] = useState('');
 
     const fileInputRef = useRef(null);
+
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
 
     const handleCancel = () => {
         navigate(-1);

@@ -75,6 +75,15 @@ function Jobs() {
     const [isModalOpenForEyeIcon, setIsModalOpenForEyeIcon] = useState(false)
     const [selectedRowData, setSelectedRowData] = useState()
     const [selectedRowId, setSelectedRowId] = useState()
+
+    //temporary auth token verification process
+    //has to create an api for verification of authToken
+    useEffect(()=>{
+        const token = localStorage.getItem('authtoken');
+        if(!token){
+            navigate('/auth/login');
+        }
+    },[]);
     
     console.log("jobs", jobs)
     useEffect(()=>{
@@ -272,8 +281,8 @@ function Jobs() {
     //    }, 
         {
             title: 'Score',
-             dataIndex: 'act_Score',
-             key: 'act_Score',
+            dataIndex: 'act_Score',
+            key: 'act_Score',
         }
 
         // {

@@ -10,12 +10,14 @@ let axiosConfig = {
 };
 
 const DeleteJobAPI = async (id) => {
-    console.log("Delete request id : ",id);
+    const payload ={
+        jobId:id
+    }
 
     //This api has to be replaced.
-    const link = `/jobs/delete/${id}`;
+    const link = `job/delete`;
 
-    return await axios.delete(link,axiosConfig)
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

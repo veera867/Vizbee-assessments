@@ -44,8 +44,9 @@ const Jobs = () => {
     useEffect(() => {
         async function getJobs() {
             setLoading(true);
+            // let token = localStorage.getItem("authToken");
             try {
-                const apiResponse = await LoadJobsAPI({});
+                const apiResponse = await LoadJobsAPI();
                 console.log("apiResponse", apiResponse);
 
                 //According to the status from API
@@ -83,7 +84,7 @@ const Jobs = () => {
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.testId);
+        setDelId(record.JobID);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);

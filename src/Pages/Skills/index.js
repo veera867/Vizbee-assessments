@@ -131,7 +131,7 @@ function Skills() {
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.skillId);
+        setDelId(record.SkillID);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);

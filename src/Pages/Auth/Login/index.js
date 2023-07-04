@@ -48,9 +48,9 @@ function Login() {
 
                 //on sucess I have to get authtoken
                 //store it in localstorage
-                // localStorage.setItem("authtoken",apiResponse.authToken);
-                let token = mail + apiResponse.message
-                 localStorage.setItem("authtoken",token);
+                localStorage.setItem("authtoken",apiResponse?.data?.authToken);
+                // let token = mail + apiResponse.message
+                //  localStorage.setItem("authtoken",token);
 
                 //Auto redirection
                 setTimeout(() => {
@@ -73,11 +73,6 @@ function Login() {
                 type: 'error',
                 content: err.message,
             });
-            // let token = mail 
-            // localStorage.setItem("authtoken",token);
-            // setTimeout(() => {
-            //     navigate("/app/jobs");
-            // }, 1000);
 
         }
     }

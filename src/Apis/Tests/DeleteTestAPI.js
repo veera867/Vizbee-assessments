@@ -10,12 +10,13 @@ let axiosConfig = {
 };
 
 const DeleteTestAPI = async (id) => {
-    console.log("Delete request id : ",id);
-
+    const payload ={
+        testId:id
+    }
     //This api has to be replaced.
-    const link = `/tests/delete/${id}`;
+    const link = `test/delete`;
 
-    return await axios.delete(link,axiosConfig)
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

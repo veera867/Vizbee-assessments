@@ -10,12 +10,13 @@ let axiosConfig = {
 };
 
 const DeleteSkillsAPI = async (id) => {
-    console.log("Delete request id : ",id);
-
+    const payload = {
+        skillId: id
+    }
     //This api has to be replaced.
-    const link = `/skills/delete/${id}`;
+    const link = `skill/delete`;
 
-    return await axios.delete(link,axiosConfig)
+    return await axios.post(link, payload, axiosConfig)
     .then((result)=>{
         return result;
     })

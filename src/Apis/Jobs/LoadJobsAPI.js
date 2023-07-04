@@ -2,6 +2,7 @@ import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
+        // 'Authorization': `Bearer ${token}`
         //"Content-Type" : "application/json",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
@@ -9,8 +10,8 @@ let axiosConfig = {
     }
 };
 
-const LoadJobsAPI = async () => {
-
+const LoadJobsAPI = async (token) => {
+    
     //This api has to be replaced.
     const url = `/jobs/list`;
 

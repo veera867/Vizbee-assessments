@@ -176,6 +176,11 @@ function EditTests() {
         setOskills(value);
     }
 
+    //handling change events
+    const handleTestName = (event) => {
+        setTestName(event.target.value);
+    }
+
     return (
         <div className="layout-outer">
             {contextHolder}
@@ -242,7 +247,7 @@ function EditTests() {
                             <Input
                                 value={testName}
                                 defaultValue={testName}
-                                onChange={(value) => setTestName(value)}
+                                onChange={handleTestName}
                             />
                         </Form.Item>
 

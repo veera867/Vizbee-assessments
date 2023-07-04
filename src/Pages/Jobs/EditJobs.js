@@ -10,14 +10,17 @@ import '../Dashboard/dashboard.css';
 function EditJobs() {
     const {id} = useParams();
     const navigate = useNavigate();
-    const location = useLocation()
-console.log("location", location)
+    const location = useLocation();
     const [messageApi, contextHolder] = message.useMessage();
 
     //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
+    const [loading,setLoading] = useState(true);
+    const [fetchFinished, setFetchFinished] = useState(false);
+
     const [hasErr,setHasErr] = useState(false);
     const [errMsg,setErrMsg] = useState('');    
+
+    const [data,setData] = useState([]);
 
     const [jdId,setJdId] = useState(0);
     const [jdName,setJdName] = useState('');
@@ -41,11 +44,9 @@ console.log("location", location)
 
     useEffect(()=> {
         fetchSkillsData()
-        console.log("useEffect")
     },[])
 
     const fetchSkillsData = async() => {
-        console.log("fetch")
         try{
             const response = await GetSkillsAPI()
             console.log("response", response)
@@ -73,22 +74,32 @@ console.log("location", location)
     }
 
     useEffect(()=>{
+        console.log("Data changed : ",data);
+
+        if(fetchFinished){
+            setLoading(false);
+
+            setJdId(data.JobID);
+            setJdName(data.jdName);                   
+            setMskills(data.mandatorySkills);
+            setOskills(data.optionalSkills);
+            setComplexity(data.complexity);
+        }
+    },[data,fetchFinished]);
+
+    useEffect(()=>{
         async function GetJobDetails(){
             setLoading(true);
+
             try{
                 const apiResponse = await GetJobWithID(id !== undefined || id !== null ? id : 0);
                 console.log("GetSpecificJobDetails",apiResponse);
     
                 //According to the status from API
-               
                 if(apiResponse.status === 200){
                     console.log("success",apiResponse);
-                    setJdId(apiResponse.data.JobID);
-                    setJdName(apiResponse.data.jdName);                   
-                    setMskills(apiResponse.data.mandatorySkills);
-                    setOskills(apiResponse?.data.optionalSkills);
-                    setComplexity(apiResponse.data.complexity);
-                    setLoading(false);
+                    setData(apiResponse.data);
+                    setFetchFinished(true);
                 } else {
                     setHasErr(true);
                     setErrMsg(apiResponse.message);
@@ -110,7 +121,7 @@ console.log("location", location)
             }    
         }
 
-        setJdId(id);
+        setJdId();
         GetJobDetails();
     },[]);
 
@@ -178,162 +189,171 @@ console.log("location", location)
         setOskills(value);
     }
 
-    console.log("jobs", jdId, jdName, oskills, mskills, complexity)
+    //console.log("jobs", jdId, jdName, oskills, mskills, complexity)
+
+    const handleNameChange = (event) => {
+        setJdName(event.target.value);
+    }
+    
     return (
         <div className="layout-outer">
             {contextHolder}
             <div className="layout-inner">
-                <div className="title-bar">
-                    <h1>Edit Job</h1>
+                {
+                    !loading
+                    ? hasErr
+                        ? <p>{errMsg}</p>
+                        : <>
+                            <div className="title-bar">
+                                <h1>Edit Job</h1>
 
-                    <div className="button-holder">
-                        <Button onClick={handleCancel}>Back</Button>
-                    </div>
-                </div>
-
-                <Divider />
-                
-                <div className="content-wrapper form-center">
-                    <Form
-                        name="basic"
-                        layout="vertical"
-                        style={{
-                            width: '100%',
-                            maxWidth: 600,
-                        }}
-                        initialValues={{
-                            jdId: jdId,
-                            jdName: jdName,
-                            mandatorySkills: mskills,
-                            optionalSkills: oskills,
-                            complexity: complexity,
-                          }}
-                        // initialValues={{
-                        //     remember: true,
-                        // }}
-                        autoComplete="off"
-                        onFinish={handleSave}
-                       
-                    >
-                        <Form.Item
-                            label="Job ID"
-                            name="jdId"
-                        >
-                            <Input 
-                                value={id}
-                                // defaultValue={id}
-                                disabled
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="JD Name"
-                            name="jdName"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please enter name!',
-                                }
-                            ]}
-                        >
-                            <Input 
-                                value={jdName}
-                               // defaultValue={jdName}
-                                onChange={(value)=>setJdName(value)}
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Mandatory Skills"
-                            name="mandatorySkills"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
-                        >
-                            <Select
-                                value={mskills}
-                                defaultActiveFirstOption={mskills}
-                             //   defaultValue={mskills}
-                                onChange={(value)=>updateMSkills(value)}
-                                mode="multiple"
-                                style={{
-                                    width : '100%'
-                                }}
-                                options={skillsData}
-                            ></Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Optional Skills"
-                            name="optionalSkills"
-                        >
-                            <Select
-                                value={oskills}
-                         //       defaultValue={oskills}
-                                onChange={(value)=>updateOSkills(value)}
-                                mode="multiple"
-                                style={{
-                                    width : '100%'
-                                }}
-                                options={skillsData}
-                            ></Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Complexity"
-                            name="complexity"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
-                        >
-                            <Select
-                                value={complexity}
-                            //    defaultValue={complexity}
-                                onChange={(value)=>{setComplexity(value)}}
-                                style={{
-                                    width : '100%'
-                                }}
-                                options={[
-                                    {
-                                        value: 'Beginner',
-                                        label: 'Beginner'
-                                    },
-                                    {
-                                        value: 'Intermediate',
-                                        label: 'Intermediate'
-                                    },
-                                    {
-                                        value: 'Pro',
-                                        label: 'Pro'
-                                    }
-                                ]}
-                            ></Select>
-                        </Form.Item>
-
-                        <div className="title-bar">
-                            <h1>{''}</h1>
-
-                            <Form.Item>
                                 <div className="button-holder">
-                                    <Button danger onClick={handleCancel}>Cancel</Button>
-                                    <span></span>
-                                    {
-                                        saveLoading
-                                        ? <Button type="primary" htmlType="submit" loading>Updaing</Button>
-                                        : <Button type="primary" htmlType="submit">Update</Button>
-                                    }
+                                    <Button onClick={handleCancel}>Back</Button>
                                 </div>
-                            </Form.Item>
-                        </div>
-                    </Form>
-                </div>
+                            </div>
+
+                            <Divider />
+
+                            <div className="content-wrapper form-center">
+                                <Form
+                                    name="basic"
+                                    layout="vertical"
+                                    style={{
+                                        width: '100%',
+                                        maxWidth: 600,
+                                    }}
+                                    initialValues={{
+                                        jdId,
+                                        jdName,
+                                        mskills,
+                                        oskills,
+                                        complexity
+                                    }}
+                                    autoComplete="off"
+                                    onFinish={handleSave}
+                                >
+                                    <Form.Item
+                                        label="Job ID"
+                                        name="jdId"
+                                    >
+                                        <Input 
+                                            value={jdId}
+                                            // defaultValue={id}
+                                            disabled
+                                        />
+                                    </Form.Item>
+                                
+                                    <Form.Item
+                                        label="JD Name"
+                                        name="jdName"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Please enter name!',
+                                            }
+                                        ]}
+                                    >
+                                        <Input 
+                                            value={jdName}
+                                           // defaultValue={jdName}
+                                            onChange={handleNameChange}
+                                        />
+                                    </Form.Item>
+                                    
+                                    
+                                    <Form.Item
+                                        label="Mandatory Skills"
+                                        name="mandatorySkills"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Please select!',
+                                            },
+                                        ]}
+                                    >
+                                        <Select
+                                            value={mskills}
+                                            defaultActiveFirstOption={mskills}
+                                         //   defaultValue={mskills}
+                                            onChange={(value)=>updateMSkills(value)}
+                                            mode="multiple"
+                                            style={{
+                                                width : '100%'
+                                            }}
+                                            options={skillsData}
+                                        ></Select>
+                                    </Form.Item>
+                                        
+                                    <Form.Item
+                                        label="Optional Skills"
+                                        name="optionalSkills"
+                                    >
+                                        <Select
+                                            value={oskills}
+                                     //       defaultValue={oskills}
+                                            onChange={(value)=>updateOSkills(value)}
+                                            mode="multiple"
+                                            style={{
+                                                width : '100%'
+                                            }}
+                                            options={skillsData}
+                                        ></Select>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Complexity"
+                                        name="complexity"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Please select!',
+                                            },
+                                        ]}
+                                    >
+                                        <Select
+                                            value={complexity}
+                                        //    defaultValue={complexity}
+                                            onChange={(value)=>{setComplexity(value)}}
+                                            style={{
+                                                width : '100%'
+                                            }}
+                                            options={[
+                                                {
+                                                    value: 'Beginner',
+                                                    label: 'Beginner'
+                                                },
+                                                {
+                                                    value: 'Intermediate',
+                                                    label: 'Intermediate'
+                                                },
+                                                {
+                                                    value: 'Pro',
+                                                    label: 'Pro'
+                                                }
+                                            ]}
+                                        ></Select>
+                                    </Form.Item>
+
+                                    <div className="title-bar">
+                                        <h1>{''}</h1>
+
+                                        <Form.Item>
+                                            <div className="button-holder">
+                                                <Button danger onClick={handleCancel}>Cancel</Button>
+                                                <span></span>
+                                                {
+                                                    saveLoading
+                                                    ? <Button type="primary" htmlType="submit" loading>Updaing</Button>
+                                                    : <Button type="primary" htmlType="submit">Update</Button>
+                                                }
+                                            </div>
+                                        </Form.Item>
+                                    </div>
+                                </Form>
+                            </div>
+                        </>
+                    : <Spin></Spin>
+                }
             </div>
         </div>
     )

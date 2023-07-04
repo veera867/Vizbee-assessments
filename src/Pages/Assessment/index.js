@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import React, { createRef } from "react";
 import { Layout, Row, Col, Button, Modal, message, Spin, Result, Progress } from "antd";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
@@ -19,12 +19,15 @@ const Assessment = () => {
   const location = useLocation();
 
   const [messageApi, contextHolder] = message.useMessage();
-  
-  const assessementCode = location.state;
 
-  const [loading,setLoading] = useState(false);
-  const [hasErr,setHasErr] = useState(false);
-  const [errMsg,setErrMsg] = useState('');
+  const assessementCode = location.state;
+  console.log("assessementCode", assessementCode)
+ 
+ 
+
+  const [loading, setLoading] = useState(false);
+  const [hasErr, setHasErr] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
 
   const [timer, setTimer] = useState(60); // Set timer to 60 seconds
 
@@ -33,8 +36,8 @@ const Assessment = () => {
   const [flag, setFlag] = useState(false);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [confirmLoading,setConfirmLoading] = useState(false);
-  const [finishLoading,setFinishLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [finishLoading, setFinishLoading] = useState(false);
 
   const ref = createRef(null);
   const [image, setImagetakeScreenshot] = useScreenshot();
@@ -45,7 +48,7 @@ const Assessment = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questions, setQuestions] = useState();
-  const [questionsStatus,setQuestionsStatus] = useState([]);
+  const [questionsStatus, setQuestionsStatus] = useState([]);
 
   const [audioChunks, setAudioChunks] = useState([]);
   const mediaRecorderRef = useRef(null);
@@ -64,45 +67,47 @@ const Assessment = () => {
 
   const sendData = async (audio) => {
     console.log('audio : ', audio);
-    try{
+    try {
       const formData = new FormData();
 
       formData.append("question_id", questions[currentQuestion].QuestionID)
       formData.append("question", questions[currentQuestion].Question)
-      formData.append("test_id", assessementCode)
+      formData.append("skillName", questions[currentQuestion]?.SkillName)
+      formData.append("test_id", assessementCode?.code)
+     
       formData.append("audio", audio);
       formData.append("image", image)
 
       const apiResponse = await SendAssessmentStatusAPI(formData);
       console.log(apiResponse);
-    
+
       //According to the status from API
       if (apiResponse.status === 200) {
-          console.log(apiResponse);
-          console.log(apiResponse.data.message);
+        console.log(apiResponse);
+        console.log(apiResponse.data.message);
 
-          
-          if (currentQuestion < questions.length - 1) {
-            questionsStatus[currentQuestion].status='success';
-            setCurrentQuestion((prevQuestion) => prevQuestion + 1);
-            setTimer(60);
-          } else {
-            setShowConfirmation(true);
-          }
-          setNextQuestionFlag(false);
-          setConfirmLoading(false);
-          messageApi.open({
-            type: 'success',
-            content: 'Your response saved!',
-          });  
 
-          setAudioChunks([]);
-          setIsRecording(false);
-          setElapsedMin(0);
-          setElapsedTime(0);
-          setAnimation(false);
-          setTimeUp(false);
-          setFlag(false);      
+        if (currentQuestion < questions.length - 1) {
+          questionsStatus[currentQuestion].status = 'success';
+          setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+          setTimer(60);
+        } else {
+          setShowConfirmation(true);
+        }
+        setNextQuestionFlag(false);
+        setConfirmLoading(false);
+        messageApi.open({
+          type: 'success',
+          content: 'Your response saved!',
+        });
+
+        setAudioChunks([]);
+        setIsRecording(false);
+        setElapsedMin(0);
+        setElapsedTime(0);
+        setAnimation(false);
+        setTimeUp(false);
+        setFlag(false);
       } else {
         console.log("Error!!");
         setNextQuestionFlag(false);
@@ -114,14 +119,14 @@ const Assessment = () => {
         });
       }
     } catch (err) {
-        console.log(err.message);
-        setNextQuestionFlag(false);
-        setConfirmLoading(false);
+      console.log(err.message);
+      setNextQuestionFlag(false);
+      setConfirmLoading(false);
 
-        messageApi.open({
-          type: 'error',
-          content: err.message,
-        })
+      messageApi.open({
+        type: 'error',
+        content: err.message,
+      })
     }
   };
 
@@ -237,11 +242,11 @@ const Assessment = () => {
   const handleConfirm = async () => {
     // Make API request to submit exam and redirect to result page
     const payload = {
-      scheduleId: assessementCode
+      scheduleId: assessementCode?.code
     }
 
     setFinishLoading(true);
-    try{
+    try {
       const apiResponse = await FinalResultApi(payload);
       console.log("apiResponse", apiResponse);
       setFinishLoading(false);
@@ -279,8 +284,8 @@ const Assessment = () => {
     setFlag(false);
     setTimeUp(false);
 
-    if (currentQuestion < questions.length-1) {
-      questionsStatus[currentQuestion].status='skip';
+    if (currentQuestion < questions.length - 1) {
+      questionsStatus[currentQuestion].status = 'skip';
       setCurrentQuestion((prevQuestion) => prevQuestion + 1);
       setTimer(60);
     } else {
@@ -288,15 +293,15 @@ const Assessment = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     let statusArr = [];
-    questions?.map((item,index) => statusArr.push({
+    questions?.map((item, index) => statusArr.push({
       id: index,
       status: ''
     }));
 
     setQuestionsStatus(statusArr);
-  },[questions]);
+  }, [questions]);
 
   //For initial data loading as questions
   useEffect(() => {
@@ -304,12 +309,22 @@ const Assessment = () => {
       try {
         setLoading(true);
         // const test_id = 1122;
-        const apiResponse = await LoadQuestionsAPI(assessementCode);
+        const payload = {
+          test_id:assessementCode?.code, 
+          currentCompanyName:assessementCode?.currentCompanyName,         
+          designation:assessementCode?.designation,         
+          relavantExperince:assessementCode?.relavantExperince,         
+          totalExperince:assessementCode?.totalExperince,
+          noticePeriod : assessementCode?.noticePeriod,
+          role: assessementCode?.role
+          
+        }
+        const apiResponse = await LoadQuestionsAPI(payload);
         console.log("response", apiResponse);
-        if(apiResponse.status === 200){
+        if (apiResponse.status === 200) {
           setQuestions(apiResponse.data.questions);
           setLoading(false);
-        }else{
+        } else {
           messageApi.open({
             type: 'error',
             content: apiResponse.message,
@@ -356,149 +371,149 @@ const Assessment = () => {
       </Header>
       {loading
         ? <div className='layout-outer'>
-            <div className='layout-inner flexer live-assessment'>
-              <Spin />
-            </div>
-          </div>
-        : hasErr 
-        ? <div className='layout-outer'>
           <div className='layout-inner flexer live-assessment'>
-            <Result 
-              status='error'
-              title='Something went wrong.'
-              extra={
-                <p>{errMsg}</p>
-              }
-            />
+            <Spin />
           </div>
         </div>
-        :
-        <div className="layout-outer">
-          <div className="layout-inner flexer live-assessment">
-            <div className="question-wrapper">
+        : hasErr
+          ? <div className='layout-outer'>
+            <div className='layout-inner flexer live-assessment'>
+              <Result
+                status='error'
+                title='Something went wrong.'
+                extra={
+                  <p>{errMsg}</p>
+                }
+              />
+            </div>
+          </div>
+          :
+          <div className="layout-outer">
+            <div className="layout-inner flexer live-assessment">
+              <div className="question-wrapper">
                 <div className="time-wrapper">
-                  <Progress 
-                    steps={questions?.length} 
-                    percent={((currentQuestion+1) / questions?.length)* 100} 
-                    size={[20,5]}
+                  <Progress
+                    steps={questions?.length}
+                    percent={((currentQuestion + 1) / questions?.length) * 100}
+                    size={[20, 5]}
                   />
                   <p className="timer">
                     <ClockCircleOutlined className="icon-clock" /> Timer: {questions ? timer : "60"}
                   </p>
                 </div>
-              <div className="question-card">
-                <div className="row-flexer">
-                  <p>
-                    {questions && questions[currentQuestion].QuestionID}.{" "}
-                    {questions && questions[currentQuestion].Question}
-                  </p>
-                  {/* {questions && questions.map((item, index) => {
+                <div className="question-card">
+                  <div className="row-flexer">
+                    <p>
+                      {questions && questions[currentQuestion].DisplayId}.{" "}
+                      {questions && questions[currentQuestion].Question}
+                    </p>
+                    {/* {questions && questions.map((item, index) => {
                   return (
                     <>
                       <p className="question-text">{`${index + 1} ${item.Question}`}</p>
                     </>
                   );
                 })} */}
+                  </div>
+                  <div className="audio-animation">
+                    {animation ? (
+                      <div className="animation running">
+                        <span className="first"></span>
+                        <span className="second"></span>
+                        <span className="third"></span>
+                        <span className="fourth"></span>
+                        <span className="fifth"></span>
+                      </div>
+                    ) : (
+                      <div className="animation">
+                        <span className="first"></span>
+                        <span className="second"></span>
+                        <span className="third"></span>
+                        <span className="fourth"></span>
+                        <span className="fifth"></span>
+                      </div>
+                    )}
+                    <p>
+                      0{elapsedMin}:{elapsedTime}
+                    </p>
+                  </div>
                 </div>
-                <div className="audio-animation">
-                  {animation ? (
-                    <div className="animation running">
-                      <span className="first"></span>
-                      <span className="second"></span>
-                      <span className="third"></span>
-                      <span className="fourth"></span>
-                      <span className="fifth"></span>
-                    </div>
+                <div className="button-wrapper">
+                  {isRecording ? (
+                    <Button onClick={handleStopClick}>Stop</Button>
+                  ) : timeUp ? (
+                    <Button onClick={handleRecordClick} disabled>
+                      Record
+                    </Button>
                   ) : (
-                    <div className="animation">
-                      <span className="first"></span>
-                      <span className="second"></span>
-                      <span className="third"></span>
-                      <span className="fourth"></span>
-                      <span className="fifth"></span>
-                    </div>
+                    <Button onClick={handleRecordClick} disabled={questions ? false : true} >Record</Button>
                   )}
-                  <p>
-                    0{elapsedMin}:{elapsedTime}
-                  </p>
+                  {isRecording ? (
+                    <Button onClick={handleSkip} disabled>
+                      Skip
+                    </Button>
+                  ) : elapsedTime > 0 ? (
+                    <Button onClick={handleSkip} disabled>
+                      Skip
+                    </Button>
+                  ) : (
+                    <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
+                  )}
+                  {!isRecording && flag ? (
+                    <Button onClick={handleNextClick}>Next</Button>
+                  ) : (
+                    <Button onClick={handleNextClick} disabled>
+                      Next
+                    </Button>
+                  )}
+                  <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
                 </div>
               </div>
-              <div className="button-wrapper">
-                {isRecording ? (
-                  <Button onClick={handleStopClick}>Stop</Button>
-                ) : timeUp ? (
-                  <Button onClick={handleRecordClick} disabled>
-                    Record
-                  </Button>
-                ) : (
-                  <Button onClick={handleRecordClick} disabled={questions ? false : true} >Record</Button>
-                )}
-                {isRecording ? (
-                  <Button onClick={handleSkip} disabled>
-                    Skip
-                  </Button>
-                ) : elapsedTime > 0 ? (
-                  <Button onClick={handleSkip} disabled>
-                    Skip
-                  </Button>
-                ) : (
-                  <Button onClick={handleSkip} disabled={questions ? false : true}>Skip</Button>
-                )}
-                {!isRecording && flag ? (
-                  <Button onClick={handleNextClick}>Next</Button>
-                ) : (
-                  <Button onClick={handleNextClick} disabled>
-                    Next
-                  </Button>
-                )}
-                <Button onClick={handleFinishClick} disabled={questions ? false : true}>Finish</Button>
-              </div>
-            </div>
-            {/*
+              {/*
               <audio src={audio} controls={true}></audio>
             */}
-            <Modal
-              title="Confirm submission"
-              open={showConfirmation}
-              onOk={handleConfirm}
-              confirmLoading={finishLoading}
-              onCancel={handleCancel}
-            >
-              <p>Are you sure you want to submit your exam?</p>
-            </Modal>
-            <Modal
-              title="Next Question"
-              open={nextQuestionFlag}
-              onOk={handleNextConfirmClick}
-              onCancel={handleNextCancelClick}
-              confirmLoading={confirmLoading}
-            >
-              <p>Are you sure you want to Move to next Question?</p>
-            </Modal>
+              <Modal
+                title="Confirm submission"
+                open={showConfirmation}
+                onOk={handleConfirm}
+                confirmLoading={finishLoading}
+                onCancel={handleCancel}
+              >
+                <p>Are you sure you want to submit your exam?</p>
+              </Modal>
+              <Modal
+                title="Next Question"
+                open={nextQuestionFlag}
+                onOk={handleNextConfirmClick}
+                onCancel={handleNextCancelClick}
+                confirmLoading={confirmLoading}
+              >
+                <p>Are you sure you want to Move to next Question?</p>
+              </Modal>
 
-            <div className="right-wrapper">
-              <div ref={ref}>
-                <Row>
-                  <Col span={10}>
-                    <Webcam {...webcamOptions} />
-                  </Col>
-                </Row>
-              </div>
-              <div className="status-box">
-                {
-                  questionsStatus.map(item =>
-                    <div className={`
+              <div className="right-wrapper">
+                <div ref={ref}>
+                  <Row>
+                    <Col span={10}>
+                      <Webcam {...webcamOptions} />
+                    </Col>
+                  </Row>
+                </div>
+                <div className="status-box">
+                  {
+                    questionsStatus.map(item =>
+                      <div className={`
                       status-shower 
                       ${item.status === 'success' ? 'success' : item.status === 'skip' ? 'skip' : ''}
                     `}>
-                      {item.id + 1}
-                    </div>
-                  )
-                }
+                        {item.id + 1}
+                      </div>
+                    )
+                  }
+                </div>
               </div>
             </div>
           </div>
-        </div>
       }
     </Layout>
   );

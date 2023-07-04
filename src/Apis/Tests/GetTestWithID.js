@@ -11,10 +11,13 @@ let axiosConfig = {
 
 const GetTestWithID = async (id) => {
 
+    const payload = {
+        TestID: id
+    }
     //This api has to be replaced.
-    const link = `/tests/list/${id}`;
+    const url = `test/get-particular-test`;
 
-    return await axios.get(link,axiosConfig)
+    return await axios.post(url,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

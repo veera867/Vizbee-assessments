@@ -11,10 +11,13 @@ let axiosConfig = {
 
 const GetJobWithID = async (id) => {
 
+    const payload = {
+        jobId: id
+    }
     //This api has to be replaced.
-    const link = `/jobs/list/${id}`;
+    const link = `/jobs/get-particular-job`;
 
-    return await axios.get(link,axiosConfig)
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

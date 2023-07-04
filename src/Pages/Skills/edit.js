@@ -18,6 +18,7 @@ function EditSkill() {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [questions, setQuestions] = useState([]);
+    console.log("questionsquestions", questions)
 
     //error boundaries and loaders
     const [loading, setLoading] = useState(false);
@@ -298,8 +299,8 @@ function EditSkill() {
         },
         {
             title: 'Importance',
-            dataIndex: 'importance',
-            key: 'importance',
+            dataIndex: 'level',
+            key: 'level',
         },
         {
             title: 'Action',

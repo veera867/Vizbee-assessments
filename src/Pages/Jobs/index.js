@@ -1,7 +1,7 @@
-import React,{useState,useEffect} from 'react';
-import {PlusOutlined,EditFilled,DeleteFilled,EyeFilled} from '@ant-design/icons';
-import { Table,Modal ,Button,message, Spin, Divider  } from 'antd';
-// import { stringify } from 'csv-stringify';
+import React, { useState, useEffect } from 'react';
+import { PlusOutlined, EditFilled, DeleteFilled, EyeFilled, DownloadOutlined } from '@ant-design/icons';
+import { Table, Modal, Button, message, Spin, Divider, Tooltip } from 'antd';
+
 import { CSVLink } from 'react-csv';
 
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI';
@@ -10,91 +10,46 @@ import '../Skills/skills.css';
 import { useNavigate } from 'react-router-dom';
 import GetSpecificSchdules from '../../Apis/Assessments/getParticularSchedular';
 
-function Jobs() {
+const Jobs = () => {
     const navigate = useNavigate()
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [jobs,setJobs] = useState([
-        
-        // {
-        //     "JobID": 619212406,
-        //     "jdName": "sai",
-        //     "mandatorySkills": "['python']",
-        //     "optionalSkills": "['React']",
-        //     "totalPositions": "2"
-        // }
-        
-    ]);
+    const [jobs, setJobs] = useState([]);
 
-    // const assesmentDashboardData = [
-    //     {
-    //         "ScheduleID": 619212545,
-    //         "jdNumber": 619212407,
-    //         "jdName": "sai",
-    //         "testName": "pptp",
-    //         "testId": 619212452,
-    //         "candidateName": "sai",
-    //         "candidateEmail": "careers.apexon@gmail.com",
-    //         "hrEmail": "careers.apexon@gmail.com",
-    //         "scheduleDate": "2023-06-23T21:33:00Z",
-    //         "mandatorySkills": "['python']",
-    //         "optionalSkills": "['React']",
-    //         "status": null,
-    //         "max_score": null,
-    //         "act_Score": null,
-    //         "percentage": null
-    //     },
-    //     {
-    //         "ScheduleID": 619212853,
-    //         "jdNumber": 619212406,
-    //         "jdName": "sai",
-    //         "testName": "pptp",
-    //         "testId": 619212452,
-    //         "candidateName": "sd",
-    //         "candidateEmail": "shivendrakumar.tiwari@apexon.com",
-    //         "hrEmail": "shivendrakumar.tiwari@apexon.com",
-    //         "scheduleDate": "2023-06-20T21:28:00Z",
-    //         "mandatorySkills": "['python']",
-    //         "optionalSkills": "['React']",
-    //         "status": null,
-    //         "max_score": null,
-    //         "act_Score": null,
-    //         "percentage": null
-    //     }
-    // ]
+
 
     //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
-    const [hasErr,setHasErr] = useState(false);
-    const [errMsg,setErrMsg] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [hasErr, setHasErr] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
 
     //for delete confirm box
-    const [cnfmDel,setCnfmDel] = useState(false);
-    const [delId,setDelId] = useState(0);
-    const [confirmLoading,setConfirmLoading] = useState(false);
+    const [cnfmDel, setCnfmDel] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const [isModalOpenForEyeIcon, setIsModalOpenForEyeIcon] = useState(false)
     const [selectedRowData, setSelectedRowData] = useState()
     const [selectedRowId, setSelectedRowId] = useState()
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
-    useEffect(()=>{
+    useEffect(() => {
         const token = localStorage.getItem('authtoken');
-        if(!token){
+        if (!token) {
             navigate('/auth/login');
         }
-    },[]);
-    
+    }, []);
+
     console.log("jobs", jobs)
-    useEffect(()=>{
-        async function getJobs(){
+    useEffect(() => {
+        async function getJobs() {
             setLoading(true);
-            try{
+            try {
                 const apiResponse = await LoadJobsAPI({});
-                console.log("apiResponse",apiResponse);
-    
+                console.log("apiResponse", apiResponse);
+
                 //According to the status from API
-                if(apiResponse.status == 200){
+                if (apiResponse.status == 200) {
                     console.log("success")
                     setJobs(apiResponse.data.skills);
                     setLoading(false);
@@ -106,8 +61,8 @@ function Jobs() {
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
-                    });                  
-                }    
+                    });
+                }
             } catch (err) {
                 console.log(err.message);
                 setLoading(false);
@@ -115,15 +70,15 @@ function Jobs() {
                 messageApi.open({
                     type: 'error',
                     content: err.message,
-                }); 
-            }    
+                });
+            }
         }
-        setTimeout(() =>{
+        setTimeout(() => {
             getJobs();
-        }, 1000) 
+        }, 1000)
 
-        
-    },[]);
+
+    }, []);
 
     // Delete Functionality
     const handleRemove = async (record) => {
@@ -132,12 +87,12 @@ function Jobs() {
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
-        try{
+        try {
             const apiResponse = await DeleteJobAPI(delId);
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setConfirmLoading(false);
                 setCnfmDel(false);
                 setDelId(null);
@@ -145,7 +100,7 @@ function Jobs() {
                 messageApi.open({
                     type: 'success',
                     content: 'Deleted Successfully',
-                });              
+                });
             } else {
                 setConfirmLoading(false);
                 setCnfmDel(false);
@@ -154,8 +109,8 @@ function Jobs() {
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });              
-            }    
+                });
+            }
         } catch (err) {
             console.log(err.message);
             setConfirmLoading(false);
@@ -165,8 +120,8 @@ function Jobs() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleDelCancel = () => {
         setCnfmDel(false);
@@ -174,22 +129,26 @@ function Jobs() {
     }
 
     useEffect(() => {
-        if(isModalOpenForEyeIcon){
+        if (isModalOpenForEyeIcon) {
             getParticularAssesmentData(selectedRowId);
         }
-    },[isModalOpenForEyeIcon])
+    }, [isModalOpenForEyeIcon])
 
-    const getParticularAssesmentData = async() =>{
+    const getParticularAssesmentData = async () => {
+        setLoading(true)
         const apiResponse = await GetSpecificSchdules(selectedRowId)
-        setSelectedRowData(apiResponse?.data?.schedules)
-        console.log("getParticularAssesmentData", apiResponse)
+        if (apiResponse.status === 200) {
+            setLoading(false)
+            setSelectedRowData(apiResponse?.data.schedules)
+            console.log("getParticularAssesmentData", apiResponse)
+        }
+
     }
 
-    const handleEyeClick = async(rowData) => {
+    const handleEyeClick = async (rowData) => {
 
         setSelectedRowId(rowData.JobID)
-        console.log("rowData", rowData)
-        // setSelectedRowData(rowData)
+        setLoading(true)
         setIsModalOpenForEyeIcon(true)
 
     }
@@ -198,50 +157,7 @@ function Jobs() {
         setIsModalOpenForEyeIcon(false)
     }
 
-    /*
-    const convertToCSV = (data) => {
-        const csvData = [];
-        const headers = Object.keys(data[0]);
-        
-        csvData.push(headers); // Add headers as the first row
 
-        data.forEach((row) => {
-            const rowData = [];
-            headers.forEach((header) => {
-                rowData.push(row[header]);
-            });
-            csvData.push(rowData);
-        });
-    
-        return csvData;
-    };      
-
-    const handleDownloadCSV = () => {
-        const csvData = convertToCSV(selectedRowData);
-
-        stringify(csvData, (err, output) => {
-            if (err) {
-                console.error('Error converting data to CSV:', err);
-                return;
-            }
-
-            // Create a Blob from the CSV data
-            const blob = new Blob([output], { type: 'text/csv;charset=utf-8;' });
-
-            // Create a temporary link element to trigger the download
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = 'table_data.csv';
-
-            // Simulate a click on the link to trigger the download
-            link.click();
-
-            // Clean up the temporary URL
-            URL.revokeObjectURL(url);
-        });
-    };  
-    */    
 
     const assessmentDashboardColumns = [
         {
@@ -274,11 +190,11 @@ function Jobs() {
             dataIndex: 'status',
             key: 'status',
         },
-    //       {
-    //         title: 'Max Score',
-    //         dataIndex: 'max_score',
-    //          key: 'max_score',
-    //    }, 
+        //       {
+        //         title: 'Max Score',
+        //         dataIndex: 'max_score',
+        //          key: 'max_score',
+        //    }, 
         {
             title: 'Score',
             dataIndex: 'act_Score',
@@ -289,9 +205,9 @@ function Jobs() {
         //     title: 'Report',
         //     dataIndex: 'report',
         //     key: 'report',
-       // }
+        // }
     ];
-    
+
     const columns = [
         {
             title: 'JD Name',
@@ -312,17 +228,7 @@ function Jobs() {
             title: 'Total No Of Positions',
             dataIndex: 'totalPositions',
             key: 'totalPositions',
-        },
-        // {
-        //     title: 'Selected Positions',
-        //     dataIndex: 'pass',
-        //     key: 'pass',
-        // },
-        // {
-        //     title: 'Remaining Positions',
-        //     dataIndex: 'fail',
-        //     key: 'fail',
-        // },
+        },      
         {
             title: 'Action',
             dataIndex: '',
@@ -334,7 +240,7 @@ function Jobs() {
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
-        }        
+        }
     ];
 
     return (
@@ -350,9 +256,9 @@ function Jobs() {
                 </div>
 
                 <Divider />
-                
+
                 <div className="content-wrapper">
-                    <Table dataSource={jobs} columns={columns} loading={loading}/>
+                    <Table dataSource={jobs} columns={columns} loading={loading} />
                 </div>
             </div>
             <Modal
@@ -366,20 +272,29 @@ function Jobs() {
             </Modal>
 
             <Modal
-                title="Filter Data"
+                title={
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: "20px" }}>
+                        <div>Filter Data</div>
+                        {/* Title of the modal */}
+                        {selectedRowData?.length > 0 &&
+                            <CSVLink data={selectedRowData} filename="schedule.csv" style={{ marginRight: '35px' }}>
+                                {/* <Tooltip title="Download CSV" > */}
+                                <DownloadOutlined style={{ fontSize: "24px" }} />
+                                {/* </Tooltip> */}
+                                <span >  Download CSV </span>
+                            </CSVLink>
+                        }
+                    </div>
+                }
                 open={isModalOpenForEyeIcon}
                 width="1000px"
-                onCancel={handleEyeCancel}                
+                onCancel={handleEyeCancel}
+                onOk={handleEyeCancel}
             >
-                
-                    {/* <CSVLink data={selectedRowData} filename="output.csv">
-                        Download CSV
-                    </CSVLink> */}
-                
-                <Table  dataSource={selectedRowData} columns={assessmentDashboardColumns}/>
+                <Table dataSource={selectedRowData} columns={assessmentDashboardColumns} loading={loading} />
             </Modal>
         </div>
-    )
+    );
 }
 
-export default Jobs
+export default Jobs;

@@ -1,16 +1,17 @@
 import React, {useState,useEffect} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button,message, Divider, Form, Input, Select } from 'antd';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Button,message, Divider, Form, Input, Select, Spin } from 'antd';
 
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
-import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
+import UpdateJobAPI from '../../Apis/Jobs/updateJob';
 import GetJobWithID from '../../Apis/Jobs/GetJobWithID';
 import '../Dashboard/dashboard.css';
 
 function EditJobs() {
     const {id} = useParams();
     const navigate = useNavigate();
-
+    const location = useLocation()
+console.log("location", location)
     const [messageApi, contextHolder] = message.useMessage();
 
     //error boundaries and loaders
@@ -19,10 +20,10 @@ function EditJobs() {
     const [errMsg,setErrMsg] = useState('');    
 
     const [jdId,setJdId] = useState(0);
-    const [jdName,setJdName] = useState();
-    const [mskills,setMskills] = useState();
-    const [oskills,setOskills] = useState();
-    const [complexity,setComplexity] = useState();
+    const [jdName,setJdName] = useState('');
+    const [mskills,setMskills] = useState([]);
+    const [oskills,setOskills] = useState([]);
+    const [complexity,setComplexity] = useState('');
 
     const [skillsDataList,setSkillsDataList] = useState();
     const [skillsData, setSkillsData] = useState()
@@ -76,14 +77,16 @@ function EditJobs() {
             setLoading(true);
             try{
                 const apiResponse = await GetJobWithID(id !== undefined || id !== null ? id : 0);
-                console.log(apiResponse);
+                console.log("GetSpecificJobDetails",apiResponse);
     
                 //According to the status from API
+               
                 if(apiResponse.status === 200){
-                    setJdId(apiResponse.data.jdId);
-                    setJdName(apiResponse.data.jdName);
+                    console.log("success",apiResponse);
+                    setJdId(apiResponse.data.JobID);
+                    setJdName(apiResponse.data.jdName);                   
                     setMskills(apiResponse.data.mandatorySkills);
-                    setOskills(apiResponse.data.optionalSkills);
+                    setOskills(apiResponse?.data.optionalSkills);
                     setComplexity(apiResponse.data.complexity);
                     setLoading(false);
                 } else {
@@ -115,14 +118,14 @@ function EditJobs() {
         try{
             setSaveLoading(true);
             const payload = {
-                jdId: id,
+                jdId: jdId,
                 jdName: jdName,
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
                 complexity: complexity
             }
-            const apiResponse = await CreateJobAPI(payload);
-            console.log(apiResponse);
+            const apiResponse = await UpdateJobAPI(payload);
+            console.log("UpdateJobAPI", apiResponse);
 
             //According to the status from API
             if(apiResponse.status === 200){
@@ -161,10 +164,10 @@ function EditJobs() {
         );
         setSkillsData(filteredOptions);
 
-        const filteredOskills = oskills.filter(
-            (item) => !mskills.includes(item)
-        );
-        setOskills(filteredOskills);      
+        // const filteredOskills = oskills?.filter(
+        //     (item) => !mskills.includes(item)
+        // );
+        setOskills(filteredOptions);      
     },[mskills]);
 
     const updateMSkills = (value) => {       
@@ -175,6 +178,7 @@ function EditJobs() {
         setOskills(value);
     }
 
+    console.log("jobs", jdId, jdName, oskills, mskills, complexity)
     return (
         <div className="layout-outer">
             {contextHolder}
@@ -198,18 +202,26 @@ function EditJobs() {
                             maxWidth: 600,
                         }}
                         initialValues={{
-                            remember: true,
-                        }}
+                            jdId: jdId,
+                            jdName: jdName,
+                            mandatorySkills: mskills,
+                            optionalSkills: oskills,
+                            complexity: complexity,
+                          }}
+                        // initialValues={{
+                        //     remember: true,
+                        // }}
                         autoComplete="off"
                         onFinish={handleSave}
+                       
                     >
                         <Form.Item
                             label="Job ID"
                             name="jdId"
                         >
                             <Input 
-                                value={jdId}
-                                defaultValue={id}
+                                value={id}
+                                // defaultValue={id}
                                 disabled
                             />
                         </Form.Item>
@@ -226,6 +238,7 @@ function EditJobs() {
                         >
                             <Input 
                                 value={jdName}
+                               // defaultValue={jdName}
                                 onChange={(value)=>setJdName(value)}
                             />
                         </Form.Item>
@@ -243,6 +256,8 @@ function EditJobs() {
                         >
                             <Select
                                 value={mskills}
+                                defaultActiveFirstOption={mskills}
+                             //   defaultValue={mskills}
                                 onChange={(value)=>updateMSkills(value)}
                                 mode="multiple"
                                 style={{
@@ -258,6 +273,7 @@ function EditJobs() {
                         >
                             <Select
                                 value={oskills}
+                         //       defaultValue={oskills}
                                 onChange={(value)=>updateOSkills(value)}
                                 mode="multiple"
                                 style={{
@@ -279,6 +295,7 @@ function EditJobs() {
                         >
                             <Select
                                 value={complexity}
+                            //    defaultValue={complexity}
                                 onChange={(value)=>{setComplexity(value)}}
                                 style={{
                                     width : '100%'
@@ -309,8 +326,8 @@ function EditJobs() {
                                     <span></span>
                                     {
                                         saveLoading
-                                        ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                        : <Button type="primary" htmlType="submit">Save</Button>
+                                        ? <Button type="primary" htmlType="submit" loading>Updaing</Button>
+                                        : <Button type="primary" htmlType="submit">Update</Button>
                                     }
                                 </div>
                             </Form.Item>

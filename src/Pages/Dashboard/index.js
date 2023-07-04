@@ -2,9 +2,10 @@ import React,{useState,useEffect} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Table ,Button,message, Spin, Divider  } from 'antd';
-import {EyeFilled} from '@ant-design/icons';
+import {DownloadOutlined} from '@ant-design/icons';
 
 import LoadAssessmentsAPI from '../../Apis/Assessments/LoadAssessmentsAPI';
+import DownloadAssessmentReports from '../../Apis/Assessments/downloadAssessmentReport'
 
 import './dashboard.css';
 
@@ -76,6 +77,50 @@ const Dashboard = () => {
         }, 1000) 
        
     },[]);
+
+    const base64ToBlob = (base64Data) => {
+        const byteCharacters = atob(base64Data);
+        const byteArrays = [];
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteArrays.push(byteCharacters.charCodeAt(i));
+        }
+
+        return new Blob([new Uint8Array(byteArrays)], { type: 'application/pdf' });
+};
+
+    const handleDownloadClick = async(id) => {
+        console.log("handleDownloadClick", id)
+        const apiResponse = await DownloadAssessmentReports(id)
+
+        if(apiResponse.status == 200){
+           console.log("apiResponse", apiResponse)
+                // Make a request to your download endpoint
+                // Replace 'YOUR_DOWNLOAD_ENDPOINT' with the actual URL
+              
+                const blob = new Blob([apiResponse.data], { type: 'application/pdf' });
+                    // Create a URL for the blob object
+                    const url = URL.createObjectURL(blob);
+                    // Create a temporary anchor element
+                    const link = document.createElement('a');
+                    link.href = url;
+                    // Set the file name for the download
+                    link.download = 'report.pdf';
+                    // Programmatically click the link to start the download
+                    link.click();
+                    // Clean up the URL object
+                    URL.revokeObjectURL(url);
+                
+                //   .catch(error => {
+                //     // Handle any error that occurred during the request
+                //     console.error('Error downloading file:', error);
+                //   });
+             
+              
+        }
+
+   // navigate("/app/asmt-dashboard/reports", {state:record})
+    }
     
     const columns = [
         {
@@ -123,7 +168,7 @@ const Dashboard = () => {
             dataIndex: '',
             key: 'x',
             render: (record) => <div className="button-holder">
-                 <Button icon={<EyeFilled />} onClick={() => navigate("/app/asmt-dashboard/reports", {state:record})} />                            
+                 <Button icon={<DownloadOutlined  />} onClick={() => handleDownloadClick(record?.ScheduleID)} />                            
             </div>
         } 
 
@@ -134,10 +179,7 @@ const Dashboard = () => {
        // }
     ];
 
-    const handleEyeClick = (record) => {
-        console.log("handleEyeClick",record)
-        navigate("asmt-dashboard/reports", {state:record})
-    }
+   
 
     return (
         <div className="layout-outer">

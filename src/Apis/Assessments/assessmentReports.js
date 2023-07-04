@@ -15,7 +15,7 @@ const GetAssessmentReports = async (id) => {
     }
 
     //This api has to be replaced.
-    const link = `assessment-report`;
+    const link = `Display`;
 
     return await axios.get(link,payload,axiosConfig)
     .then((result)=>{

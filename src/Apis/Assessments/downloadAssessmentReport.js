@@ -1,4 +1,4 @@
-import axios from './axiosInstance.js';
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
@@ -9,15 +9,16 @@ let axiosConfig = {
     }
 };
 
-const LoadQuestionsAPI = async (payload) => {
-    console.log("load", payload)
-    // const payload = {
-    //     test_id : id
-    // }
-    //This api has to be replaced.
-    const url = `/getquestions`;
+const DownloadAssessmentReports = async (id) => {
+    console.log("DownloadAssessmentReports", id)
+    const payload = {
+        scheduleId:id
+    }
 
-    return await axios.post(url,payload,axiosConfig)
+    //This api has to be replaced.
+    const link = `downloadpdff`;
+
+    return await axios.post(link,payload,axiosConfig)
     .then((result)=>{
         return result;
     })
@@ -28,4 +29,4 @@ const LoadQuestionsAPI = async (payload) => {
     })
 }
 
-export default LoadQuestionsAPI;
+export default DownloadAssessmentReports;

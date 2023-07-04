@@ -10,8 +10,11 @@ let axiosConfig = {
 };
 
 const DeleteSkillsAPI = async (id) => {
+    const token = localStorage.getItem('authtoken');
+    
     const payload = {
-        skillId: id
+        skillId: id,
+        token : token
     }
     //This api has to be replaced.
     const link = `skill/delete`;

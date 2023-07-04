@@ -10,6 +10,9 @@ let axiosConfig = {
 };
 
 const LoadQuestionsAPI = async (payload) => {
+    const token = localStorage.getItem('authtoken');
+    payload.token = token;
+
     console.log("load", payload)
     // const payload = {
     //     test_id : id

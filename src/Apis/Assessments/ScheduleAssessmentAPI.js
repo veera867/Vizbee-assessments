@@ -10,6 +10,8 @@ let axiosConfig = {
 };
 
 const ScheduleAssessmentAPI = async (values) => {
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
 
     //This api has to be replaced.
     const url = `/assessment-scheduler/schedule`;

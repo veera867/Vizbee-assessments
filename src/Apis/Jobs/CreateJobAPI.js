@@ -10,6 +10,8 @@ let axiosConfig = {
 };
 
 const CreateJobAPI = async (values) => {
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
     console.log("payload : ",values);
 
     //This api has to be replaced.

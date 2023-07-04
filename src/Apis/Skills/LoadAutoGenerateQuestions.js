@@ -11,6 +11,9 @@ let axiosConfig = {
 
 const LoadAutoGenerateQuestions = async (value) => {
 
+    const token = localStorage.getItem('authtoken');
+    value.token = token;
+
     //This api has to be replaced.
     const link = `skills/autogenerate`;
 

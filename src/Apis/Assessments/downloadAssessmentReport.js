@@ -11,8 +11,10 @@ let axiosConfig = {
 
 const DownloadAssessmentReports = async (id) => {
     console.log("DownloadAssessmentReports", id)
+    const token = localStorage.getItem('authtoken');
     const payload = {
-        scheduleId:id
+        scheduleId:id,
+        token: token
     }
 
     //This api has to be replaced.

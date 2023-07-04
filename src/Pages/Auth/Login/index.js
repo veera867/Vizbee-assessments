@@ -63,7 +63,6 @@ function Login() {
                     type: 'error',
                     content: apiResponse.message,
                 });
-             
             }
         } catch (err) {
             console.log(err.message);

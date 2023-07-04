@@ -13,6 +13,9 @@ const UpdateJobAPI = async (values) => {
     // console.log("payload : ",values);
 
     //This api has to be replaced.
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
+
     const url = `update/job`;
 
     return await axios.post(url,values,axiosConfig)

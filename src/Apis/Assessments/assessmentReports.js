@@ -10,8 +10,10 @@ let axiosConfig = {
 };
 
 const GetAssessmentReports = async (id) => {
+    const token = localStorage.getItem('authtoken');
     const payload = {
-        jobId:id
+        jobId:id,
+        token : token
     }
 
     //This api has to be replaced.

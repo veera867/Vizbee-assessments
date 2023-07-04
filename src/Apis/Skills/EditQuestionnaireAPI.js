@@ -10,6 +10,9 @@ let axiosConfig = {
 };
 
 const EditQuestionnaireAPI = async (values) => {
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
+
     console.log("Edit request id : ",values.slno);
 
     //This api has to be replaced.

@@ -10,8 +10,11 @@ let axiosConfig = {
 };
 
 const DeleteTestAPI = async (id) => {
+    const token = localStorage.getItem('authtoken');
+
     const payload ={
-        testId:id
+        testId:id,
+        token: token
     }
     //This api has to be replaced.
     const link = `test/delete`;

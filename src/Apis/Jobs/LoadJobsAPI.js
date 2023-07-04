@@ -10,12 +10,15 @@ let axiosConfig = {
     }
 };
 
-const LoadJobsAPI = async (token) => {
-    
+const LoadJobsAPI = async () => {
+    const values = {};
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
+
     //This api has to be replaced.
     const url = `/jobs/list`;
 
-    return await axios.get(url,axiosConfig)
+    return await axios.post(url,values,axiosConfig)
     .then((result)=>{
         return result;
     })

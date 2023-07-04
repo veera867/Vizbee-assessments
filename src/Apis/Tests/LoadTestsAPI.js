@@ -11,10 +11,15 @@ let axiosConfig = {
 
 const LoadTestsAPI = async () => {
 
+    const token = localStorage.getItem('authtoken');
+    const payload = {
+        token : token,
+    }
+
     //This api has to be replaced.
     const url = `/tests/list`;
 
-    return await axios.get(url,axiosConfig)
+    return await axios.post(url,payload,axiosConfig)
     .then((result)=>{
         return result;
     })

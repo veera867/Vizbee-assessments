@@ -11,6 +11,9 @@ let axiosConfig = {
 
 const FinalResultApi = async (payload) => {
 
+    const values = {};
+    const token = localStorage.getItem('authtoken');
+    values.token = token;
     //This api has to be replaced.
     const url = `/finalresult`;
 

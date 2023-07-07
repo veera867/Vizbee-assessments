@@ -10,9 +10,7 @@ let axiosConfig = {
 };
 
 const GetSkillWithID = async (id) => {
-
     const token = localStorage.getItem('authtoken');
-
     const payload = {
         SkillID:id,
         token: token
@@ -20,7 +18,11 @@ const GetSkillWithID = async (id) => {
     //This api has to be replaced.
     const link = `/getparticularskill`;
 
-    return await axios.post(link,payload,axiosConfig)
+    return await axios.post(link,payload,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

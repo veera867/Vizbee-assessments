@@ -10,14 +10,15 @@ let axiosConfig = {
 };
 
 const LoadAutoGenerateQuestions = async (value) => {
-
     const token = localStorage.getItem('authtoken');
-    value.token = token;
-
     //This api has to be replaced.
     const link = `skills/autogenerate`;
 
-    return await axios.post(link,value,axiosConfig)
+    return await axios.post(link,value,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

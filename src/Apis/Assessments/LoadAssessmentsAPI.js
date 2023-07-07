@@ -9,14 +9,17 @@ let axiosConfig = {
     }
 };
 
-const LoadAssessmentsAPI = async () => {
-    const values = {};
+const LoadAssessmentsAPI = async (id) => {
     const token = localStorage.getItem('authtoken');
-    values.token = token;
+
     //This api has to be replaced.
     const url = `/assessment-dashboard/list`;
 
-    return await axios.post(url,values,axiosConfig)
+    return await axios.get(url,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

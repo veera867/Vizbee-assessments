@@ -14,11 +14,15 @@ const UpdateTestAPI = async (values) => {
     values.token = token;
 
     console.log("payload : ",values);
-
+    const token = localStorage.getItem('authtoken');
     //This api has to be replaced.
     const url = `test/update`;
 
-    return await axios.post(url,values,axiosConfig)
+    return await axios.post(url,values,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

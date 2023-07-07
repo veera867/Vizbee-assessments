@@ -11,16 +11,18 @@ let axiosConfig = {
 
 const DeleteJobAPI = async (id) => {
     const token = localStorage.getItem('authtoken');
-
     const payload ={
-        jobId:id,
-        token: token
+        jobId:id
     }
 
     //This api has to be replaced.
     const link = `job/delete`;
 
-    return await axios.post(link,payload,axiosConfig)
+    return await axios.post(link,payload,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

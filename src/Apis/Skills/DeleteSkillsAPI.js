@@ -19,7 +19,11 @@ const DeleteSkillsAPI = async (id) => {
     //This api has to be replaced.
     const link = `skill/delete`;
 
-    return await axios.post(link, payload, axiosConfig)
+    return await axios.post(link, payload, {
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

@@ -19,7 +19,11 @@ const GetAssessmentReports = async (id) => {
     //This api has to be replaced.
     const link = `Display`;
 
-    return await axios.get(link,payload,axiosConfig)
+    return await axios.get(link,payload,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

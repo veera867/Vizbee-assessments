@@ -11,11 +11,16 @@ let axiosConfig = {
 
 const DeleteQuestionnaireAPI = async (id) => {
     console.log("Delete request id : ",id);
-
+    const token = localStorage.getItem('authtoken');
     //This api has to be replaced.
     const link = `/questionnaire/delete/${id}`;
 
-    return await axios.delete(link,axiosConfig)
+    return await axios.delete(link,
+        {
+                headers: {
+                  'Authorization': `Token ${token}`,
+                  'Content-Type': 'application/json',
+                }})
     .then((result)=>{
         return result;
     })

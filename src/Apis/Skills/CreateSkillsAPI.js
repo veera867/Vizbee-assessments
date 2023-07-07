@@ -14,11 +14,16 @@ const CreateSkillsAPI = async (values) => {
     values.token = token;
 
     console.log("New skill add : ",values);
-
+    const token = localStorage.getItem('authtoken')
     //This api has to be replaced.
     const link = `/skills/create`;
 
-    return await axios.post(link,values,axiosConfig)
+    return await axios.post(link,values,
+        {
+                headers: {
+                  'Authorization': `Token ${token}`,
+                  'Content-Type': 'application/json',
+                }})
     .then((result)=>{
         return result;
     })

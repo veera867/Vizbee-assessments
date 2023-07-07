@@ -10,15 +10,15 @@ let axiosConfig = {
 };
 
 const GetQuestionnaireAPI = async () => {
-    const values = {};
-
     const token = localStorage.getItem('authtoken');
-    values.token = token;
-
     //This api has to be replaced.
     const link = `/skills/questionnaire/list`;
 
-    return await axios.post(link,values,axiosConfig)
+    return await axios.get(link,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

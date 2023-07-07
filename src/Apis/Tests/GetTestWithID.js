@@ -10,7 +10,6 @@ let axiosConfig = {
 };
 
 const GetTestWithID = async (id) => {
-
     const token = localStorage.getItem('authtoken');
     const payload = {
         TestID: id,
@@ -19,7 +18,11 @@ const GetTestWithID = async (id) => {
     //This api has to be replaced.
     const url = `test/get-particular-test`;
 
-    return await axios.post(url,payload,axiosConfig)
+    return await axios.post(url,payload,{
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        }})
     .then((result)=>{
         return result;
     })

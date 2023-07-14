@@ -30,6 +30,7 @@ const Jobs = () => {
     const [isModalOpenForEyeIcon, setIsModalOpenForEyeIcon] = useState(false)
     const [selectedRowData, setSelectedRowData] = useState()
     const [selectedRowId, setSelectedRowId] = useState()
+    const [deletedSkillId, setDeletedSkillId] = useState(null);
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
@@ -82,6 +83,14 @@ const Jobs = () => {
     }, []);
 
     // Delete Functionality
+    useEffect(() => {
+        if (deletedSkillId) {
+            setJobs(prevSkills => prevSkills.filter(skill => skill.JobID !== deletedSkillId));
+          setDeletedSkillId(null);
+        }
+      }, [deletedSkillId]);
+      console.log("jobsssssssss", jobs)
+
     const handleRemove = async (record) => {
         setCnfmDel(true);
         setDelId(record.JobID);
@@ -97,6 +106,9 @@ const Jobs = () => {
                 setConfirmLoading(false);
                 setCnfmDel(false);
                 setDelId(null);
+                setDeletedSkillId(delId); // Store the deleted skill ID
+
+                setJobs(prevSkills => prevSkills.filter(skill => skill.JobID !== delId));
 
                 messageApi.open({
                     type: 'success',

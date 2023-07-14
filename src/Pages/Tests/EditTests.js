@@ -4,7 +4,7 @@ import { Button, message, Divider, Form, Input, Select, Spin } from 'antd';
 
 import UpdateTestAPI from '../../Apis/Tests/updateTest';
 import GetTestWithID from '../../Apis/Tests/GetTestWithID';
-import '../Dashboard/dashboard.css';
+import '../AssessmentDashboard/dashboard.css';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
 function EditTests() {

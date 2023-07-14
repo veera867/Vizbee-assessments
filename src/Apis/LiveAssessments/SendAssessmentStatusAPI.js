@@ -2,23 +2,22 @@ import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
-        // "Content-Type" : "multipart/form-data",
+        "Content-Type" : "multipart/form-data",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
     }
 };
 
-const FinalResultApi = async (payload) => {
-
-    const values = {};
+const SendAssessmentStatusAPI = async (values) => {
+    const url = `/audio`;
     const token = localStorage.getItem('authtoken');
-    values.token = token;
-    //This api has to be replaced.
-    const url = `/finalresult`;
+    // values.token = token;
 
-    return await axios.post(url,payload,axiosConfig)
-    .then((result)=>{
+    // console.log("payload", values);
+
+    return await axios.post(url, values, axiosConfig)
+    .then((result) => {
         return result;
     })
     .catch((error)=>{
@@ -28,4 +27,4 @@ const FinalResultApi = async (payload) => {
     })
 }
 
-export default FinalResultApi;
+export default SendAssessmentStatusAPI;

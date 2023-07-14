@@ -7,7 +7,7 @@ import ScheduleAssessmentAPI from '../../Apis/Assessments/ScheduleAssessmentAPI'
 import LoadJobsAPI from '../../Apis/Jobs/LoadJobsAPI'
 import LoadTestsAPI from '../../Apis/Tests/LoadTestsAPI'
 
-function Schedule() {
+const Schedule = () => {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 

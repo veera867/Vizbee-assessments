@@ -11,10 +11,7 @@ let axiosConfig = {
 
 const UpdateTestAPI = async (values) => {
     const token = localStorage.getItem('authtoken');
-    values.token = token;
-
-    console.log("payload : ",values);
-    const token = localStorage.getItem('authtoken');
+   
     //This api has to be replaced.
     const url = `test/update`;
 

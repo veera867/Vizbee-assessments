@@ -4,9 +4,9 @@ import AppLayout from './Pages';
 
 import './custom-theme.less';
 import AuthLayout from './Pages/Auth';
-import VerifyCode from './Pages/Assessment/VerifyCode';
-import Assessment from './Pages/Assessment';
-import Greeting from './Pages/Assessment/Greeting';
+import VerifyCode from './Pages/LiveAssessment/VerifyCode';
+import Assessment from './Pages/LiveAssessment/index';
+import Greeting from './Pages/LiveAssessment/Greeting';
 
 function App() {
   return (

@@ -10,7 +10,6 @@ let axiosConfig = {
 };
 
 const LoginAPI = async (values) => {
-    console.log("payload : ",values);
 
     //This api has to be replaced.
     const url = `api/superuser-login/`;

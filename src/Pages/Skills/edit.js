@@ -258,7 +258,7 @@ function EditSkill() {
                 count: index + 1,
                 A: item.A,
                 Q: item.Q,
-                importance: item.importance
+                level: item.level
             }))
             setQuestions(questionsNumberArragement)
             setConfirmLoading(false);
@@ -283,36 +283,46 @@ function EditSkill() {
 
     const columns = [
         {
-            title: 'Sl. no',
-            dataIndex: 'count',
-            key: 'count',
+          title: 'Sl. no',
+          dataIndex: 'count',
+          key: 'count',
         },
         {
-            title: 'Question',
-            dataIndex: 'Q',
-            key: 'Q',
+          title: 'Question',
+          dataIndex: 'Q',
+          key: 'Q',
         },
         {
-            title: 'Answer',
-            dataIndex: 'A',
-            key: 'A',
+          title: 'Answer',
+          dataIndex: 'A',
+          key: 'A',
         },
         {
-            title: 'Importance',
-            dataIndex: 'level',
-            key: 'level',
+          title: 'Importance',
+          dataIndex: 'level',
+          key: 'level',
+          render: (importance, record) => {
+            console.log("importance", importance)
+            if (record.count === delId) {
+              return null; // Hide the importance value for the deleted row
+            }
+            return importance;
+          },
         },
         {
-            title: 'Action',
-            dataIndex: '',
-            key: 'x',
-            render: (record) => <div className="button-holder">
-                <Button icon={<EditFilled />} onClick={() => handleEdit(record)}></Button>
-                <span></span>
-                <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
-            </div>,
-        }        
-    ];
+          title: 'Action',
+          dataIndex: '',
+          key: 'x',
+          render: (record) => (
+            <div className="button-holder">
+              <Button icon={<EditFilled />} onClick={() => handleEdit(record)}></Button>
+              <span></span>
+              <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
+            </div>
+          ),
+        },
+      ];
+      
 
     return (
         <div className="layout-outer">

@@ -8,12 +8,13 @@ import DeleteTestAPI from '../../Apis/Tests/DeleteTestAPI';
 
 import '../Skills/skills.css';
 
-function Tests() {
+const  Tests = () => {
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [Tests,setTests] = useState([]);
+    const [tests,setTests] = useState([]);
+    const [deletedSkillId, setDeletedSkillId] = useState(null);
 
     //error boundaries and loaders
     const [loading,setLoading] = useState(false);
@@ -78,6 +79,14 @@ function Tests() {
         setCnfmDel(true);
         setDelId(record.testId);
     }
+   
+    useEffect(() => {
+        if (deletedSkillId) {
+            setTests(prevSkills => prevSkills.filter(skill => skill.testId !== deletedSkillId));
+          setDeletedSkillId(null);
+        }
+      }, [deletedSkillId]);
+
     const handleDelOk = async () => {
         setConfirmLoading(true);
         try{
@@ -89,6 +98,9 @@ function Tests() {
                 setConfirmLoading(false);
                 setCnfmDel(false);
                 setDelId(null);
+                setDeletedSkillId(delId); // Store the deleted skill ID
+
+                setTests(prevSkills => prevSkills.filter(skill => skill.testId !== delId));
 
                 messageApi.open({
                     type: 'success',
@@ -153,6 +165,7 @@ function Tests() {
             </div>,
         }        
     ];
+    console.log("tests", tests)
 
     return (
         <div className="layout-outer">
@@ -169,7 +182,7 @@ function Tests() {
                 <Divider />
                 
                 <div className="content-wrapper">
-                    <Table dataSource={Tests} columns={columns} loading={loading}/>
+                    <Table dataSource={tests} columns={columns} loading={loading}/>
                 </div>
             </div>
             <Modal

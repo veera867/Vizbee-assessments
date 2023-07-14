@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Col, Row } from 'antd';
 import { Divider, Form, Select, DatePicker, TimePicker } from 'antd';
 import { Layout, Button, message, Input, Space, Card, List } from 'antd';
-import VerifyCodeAPI from '../../Apis/Assessments/verifyCodeAPI';
+// import VerifyCodeAPI from '../../Apis/Assessments/verifyCodeAPI';
 
 const { Header } = Layout;
 

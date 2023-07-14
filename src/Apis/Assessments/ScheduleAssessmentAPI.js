@@ -1,18 +1,9 @@
 import axios from "../axiosInstance.js";
 
-let axiosConfig = {
-    headers: {
-        "Content-Type" : "multipart/form-data",
-        //"Access-Control-Allow-Origin" : "*",
-        //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
-        //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
-    }
-};
+
 
 const ScheduleAssessmentAPI = async (values) => {
-    const token = localStorage.getItem('authtoken');
-
-    //This api has to be replaced.
+    const token = localStorage.getItem('authtoken');    
     const url = `/assessment-scheduler/schedule`;
 
     return await axios.post(url,values,{

@@ -1,19 +1,11 @@
 import axios from "../axiosInstance.js";
 
-let axiosConfig = {
-    headers: {
-        //"Content-Type" : "application/json",
-        //"Access-Control-Allow-Origin" : "*",
-        //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
-        //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
-    }
-};
+
 
 const GetAssessmentReports = async (id) => {
     const token = localStorage.getItem('authtoken');
     const payload = {
-        jobId:id,
-        token : token
+        jobId:id
     }
 
     //This api has to be replaced.

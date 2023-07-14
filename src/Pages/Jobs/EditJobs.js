@@ -5,7 +5,7 @@ import { Button, message, Divider, Form, Input, Select, Spin } from 'antd';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 import UpdateJobAPI from '../../Apis/Jobs/updateJob';
 import GetJobWithID from '../../Apis/Jobs/GetJobWithID';
-import '../Dashboard/dashboard.css';
+import '../AssessmentDashboard/dashboard.css';
 
 function EditJobs() {
     const { id } = useParams();

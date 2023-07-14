@@ -6,9 +6,9 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
 
-import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
-import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
-import FinalResultApi from '../../Apis/Assessments/finalResultApi';
+import SendAssessmentStatusAPI from "../../Apis/LiveAssessments/SendAssessmentStatusAPI";
+import LoadQuestionsAPI from "../../Apis/LiveAssessments/LoadQuestionsAPI";
+import FinalResultApi from '../../Apis/LiveAssessments/finalResultApi';
 
 import "../../App.css";
 
@@ -146,6 +146,7 @@ const Assessment = () => {
       setIsRecording(false);
       setAnimation(false);
       setTimeUp(true);
+      mediaRecorderRef?.current?.stop();
       //setFlag(true);
       clearInterval(interval);
     }

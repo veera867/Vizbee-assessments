@@ -1,8 +1,8 @@
-import React,{useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {PlusOutlined,EditFilled,DeleteFilled,CloudUploadOutlined} from '@ant-design/icons';
-import { Table,Modal ,Button,message, Spin, Input, Space, Divider, Select  } from 'antd';
+import { PlusOutlined, EditFilled, DeleteFilled, CloudUploadOutlined } from '@ant-design/icons';
+import { Table, Modal, Button, message, Spin, Input, Space, Divider, Select } from 'antd';
 import { Tooltip } from 'antd';
 
 import CreateSkillsAPI from '../../Apis/Skills/CreateSkillsAPI';
@@ -15,65 +15,44 @@ function CreateSkill() {
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-
-    const [questions,setQuestions] = useState([
-        //dummy data for testing purpose only. Can be removed!!
-    //     {
-    //         slno : 1,
-    //         question : 'What is Python?',
-    //         answer : 'Python is a porgramming language.',
-    //         importance: 'Beginner',
-    //     },
-    //     {
-    //         slno : 2,
-    //         question : 'What is Java?',
-    //         answer : 'Java is a porgramming language.',
-    //         importance: 'Intermediate',
-    //     },
-    //     {
-    //         slno : 3,
-    //         question : 'What is JavaScript?',
-    //         answer : 'JavaScript is a porgramming language.',
-    //         importance: 'Beginner',
-    //     },
-    // 
-    ]
+    const [saveLoading, setSaveLoading] = useState(false);
+    const [questions, setQuestions] = useState([]
     );
-    
+
     //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
-    const [hasErr,setHasErr] = useState(false);
-    const [errMsg,setErrMsg] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [hasErr, setHasErr] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
 
-    const [skillName,setSkillName] = useState('');
-    const [skillGroup,setSkillGroup] = useState('');
+    const [skillName, setSkillName] = useState('');
+    const [skillGroup, setSkillGroup] = useState('');
 
-    const [fetchLoading,setFetchLoading] = useState(false);
+    const [fetchLoading, setFetchLoading] = useState(false);
 
     //for delete confirm box
-    const [cnfmDel,setCnfmDel] = useState(false);
-    const [delId,setDelId] = useState(0);
-    const [confirmLoading,setConfirmLoading] = useState(false);
+    const [cnfmDel, setCnfmDel] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     //for edit popup box
-    const [openEdit,setOpenEdit] = useState(false);
-    const [editId,setEditId] = useState(0);
-    const [editLoading,setEditLoading] = useState(false);
-    const [currentEditModel,setCurrentEditModel] = useState({});
-    const [question,setQuestion] = useState('');
-    const [answer,setAnswer] = useState('');
-    const [importance,setImportance] = useState('');
+    const [openEdit, setOpenEdit] = useState(false);
+    const [editId, setEditId] = useState(0);
+    const [editLoading, setEditLoading] = useState(false);
+    const [currentEditModel, setCurrentEditModel] = useState({});
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [importance, setImportance] = useState('');
 
     const fileInputRef = useRef(null);
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
-    useEffect(()=>{
+    useEffect(() => {
         const token = localStorage.getItem('authtoken');
-        if(!token){
+        if (!token) {
             navigate('/auth/login');
         }
-    },[]);
+    }, []);
 
     const handleCancel = () => {
         navigate(-1);
@@ -83,16 +62,16 @@ function CreateSkill() {
         fileInputRef.current.click();
     };
 
-    const handleAutoGenerate = async() => {
+    const handleAutoGenerate = async () => {
         const payload = {
             skillName: skillName
         }
 
-        try{
+        try {
             setFetchLoading(true);
             const apiResponse = await LoadAutoGenerateQuestions(payload);
             console.log("apiResponse", apiResponse);
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setQuestions(apiResponse.data.questions);
                 setFetchLoading(false);
             } else {
@@ -100,17 +79,17 @@ function CreateSkill() {
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
+                });
             }
         } catch (err) {
             setFetchLoading(false);
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
-    
+
     const handleCSVUpload = (e) => {
         const file = e.target.files[0];
 
@@ -120,13 +99,13 @@ function CreateSkill() {
         // Define the onload function
         reader.onload = (event) => {
             const csvData = event.target.result;
-            
+
             // Process the CSV data and extract the necessary information
             const extractedData = processCSVData(csvData);
-            
+
             // Update the state with the extracted data
             setQuestions([...questions, ...extractedData]);
-            
+
             messageApi.open({
                 type: 'success',
                 content: 'CSV file uploaded successfully.',
@@ -137,21 +116,24 @@ function CreateSkill() {
     };
 
     const handleSave = async () => {
-        try{
+        setSaveLoading(true);
+        try {
             const payload = {
-                skillName : skillName,
-                skillGroup : skillGroup,
-                questionnaire : questions
+                skillName: skillName,
+                skillGroup: skillGroup,
+                questionnaire: questions
             }
             const apiResponse = await CreateSkillsAPI(payload);
-            console.log("apiResponse",apiResponse);
+            console.log("apiResponse", apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
+                setSaveLoading(false);
                 // setQuestions(apiResponse.data);
                 setLoading(false);
                 navigate(-1)
             } else {
+                setSaveLoading(false);
                 setHasErr(true);
                 setErrMsg(apiResponse.message);
                 setLoading(false);
@@ -159,16 +141,17 @@ function CreateSkill() {
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
-            }    
+                });
+            }
         } catch (err) {
             console.log(err.message);
             setLoading(false);
+            setSaveLoading(false);
 
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
 
@@ -182,12 +165,12 @@ function CreateSkill() {
 
         setOpenEdit(true);
     }
-    const handleEdit2 = () =>{
+    const handleEdit2 = () => {
         setEditId(0);
         setCurrentEditModel({
-            slno : 0,
-            question : '',
-            answer : '',
+            slno: 0,
+            question: '',
+            answer: '',
             importance: 'Beginner',
         });
         setQuestion('');
@@ -198,27 +181,27 @@ function CreateSkill() {
     }
     const handleEditOk = async () => {
         setEditLoading(true);
-        try{
-            if(editId === 0){
+        try {
+            if (editId === 0) {
                 let temp = {
-                    count : questions.length > 0 
-                                ? question.length === 1 
-                                    ? questions.length+1 
-                                    : question.length 
-                                : 1,
-                    Q : question,
-                    A : answer,
+                    count: questions.length > 0
+                        ? question.length === 1
+                            ? questions.length + 1
+                            : question.length
+                        : 1,
+                    Q: question,
+                    A: answer,
                     importance: importance,
                 };
-                setQuestions([...questions,temp]);
+                setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if(ques.slno === editId){
+                    if (ques.slno === editId) {
                         ques.question = question;
                         ques.answer = answer;
                         ques.importance = importance;
                     }
-    
+
                     return null;
                 })
             }
@@ -234,8 +217,8 @@ function CreateSkill() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleEditCancel = () => {
         setOpenEdit(false);
@@ -249,7 +232,7 @@ function CreateSkill() {
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
-        try{
+        try {
             setQuestions(questions.filter(ques => ques.count !== delId));
             setConfirmLoading(false);
             setCnfmDel(false);
@@ -263,16 +246,16 @@ function CreateSkill() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleDelCancel = () => {
         setCnfmDel(false);
         setDelId(null);
     }
 
-   
-    
+
+
     const columns = [
         {
             title: 'Sl. no',
@@ -303,7 +286,7 @@ function CreateSkill() {
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
-        }        
+        }
     ];
 
     return (
@@ -316,7 +299,12 @@ function CreateSkill() {
                     <div className="button-holder">
                         <Button danger onClick={handleCancel}>Cancel</Button>
                         <span></span>
-                        <Button type="primary" onClick={handleSave} disabled={fetchLoading}>Save</Button>
+                        {
+                            saveLoading
+                                ? <Button type="primary" htmlType="submit" loading>Saving</Button>
+                                : <Button type="primary" onClick={handleSave} disabled={fetchLoading}  htmlType="submit">Save</Button>
+                        }
+                        {/* <Button type="primary" onClick={handleSave} disabled={fetchLoading}>Save</Button> */}
                     </div>
                 </div>
 
@@ -324,21 +312,21 @@ function CreateSkill() {
 
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                     <label for="skillName">Skill Name : </label>
-                    <Input 
+                    <Input
                         placeholder="Skill Name"
                         value={skillName}
                         onChange={(e) => setSkillName(e.target.value)}
                         name="skillName"
-                        style={{maxWidth:'500px'}}
+                        style={{ maxWidth: '500px' }}
                     ></Input>
 
                     <label for="skillGroup">Skill Group : </label>
-                    <Input 
+                    <Input
                         placeholder="Skill Group"
                         value={skillGroup}
                         onChange={(e) => setSkillGroup(e.target.value)}
                         name="skillGroup"
-                        style={{maxWidth:'500px'}}
+                        style={{ maxWidth: '500px' }}
                     ></Input>
                 </Space>
 
@@ -346,18 +334,19 @@ function CreateSkill() {
                     <h1>{''}</h1>
 
                     <div className="button-holder">
-                    <Tooltip title="Add Questions">
-                        <Button type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />}/>
-                    </Tooltip>
+                        <Tooltip title="Add Questions">
+                            <Button disabled={fetchLoading} type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />} />
+                        </Tooltip>
                         <span></span>
                         <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
-                        <Tooltip title="Csv File Upload">
-                            <Button type="primary" 
-                                shape="circle" 
-                                icon={<CloudUploadOutlined />} 
-                                onClick={handleUploadClick} 
-                            />
-                        </Tooltip>
+                            <Tooltip title="Csv File Upload">
+                                <Button type="primary"
+                                    shape="circle"
+                                    disabled={fetchLoading}
+                                    icon={<CloudUploadOutlined />}
+                                    onClick={handleUploadClick}
+                                />
+                            </Tooltip>
                             <input
                                 type="file"
                                 id="csv-upload"
@@ -366,7 +355,7 @@ function CreateSkill() {
                                 ref={fileInputRef}
                                 onChange={handleCSVUpload}
                             />
-                        </label>                        
+                        </label>
                         <span></span>
                         <Button type="primary" onClick={handleAutoGenerate} disabled={fetchLoading}>Auto Generate</Button>
                     </div>
@@ -374,8 +363,8 @@ function CreateSkill() {
                 <div className="content-wrapper">
                     {
                         loading
-                        ? <Spin tip="loading"></Spin>
-                        : <Table dataSource={questions} columns={columns} loading={fetchLoading}/>
+                            ? <Spin tip="loading"></Spin>
+                            : <Table dataSource={questions} columns={columns} loading={fetchLoading} />
                     }
                 </div>
             </div>
@@ -398,7 +387,7 @@ function CreateSkill() {
                 onCancel={handleEditCancel}
             >
                 <Divider />
-                <Space direction="vertical" size="middle" style={{ display: 'flex',width:'100%' }}>
+                <Space direction="vertical" size="middle" style={{ display: 'flex', width: '100%' }}>
                     {/* <label for="slno">Sl No : </label>
                     <Input 
                         placeholder="Sl No"
@@ -409,7 +398,7 @@ function CreateSkill() {
                     ></Input> */}
 
                     <label for="question">Question : </label>
-                    <Input 
+                    <Input
                         placeholder="Question"
                         defaultValue={currentEditModel.question}
                         value={question}
@@ -418,7 +407,7 @@ function CreateSkill() {
                     ></Input>
 
                     <label for="answer">Answer : </label>
-                    <Input 
+                    <Input
                         placeholder="Answer"
                         defaultValue={currentEditModel.answer}
                         value={answer}
@@ -429,9 +418,9 @@ function CreateSkill() {
                     <label for="importance">Importance : </label>
                     <Select
                         defaultValue='Beginner'
-                        onChange={(value)=>setImportance(value)}
+                        onChange={(value) => setImportance(value)}
                         style={{
-                            width : '100%'
+                            width: '100%'
                         }}
                         options={[
                             {

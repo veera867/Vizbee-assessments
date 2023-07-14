@@ -13,8 +13,7 @@ const GetJobWithID = async (id) => {
     const token = localStorage.getItem('authtoken');
 
     const payload = {
-        jobId: id,
-        token: token
+        jobId: id
     }
     //This api has to be replaced.
     const link = `/jobs/get-particular-job`;

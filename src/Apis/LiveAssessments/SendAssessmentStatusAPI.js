@@ -11,11 +11,7 @@ let axiosConfig = {
 
 const SendAssessmentStatusAPI = async (values) => {
     const url = `/audio`;
-    const token = localStorage.getItem('authtoken');
-    // values.token = token;
-
-    // console.log("payload", values);
-
+    
     return await axios.post(url, values, axiosConfig)
     .then((result) => {
         return result;

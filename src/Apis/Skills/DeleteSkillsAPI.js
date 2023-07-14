@@ -13,8 +13,7 @@ const DeleteSkillsAPI = async (id) => {
     const token = localStorage.getItem('authtoken');
     
     const payload = {
-        skillId: id,
-        token : token
+        skillId: id
     }
     //This api has to be replaced.
     const link = `skill/delete`;

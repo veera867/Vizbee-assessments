@@ -1,24 +1,18 @@
-import axios from './axiosInstance.js';
+import axios from "../axiosInstance.js";
 
 let axiosConfig = {
     headers: {
-        //"Content-Type" : "application/json",
+        // "Content-Type" : "multipart/form-data",
         //"Access-Control-Allow-Origin" : "*",
         //"Access-Control-Allow-Headers" : "Content-Type, Authorization, X-Requested-With",
         //"Access-Control-Allow-Methods" : "GET, POST, PUT, DELETE, OPTIONS",
     }
 };
 
-const LoadQuestionsAPI = async (payload) => {
-    const token = localStorage.getItem('authtoken');
-    payload.token = token;
+const FinalResultApi = async (payload) => {
 
-    console.log("load", payload)
-    // const payload = {
-    //     test_id : id
-    // }
     //This api has to be replaced.
-    const url = `/getquestions`;
+    const url = `/finalresult`;
 
     return await axios.post(url,payload,axiosConfig)
     .then((result)=>{
@@ -31,4 +25,4 @@ const LoadQuestionsAPI = async (payload) => {
     })
 }
 
-export default LoadQuestionsAPI;
+export default FinalResultApi;

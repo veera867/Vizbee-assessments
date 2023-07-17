@@ -13,8 +13,7 @@ const DeleteTestAPI = async (id) => {
     const token = localStorage.getItem('authtoken');
 
     const payload ={
-        testId:id,
-        token: token
+        testId:id
     }
     //This api has to be replaced.
     const link = `test/delete`;

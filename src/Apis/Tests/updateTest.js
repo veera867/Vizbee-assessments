@@ -15,6 +15,7 @@ const UpdateTestAPI = async (values) => {
 
     console.log("payload : ",values);
     //const token = localStorage.getItem('authtoken');
+   
     //This api has to be replaced.
     const url = `test/update`;
 

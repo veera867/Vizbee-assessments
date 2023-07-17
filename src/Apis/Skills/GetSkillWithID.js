@@ -12,8 +12,7 @@ let axiosConfig = {
 const GetSkillWithID = async (id) => {
     const token = localStorage.getItem('authtoken');
     const payload = {
-        SkillID:id,
-        token: token
+        SkillID:id
     }
     //This api has to be replaced.
     const link = `/getparticularskill`;

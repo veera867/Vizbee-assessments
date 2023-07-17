@@ -10,11 +10,11 @@ import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-
 
 import '../App.css';
 import Skills from './Skills';
-import Dashboard from './Dashboard';
-import AssesmentReport from './Dashboard/assessmentReport'
+import Dashboard from './AssessmentDashboard/index';
+import AssesmentReport from './AssessmentDashboard/assessmentReport'
 import SkillCreate from './Skills/create';
 import NewQuestionnaire from './Skills/NewQuestionnaire';
-import Schedule from './Dashboard/Schedule';
+import Schedule from './AssessmentDashboard/Schedule';
 import CreateTest from './Tests/CreateTest';
 import EditSkill from './Skills/edit';
 import Tests from './Tests';

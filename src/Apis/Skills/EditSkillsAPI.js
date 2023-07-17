@@ -15,6 +15,7 @@ const UpdateSkillsAPI = async (values) => {
 
     console.log("Edit request id : ",values.skillId);
     //const token = localStorage.getItem('authtoken');
+  
     //This api has to be replaced.
     const link = `updateskill`;
 

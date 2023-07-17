@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, message, Divider, Form, Input, Select } from 'antd';
 
 import CreateJobAPI from '../../Apis/Jobs/CreateJobAPI';
-import '../Dashboard/dashboard.css';
+import '../AssessmentDashboard/dashboard.css';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
 function CreateJob() {

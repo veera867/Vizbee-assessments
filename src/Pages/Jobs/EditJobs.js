@@ -5,7 +5,7 @@ import { Button, message, Divider, Form, Input, Select, Spin } from 'antd';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 import UpdateJobAPI from '../../Apis/Jobs/updateJob';
 import GetJobWithID from '../../Apis/Jobs/GetJobWithID';
-import '../Dashboard/dashboard.css';
+import '../AssessmentDashboard/dashboard.css';
 
 function EditJobs() {
     const { id } = useParams();
@@ -34,6 +34,15 @@ function EditJobs() {
     const [skillsData, setSkillsData] = useState()
 
     const [saveLoading, setSaveLoading] = useState(false);
+    const [initialFormValues, setInitialFormValues] = useState({
+        jdId: '',
+        jdName: '',
+        mandatorySkills: [],
+        optionalSkills: [],
+        complexity: '',
+        totalPositions: '',
+        jobDescription: ''
+      });
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
@@ -88,6 +97,15 @@ function EditJobs() {
             setComplexity(data.complexity);
             setTotalPositions(data.totalPositions);
             setJobDescription(data.jobDescription)
+            setInitialFormValues({
+                jdId: data.JobID,
+                jdName: data.jdName,
+                mandatorySkills: data.mandatorySkills,
+                optionalSkills: data.optionalSkills,
+                complexity: data.complexity,
+                totalPositions: data.totalPositions,
+                jobDescription: data.jobDescription
+              });
         }
     }, [data, fetchFinished]);
 
@@ -227,15 +245,7 @@ function EditJobs() {
                                             width: '100%',
                                             maxWidth: 600,
                                         }}
-                                        initialValues={{
-                                            jdId,
-                                            jdName,
-                                            mskills,
-                                            oskills,
-                                            complexity,
-                                            totalPositions,
-                                            jobDescription
-                                        }}
+                                        initialValues={initialFormValues}
                                         autoComplete="off"
                                         onFinish={handleSave}
                                     >

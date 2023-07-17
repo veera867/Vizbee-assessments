@@ -4,7 +4,7 @@ import { Layout, Result } from 'antd';
 
 const { Header } = Layout;
 
-function Greeting() {
+const Greeting = () => {
     const {type} = useParams();
 
     return (

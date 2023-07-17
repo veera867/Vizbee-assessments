@@ -11,10 +11,7 @@ let axiosConfig = {
 
 const CreateSkillsAPI = async (values) => {
     const token = localStorage.getItem('authtoken');
-    values.token = token;
-
-    console.log("New skill add : ",values);
-    //const token = localStorage.getItem('authtoken')
+   
     //This api has to be replaced.
     const link = `/skills/create`;
 

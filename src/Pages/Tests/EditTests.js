@@ -4,7 +4,7 @@ import { Button, message, Divider, Form, Input, Select, Spin } from 'antd';
 
 import UpdateTestAPI from '../../Apis/Tests/updateTest';
 import GetTestWithID from '../../Apis/Tests/GetTestWithID';
-import '../Dashboard/dashboard.css';
+import '../AssessmentDashboard/dashboard.css';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
 function EditTests() {
@@ -28,6 +28,13 @@ function EditTests() {
     const [skillsData, setSkillsData] = useState()
 
     const [saveLoading, setSaveLoading] = useState(false);
+    const [initialValues, setInitialValues] = useState({
+        testId: 0,
+        testName: '',
+        mandatorySkills: [],
+        optionalSkills: [],
+        complexity: ''
+    });
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
@@ -86,6 +93,13 @@ function EditTests() {
                     setOskills(apiResponse.data.OptionalSkills);
                     setComplexity(apiResponse.data.Complexity);
                     setLoading(false);
+                    setInitialValues({
+                        testId: apiResponse.data.TestID,
+                        testName: apiResponse.data.TestName,
+                        mandatorySkills: apiResponse.data.MandatorySkills,
+                        optionalSkills: apiResponse.data.OptionalSkills,
+                        complexity: apiResponse.data.Complexity
+                    });
 
                 } else {
                     setHasErr(true);
@@ -156,25 +170,44 @@ function EditTests() {
     }
 
     //to capture the mskills and update the skillsData list
-    // useEffect(()=>{
-    //     const filteredOptions = skillsDataList?.filter(
-    //         (item) => !mskills.includes(item.value)
-    //     );
-    //     setSkillsData(filteredOptions);
+    useEffect(() => {
+        const filteredOptions = skillsDataList?.filter(
+            (item) => !mskills.includes(item.value)
+        );
+        setSkillsData(filteredOptions);
 
-    //     const filteredOskills = oskills?.filter(
-    //         (item) => !mskills.includes(item)
-    //     );
-    //     setOskills(filteredOskills);      
-    // },[mskills]);
+        const filteredOskills = oskills?.filter(
+            (item) => !mskills.includes(item)
+        );
+        setOskills(filteredOskills);
+    }, [mskills]);
 
     const updateMSkills = (value) => {
+        // Update the mandatory skills state
         setMskills(value);
-    }
+      
+        // Update the optional skills dropdown options
+        const filteredOptions = skillsDataList?.filter(
+          (item) => !value.includes(item.value)
+        );
+        setOskills(filteredOptions);
+      
+        // Remove any initially selected optional skills that are now part of the mandatory skills
+        const filteredOskills = oskills?.filter(
+          (item) => !value.includes(item)
+        );
+        setOskills(filteredOskills);
+      };
 
     const updateOSkills = (value) => {
         setOskills(value);
-    }
+
+        // Update the mandatorySkills dropdown options
+        // const filteredOptions = skillsDataList?.filter(
+        //     (item) => !value.includes(item.value)
+        // );
+        // setMskills(filteredOptions);
+    };
 
     //handling change events
     const handleTestName = (event) => {
@@ -195,152 +228,145 @@ function EditTests() {
 
                 <Divider />
                 {loading ? <Spin /> :
-                // <Input
-                //     placeholder="Skill Name"
-                //     value={testName}
-                //     // onChange={(e) => setSkillName(e.target.value)}
-                //     name="skillName"
-                //     style={{ maxWidth: '500px' }}
-                // >
+                    // <Input
+                    //     placeholder="Skill Name"
+                    //     value={testName}
+                    //     // onChange={(e) => setSkillName(e.target.value)}
+                    //     name="skillName"
+                    //     style={{ maxWidth: '500px' }}
+                    // >
 
-                // </Input>
+                    // </Input>
 
-                <div className="content-wrapper form-center">
-                    <Form
-                        name="basic"
-                        layout="vertical"
-                        style={{
-                            width: '100%',
-                            maxWidth: 600,
-                        }}
-                        initialValues={{
-                            testId: testId,
-                            testName: testName,
-                            mandatorySkills: mskills,
-                            optionalSkills: oskills,
-                            complexity: complexity
-                        }}
-                        autoComplete="off"
-                        onFinish={handleSave}
-                    >
-                        <Form.Item
-                            label="Test ID"
-                            name="testId"
+                    <div className="content-wrapper form-center">
+                        <Form
+                            name="basic"
+                            layout="vertical"
+                            style={{
+                                width: '100%',
+                                maxWidth: 600,
+                            }}
+                            initialValues={initialValues}
+                            autoComplete="off"
+                            onFinish={handleSave}
                         >
-                            <Input
-                                value={testId}
-                                defaultValue={id}
-                                disabled
-                            />
-                        </Form.Item>
+                            <Form.Item
+                                label="Test ID"
+                                name="testId"
+                            >
+                                <Input
+                                    value={testId}
+                                    defaultValue={id}
+                                    disabled
+                                />
+                            </Form.Item>
 
-                        <Form.Item
-                            label="Test Name"
-                            name="testName"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please enter name!',
-                                }
-                            ]}
-                        >
-                            <Input
-                                value={testName}
-                                defaultValue={testName}
-                                onChange={handleTestName}
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Mandatory Skills"
-                            name="mandatorySkills"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
-                        >
-                            <Select
-                                value={mskills}
-                                onChange={(value) => updateMSkills(value)}
-                                mode="multiple"
-                                defaultActiveFirstOption
-                                style={{
-                                    width: '100%'
-                                }}
-                                options={skillsData}
-                            ></Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Optional Skills"
-                            name="optionalSkills"
-                        >
-                            <Select
-                                value={oskills}
-                                onChange={(value) => updateOSkills(value)}
-                                mode="multiple"
-                                style={{
-                                    width: '100%'
-                                }}
-                                options={skillsData}
-                            ></Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Complexity"
-                            name="complexity"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please select!',
-                                },
-                            ]}
-                        >
-                            <Select
-                                value={complexity}
-                                onChange={(value) => { setComplexity(value) }}
-                                style={{
-                                    width: '100%'
-                                }}
-                                options={[
+                            <Form.Item
+                                label="Test Name"
+                                name="testName"
+                                rules={[
                                     {
-                                        value: 'Beginner',
-                                        label: 'Beginner'
-                                    },
-                                    {
-                                        value: 'Intermediate',
-                                        label: 'Intermediate'
-                                    },
-                                    {
-                                        value: 'Pro',
-                                        label: 'Pro'
+                                        required: true,
+                                        message: 'Please enter name!',
                                     }
                                 ]}
-                            ></Select>
-                        </Form.Item>
-
-                        <div className="title-bar">
-                            <h1>{''}</h1>
-
-                            <Form.Item>
-                                <div className="button-holder">
-                                    <Button danger onClick={handleCancel}>Cancel</Button>
-                                    <span></span>
-                                    {
-                                        saveLoading
-                                            ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                            : <Button type="primary" htmlType="submit">Save</Button>
-                                    }
-                                </div>
+                            >
+                                <Input
+                                    value={testName}
+                                    defaultValue={testName}
+                                    onChange={handleTestName}
+                                />
                             </Form.Item>
-                        </div>
-                    </Form>
-                
-                </div>
-}
+
+
+                            <Form.Item
+                                label="Mandatory Skills"
+                                name="mandatorySkills"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    value={mskills}
+                                    onChange={updateMSkills} // Update the onChange prop here
+                                    mode="multiple"
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    options={skillsData}
+                                ></Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Optional Skills"
+                                name="optionalSkills"
+                            >
+                                <Select
+                                    value={oskills}
+                                    onChange={updateOSkills}
+                                    mode="multiple"
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    options={skillsData}
+                                ></Select>
+                            </Form.Item>
+
+
+                            <Form.Item
+                                label="Complexity"
+                                name="complexity"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    value={complexity}
+                                    onChange={(value) => { setComplexity(value) }}
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                    options={[
+                                        {
+                                            value: 'Beginner',
+                                            label: 'Beginner'
+                                        },
+                                        {
+                                            value: 'Intermediate',
+                                            label: 'Intermediate'
+                                        },
+                                        {
+                                            value: 'Pro',
+                                            label: 'Pro'
+                                        }
+                                    ]}
+                                ></Select>
+                            </Form.Item>
+
+                            <div className="title-bar">
+                                <h1>{''}</h1>
+
+                                <Form.Item>
+                                    <div className="button-holder">
+                                        <Button danger onClick={handleCancel}>Cancel</Button>
+                                        <span></span>
+                                        {
+                                            saveLoading
+                                                ? <Button type="primary" htmlType="submit" loading>Save</Button>
+                                                : <Button type="primary" htmlType="submit">Save</Button>
+                                        }
+                                    </div>
+                                </Form.Item>
+                            </div>
+                        </Form>
+
+                    </div>
+                }
             </div>
         </div>
     )

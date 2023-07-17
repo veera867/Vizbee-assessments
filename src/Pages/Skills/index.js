@@ -1,7 +1,7 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {PlusOutlined,EditFilled,DeleteFilled} from '@ant-design/icons';
-import { Table,Modal ,Button,message, Divider  } from 'antd';
+import { PlusOutlined, EditFilled, DeleteFilled } from '@ant-design/icons';
+import { Table, Modal, Button, message, Divider } from 'antd';
 
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 import DeleteSkillsAPI from '../../Apis/Skills/DeleteSkillsAPI';
@@ -10,95 +10,41 @@ import './skills.css';
 
 function Skills() {
 
-    const navigate= useNavigate();
+    const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
+    const [deletedSkillId, setDeletedSkillId] = useState(null);
 
-    const [skills,setSkills] = useState([
-        //dummy data for testing purpose only. Can be removed!!
-        // {
-        //     SkillID : 1,
-        //     SkillName : 'Python',
-        //     // questionnaire: [
-        //     //     {
-        //     //         question : 'What is Python',
-        //     //         answer : 'Pytho is a programming langauge'
-        //     //     },
-        //     //     {
-        //     //         question : 'How to compile python code?',
-        //     //         answer : 'Using Python file.py cmd'
-        //     //     },
-        //     //     {
-        //     //         question : 'What is the stable version of Python?',
-        //     //         answer : 'Latest LTS is 3.10.0'
-        //     //     }
-        //     // ]
-        // },
-        // {
-        //     SkillID : 2,
-        //     SkillName : 'Java',
-        //     // questionnaire: [
-        //     //     {
-        //     //         question : 'What is Java',
-        //     //         answer : 'Java is a programming langauge'
-        //     //     },
-        //     //     {
-        //     //         question : 'How to compile Java code?',
-        //     //         answer : 'Using javac file.java cmd'
-        //     //     },
-        //     //     {
-        //     //         question : 'What is the stable version of Java?',
-        //     //         answer : 'Latest LTS is 16.8.0'
-        //     //     }
-        //     // ]
-        // },
-        // {
-        //     SkillID : 3,
-        //     SkillName : 'JavaScript',
-        //     // questionnaire: [
-        //     //     {
-        //     //         question : 'What is JavaScript',
-        //     //         answer : 'JavScript is a programming langauge'
-        //     //     },
-        //     //     {
-        //     //         question : 'How to compile JavaScript code?',
-        //     //         answer : 'Using node file.js or in browser console.'
-        //     //     },
-        //     //     {
-        //     //         question : 'What is the stable version of JavaScript?',
-        //     //         answer : 'Latest ECMAScript'
-        //     //     }
-        //     // ]
-        // }
-    ]);
+
+    const [skills, setSkills] = useState([]);
 
     //error boundaries and loaders
-    const [loading,setLoading] = useState(false);
-    const [hasErr,setHasErr] = useState(false);
-    const [errMsg,setErrMsg] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [hasErr, setHasErr] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
 
     //for delete confirm box
-    const [cnfmDel,setCnfmDel] = useState(false);
-    const [delId,setDelId] = useState(0);
-    const [confirmLoading,setConfirmLoading] = useState(false);
+    const [cnfmDel, setCnfmDel] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
-    useEffect(()=>{
+    useEffect(() => {
         const token = localStorage.getItem('authtoken');
-        if(!token){
+        if (!token) {
             navigate('/auth/login');
         }
-    },[]);
+    }, []);
 
-    useEffect(()=>{
-        async function getSkills(){
+    useEffect(() => {
+        async function getSkills() {
             setLoading(true);
-            try{
+            try {
                 const apiResponse = await GetSkillsAPI({});
                 console.log(apiResponse);
-    
+
                 //According to the status from API
-                if(apiResponse.status == 200){
+                if (apiResponse.status == 200) {
                     setSkills(apiResponse.data.skills);
                     setLoading(false);
                 } else {
@@ -109,8 +55,8 @@ function Skills() {
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
-                    });                  
-                }    
+                    });
+                }
             } catch (err) {
                 console.log(err.message);
                 setLoading(false);
@@ -118,15 +64,23 @@ function Skills() {
                 messageApi.open({
                     type: 'error',
                     content: err.message,
-                }); 
-            }    
+                });
+            }
         }
 
-        setTimeout(() =>{
+        setTimeout(() => {
             getSkills();
-        }, 1000) 
-       
-    },[]);
+        }, 1000)
+
+    }, []);
+
+    useEffect(() => {
+        if (deletedSkillId) {
+          setSkills(prevSkills => prevSkills.filter(skill => skill.SkillID !== deletedSkillId));
+          setDeletedSkillId(null);
+        }
+      }, [deletedSkillId]);
+      
 
     // Delete Functionality
     const handleRemove = async (record) => {
@@ -135,20 +89,23 @@ function Skills() {
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
-        try{
+        try {
             const apiResponse = await DeleteSkillsAPI(delId);
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if (apiResponse.status === 200) {
                 setConfirmLoading(false);
                 setCnfmDel(false);
                 setDelId(null);
+                setDeletedSkillId(delId); // Store the deleted skill ID
+
+                setSkills(prevSkills => prevSkills.filter(skill => skill.SkillID !== delId));
 
                 messageApi.open({
                     type: 'success',
                     content: 'Deleted Successfully',
-                });              
+                });
             } else {
                 setConfirmLoading(false);
                 setCnfmDel(false);
@@ -157,8 +114,8 @@ function Skills() {
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });              
-            }    
+                });
+            }
         } catch (err) {
             console.log(err.message);
             setConfirmLoading(false);
@@ -168,14 +125,14 @@ function Skills() {
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleDelCancel = () => {
         setCnfmDel(false);
         setDelId(null);
     }
-    
+
     const columns = [
         {
             title: 'Skill Id',
@@ -196,7 +153,7 @@ function Skills() {
                 <span></span>
                 <Button icon={<DeleteFilled />} onClick={() => handleRemove(record)}></Button>
             </div>,
-        }        
+        }
     ];
 
     return (
@@ -212,9 +169,9 @@ function Skills() {
                 </div>
 
                 <Divider />
-                
+
                 <div className="content-wrapper">
-                    <Table dataSource={skills} columns={columns} loading={loading}/>
+                    <Table dataSource={skills} columns={columns} loading={loading} />
                 </div>
             </div>
             <Modal

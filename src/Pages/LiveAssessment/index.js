@@ -6,9 +6,9 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import Webcam from "react-webcam";
 import { useScreenshot } from "use-react-screenshot";
 
-import SendAssessmentStatusAPI from "../../Apis/SendAssessmentStatusAPI";
-import LoadQuestionsAPI from "../../Apis/LoadQuestionsAPI";
-import FinalResultApi from '../../Apis/Assessments/finalResultApi';
+import SendAssessmentStatusAPI from "../../Apis/LiveAssessments/SendAssessmentStatusAPI";
+import LoadQuestionsAPI from "../../Apis/LiveAssessments/LoadQuestionsAPI";
+import FinalResultApi from '../../Apis/LiveAssessments/finalResultApi';
 
 import "../../App.css";
 
@@ -21,7 +21,9 @@ const Assessment = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const assessementCode = location.state;
-  //console.log("assessementCode", assessementCode);
+  console.log("assessementCode", assessementCode)
+ 
+ 
 
   const [loading, setLoading] = useState(false);
   const [hasErr, setHasErr] = useState(false);
@@ -58,7 +60,7 @@ const Assessment = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [elapsedMin, setElapsedMin] = useState(0);
   const [animation, setAnimation] = useState(false);
-  const [nextQuestionFlag, setNextQuestionFlag] = useState(false);
+  const [nextQuestionFlag, setNextQuestionFlag] = useState(false)
 
   //const pathName = location.pathname;
   //const scheduleId = pathName.substring(pathName.lastIndexOf('/') + 1)
@@ -72,7 +74,7 @@ const Assessment = () => {
       formData.append("question", questions[currentQuestion].Question)
       formData.append("skillName", questions[currentQuestion]?.SkillName)
       formData.append("test_id", assessementCode?.code)
-  
+     
       formData.append("audio", audio);
       formData.append("image", image)
 
@@ -144,10 +146,7 @@ const Assessment = () => {
       setIsRecording(false);
       setAnimation(false);
       setTimeUp(true);
-
-      //This is causing error for next click saving!!
       mediaRecorderRef?.current?.stop();
-
       //setFlag(true);
       clearInterval(interval);
     }
@@ -222,11 +221,6 @@ const Assessment = () => {
   }
 
   const handleNextConfirmClick = async () => {
-    console.log('handleNextConfirmClick invoked...');
-
-    setIsRecording(false);
-    setAnimation(false);
-    mediaRecorderRef?.current?.stop();
 
     setConfirmLoading(true);
     const blob = new Blob(audioChunks, { type: "audio/webm" });
@@ -279,6 +273,7 @@ const Assessment = () => {
 
   const handleCancel = () => {
     setShowConfirmation(false);
+
   };
 
   const handleSkip = () => {
@@ -400,7 +395,7 @@ const Assessment = () => {
                 <div className="time-wrapper">
                   <Progress
                     steps={questions?.length}
-                    percent={Math.floor(((currentQuestion + 1) / questions?.length) * 100)}
+                    percent={((currentQuestion + 1) / questions?.length) * 100}
                     size={[20, 5]}
                   />
                   <p className="timer">

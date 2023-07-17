@@ -12,8 +12,7 @@ let axiosConfig = {
 const GetTestWithID = async (id) => {
     const token = localStorage.getItem('authtoken');
     const payload = {
-        TestID: id,
-        token : token
+        TestID: id
     }
     //This api has to be replaced.
     const url = `test/get-particular-test`;

@@ -12,7 +12,7 @@ let axiosConfig = {
 const DownloadAssessmentReports = async (id) => {
     const token = localStorage.getItem('authtoken');
     console.log("DownloadAssessmentReports", id)
-    const token = localStorage.getItem('authtoken');
+    //const token = localStorage.getItem('authtoken');
     const payload = {
         scheduleId:id,
         token: token

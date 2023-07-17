@@ -13,7 +13,7 @@ const UpdateJobAPI = async (values) => {
     // console.log("payload : ",values);
     const token = localStorage.getItem('authtoken')
     //This api has to be replaced.
-    const token = localStorage.getItem('authtoken');
+    //const token = localStorage.getItem('authtoken');
     values.token = token;
 
     const url = `update/job`;

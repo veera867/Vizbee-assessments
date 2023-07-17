@@ -116,44 +116,51 @@ function CreateSkill() {
     };
 
     const handleSave = async () => {
-        setSaveLoading(true);
-        try {
-            const payload = {
-                skillName: skillName,
-                skillGroup: skillGroup,
-                questionnaire: questions
-            }
-            const apiResponse = await CreateSkillsAPI(payload);
-            console.log("apiResponse", apiResponse);
-
-            //According to the status from API
-            if (apiResponse.status === 200) {
-                setSaveLoading(false);
-                // setQuestions(apiResponse.data);
-                setLoading(false);
-                navigate(-1)
-            } else {
-                setSaveLoading(false);
-                setHasErr(true);
-                setErrMsg(apiResponse.message);
-                setLoading(false);
-
-                messageApi.open({
-                    type: 'error',
-                    content: apiResponse.message,
-                });
-            }
-        } catch (err) {
-            console.log(err.message);
-            setLoading(false);
-            setSaveLoading(false);
-
-            messageApi.open({
-                type: 'error',
-                content: err.message,
-            });
+    setSaveLoading(true);
+    try {
+        const payload = {
+            skillName: skillName,
+            skillGroups: skillGroup,
+            questionnaire: questions
         }
+        const apiResponse = await CreateSkillsAPI(payload);
+        console.log("apiResponse", apiResponse);
+
+        // Check the status code from the API response
+        if (apiResponse.status === 201) {
+            // Skill creation is successful
+            setSaveLoading(false);
+            setLoading(false);
+            navigate(-1);
+        } else if (apiResponse.status === 401) {
+            // Authentication failed
+            console.log("401", 401)
+            setSaveLoading(false);
+            navigate('/auth/login');
+        } else if (apiResponse.status === 403) {
+            // Permission denied
+            setSaveLoading(false);
+            setHasErr(true);
+            setErrMsg(apiResponse.message);
+        } else if (apiResponse.status === 404) {
+            // Skill not found
+            setSaveLoading(false);
+            setHasErr(true);
+            setErrMsg(apiResponse.message);
+        } else {
+            // Other error scenarios
+            setSaveLoading(false);
+            setHasErr(true);
+            setErrMsg(apiResponse.message);
+        }
+    } catch (err) {
+        console.log(err.response.data.message);
+        setSaveLoading(false);
+        setHasErr(true);
+        setErrMsg(err.response.data.message);
     }
+};
+
 
     //Edit Functionality
     const handleEdit = async (record) => {

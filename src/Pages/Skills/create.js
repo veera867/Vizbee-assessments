@@ -120,7 +120,7 @@ function CreateSkill() {
     try {
         const payload = {
             skillName: skillName,
-            skillGroups: skillGroup,
+            skillGroup: skillGroup,
             questionnaire: questions
         }
         const apiResponse = await CreateSkillsAPI(payload);
@@ -139,7 +139,7 @@ function CreateSkill() {
             navigate('/auth/login');
         } else if (apiResponse.status === 403) {
             // Permission denied
-            setSaveLoading(false);
+            setSaveLoading(false); 
             setHasErr(true);
             setErrMsg(apiResponse.message);
         } else if (apiResponse.status === 404) {
@@ -164,10 +164,10 @@ function CreateSkill() {
 
     //Edit Functionality
     const handleEdit = async (record) => {
-        setEditId(record.slno);
+        setEditId(record.count);
         setCurrentEditModel(record);
-        setQuestion(record.question);
-        setAnswer(record.answer);
+        setQuestion(record['Q']);
+        setAnswer(record['A']);
         setImportance(record.importance);
 
         setOpenEdit(true);
@@ -175,9 +175,9 @@ function CreateSkill() {
     const handleEdit2 = () => {
         setEditId(0);
         setCurrentEditModel({
-            slno: 0,
-            question: '',
-            answer: '',
+            count: 0,
+            Q: '',
+            A: '',
             importance: 'Beginner',
         });
         setQuestion('');
@@ -190,12 +190,11 @@ function CreateSkill() {
         setEditLoading(true);
         try {
             if (editId === 0) {
+                //console.log(editId, questions.length);
                 let temp = {
                     count: questions.length > 0
-                        ? question.length === 1
-                            ? questions.length + 1
-                            : question.length
-                        : 1,
+                            ? String(Number(questions[questions.length - 1].count) + 1)
+                            : '1',
                     Q: question,
                     A: answer,
                     importance: importance,
@@ -203,9 +202,9 @@ function CreateSkill() {
                 setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if (ques.slno === editId) {
-                        ques.question = question;
-                        ques.answer = answer;
+                    if (ques.count === editId) {
+                        ques['Q'] = question;
+                        ques['A'] = answer;
                         ques.importance = importance;
                     }
 
@@ -235,7 +234,7 @@ function CreateSkill() {
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.slno);
+        setDelId(record.count);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);

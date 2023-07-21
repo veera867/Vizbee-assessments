@@ -4,6 +4,9 @@ import axios from "../axiosInstance.js";
 
 const CreateJobAPI = async (values) => {
     const token = localStorage.getItem('authtoken');
+    values.token = token;
+    console.log("payload : ",values);
+    //const token = localStorage.getItem('authtoken');
     //This api has to be replaced.
     const url = `/jobs/create`;
 

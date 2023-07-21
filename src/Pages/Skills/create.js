@@ -230,8 +230,8 @@ function CreateSkill() {
     const handleEdit = async (record) => {
         setEditId(record.count);
         setCurrentEditModel(record);
-        setQuestion(record.Q);
-        setAnswer(record.A);
+        setQuestion(record['Q']);
+        setAnswer(record['A']);
         setImportance(record.importance);
         setOpenEdit(true);
     }
@@ -240,10 +240,10 @@ function CreateSkill() {
         setEditId(0);
        
         setCurrentEditModel({
-          count: 0, // Calculate the new count based on the current questions array length
-          Q: '',
-          A: '',
-          importance: 'Beginner',
+            count: 0,
+            Q: '',
+            A: '',
+            importance: 'Beginner',
         });
        
         setQuestion('');
@@ -256,12 +256,11 @@ function CreateSkill() {
         setEditLoading(true);
         try {
             if (editId === 0) {
+                //console.log(editId, questions.length);
                 let temp = {
                     count: questions.length > 0
-                        ? question.length === 1
-                            ? questions.length + 1
-                            :question.length
-                        : 1,
+                            ? String(Number(questions[questions.length - 1].count) + 1)
+                            : '1',
                     Q: question,
                     A: answer,
                     importance: importance,
@@ -270,8 +269,8 @@ function CreateSkill() {
             } else {
                 questions.map(ques => {
                     if (ques.count === editId) {
-                        ques.Q = question;
-                        ques.A = answer;
+                        ques['Q'] = question;
+                        ques['A'] = answer;
                         ques.importance = importance;
                     }
 

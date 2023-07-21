@@ -4,8 +4,6 @@ import axios from "../axiosInstance.js";
 
 const DownloadAssessmentReports = async (id) => {
     const token = localStorage.getItem('authtoken');
-    console.log("DownloadAssessmentReports", id)
-    //const token = localStorage.getItem('authtoken');
     const payload = {
         scheduleId:id,
     }

@@ -43,7 +43,7 @@ function Login() {
                 setLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse?.data?.message,
+                    content: apiResponse?.data.message,
                 });
 
                 //on sucess I have to get authtoken

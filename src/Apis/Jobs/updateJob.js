@@ -3,9 +3,6 @@ import axios from "../axiosInstance.js";
 const UpdateJobAPI = async (values) => {
     const token = localStorage.getItem('authtoken')
     //This api has to be replaced.
-    //const token = localStorage.getItem('authtoken');
-    values.token = token;
-
     const url = `update/job`;
 
     try {

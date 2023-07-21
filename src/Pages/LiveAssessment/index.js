@@ -22,8 +22,8 @@ const Assessment = () => {
 
   const assessementCode = location.state;
   console.log("assessementCode", assessementCode)
- 
- 
+
+
 
   const [loading, setLoading] = useState(false);
   const [hasErr, setHasErr] = useState(false);
@@ -74,7 +74,7 @@ const Assessment = () => {
       formData.append("question", questions[currentQuestion].Question)
       formData.append("skillName", questions[currentQuestion]?.SkillName)
       formData.append("test_id", assessementCode?.code)
-     
+
       formData.append("audio", audio);
       formData.append("image", image)
 
@@ -82,7 +82,7 @@ const Assessment = () => {
       console.log(apiResponse);
 
       //According to the status from API
-      if (apiResponse.status === 200) {
+      if (apiResponse.status === 201) {
         console.log(apiResponse);
         console.log(apiResponse.data.message);
 
@@ -115,7 +115,7 @@ const Assessment = () => {
 
         messageApi.open({
           type: 'error',
-          content: apiResponse.message,
+          content: apiResponse.statusText,
         });
       }
     } catch (err) {
@@ -254,14 +254,43 @@ const Assessment = () => {
       setShowConfirmation(false);
       if (apiResponse.status === 200) {
         navigate(`/assessment/greetings/success`);
+      }
+      else if (apiResponse.status === 404) {
+        // Skill not found
+        setLoading(false);
+        setHasErr(true);
+       
+        setErrMsg(apiResponse.statusText);
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.statusText,
+        });
+        navigate(`/assessment/greetings/error`);
       } else {
+        setLoading(false);
+        setHasErr(true);
+        setErrMsg(apiResponse.message);
+       
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.statusText,
+        });
         navigate(`/assessment/greetings/error`);
       }
     } catch (err) {
+      setLoading(false);
+      setHasErr(true);
+      setErrMsg(err.message);
       setFinishLoading(false);
       setShowConfirmation(false);
       navigate(`/assessment/greetings:error`);
+
+      messageApi.open({
+        type: 'error',
+        content: err.message,
+      });
     }
+   
 
     // const blob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
     // const audioUrl = URL.createObjectURL(blob);
@@ -311,24 +340,25 @@ const Assessment = () => {
         setLoading(true);
         // const test_id = 1122;
         const payload = {
-          test_id:assessementCode?.code, 
-          currentCompanyName:assessementCode?.currentCompanyName,         
-          designation:assessementCode?.designation,         
-          relavantExperince:assessementCode?.relavantExperince,         
-          totalExperince:assessementCode?.totalExperince,
-          noticePeriod : assessementCode?.noticePeriod,
+          test_id: assessementCode?.code,
+          currentCompanyName: assessementCode?.currentCompanyName,
+          designation: assessementCode?.designation,
+          relavantExperince: assessementCode?.relavantExperince,
+          totalExperince: assessementCode?.totalExperince,
+          noticePeriod: assessementCode?.noticePeriod,
           role: assessementCode?.role
-          
+
         }
         const apiResponse = await LoadQuestionsAPI(payload);
         console.log("response", apiResponse);
         if (apiResponse.status === 200) {
           setQuestions(apiResponse.data.questions);
           setLoading(false);
-        } else {
+        } 
+        else {
           messageApi.open({
             type: 'error',
-            content: apiResponse.message,
+            content: apiResponse.statusText,
           });
 
           setLoading(false);

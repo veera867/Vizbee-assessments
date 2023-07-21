@@ -4,8 +4,10 @@ import { Button,message, Divider, Form, Input, Select } from 'antd';
 
 import CreateTestAPI from '../../Apis/Tests/CreateTestAPI';
 import '../AssessmentDashboard/dashboard.css';
-import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI'
-function CreateTest() {
+import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
+
+
+const CreateTest = () => {
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -18,6 +20,7 @@ function CreateTest() {
 
     const [skillsDataList,setSkillsDataList] = useState();
     const [skillsData, setSkillsData] = useState();
+    const [loading, setLoading] = useState(false)
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
@@ -34,30 +37,63 @@ function CreateTest() {
     },[])
 
     const fetchSkillsData = async() => {
+        setLoading(true);
         try{
-            const response = await GetSkillsAPI()
-            console.log("response", response)
+            const apiResponse = await GetSkillsAPI()
+            console.log("response", apiResponse)
 
-            if(response.status === 200){
-                const selectOptions = response.data.skills.map(item => ({
+            if(apiResponse.status === 200){
+                const selectOptions = apiResponse.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
                 }))
                 setSkillsData(selectOptions);
                 setSkillsDataList(selectOptions);
-            } else {
+                setLoading(false);
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
                 messageApi.open({
                     type: 'error',
-                    content: response.message,
-                });                  
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+               
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+                
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setLoading(false);
+               
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });
             }
         } catch (err) {
-            console.log(err);
+            setLoading(false);
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });                  
+            });
         }
+          
     }
 
     const handleSave = async () => {
@@ -73,28 +109,57 @@ function CreateTest() {
             console.log(apiResponse);
 
             //According to the status from API
-            if(apiResponse.status === 200){
+            if(apiResponse.status === 201){
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
                     content: apiResponse.message,
                 });           
                 navigate(-1);
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false);
+               
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setSaveLoading(false);
+                
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setSaveLoading(false);
+               
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });                  
-            }    
+                });
+            }
         } catch (err) {
-            console.log(err.message);
             setSaveLoading(false);
-            
+           
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            }); 
+            });
         }
     }
 

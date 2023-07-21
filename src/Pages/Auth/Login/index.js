@@ -56,23 +56,50 @@ function Login() {
                 setTimeout(() => {
                     navigate("/app/jobs");
                 }, 1000);
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: ` ${apiResponse.data.error}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+                
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+               
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setLoading(false);
-
+                
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err.message);
             setLoading(false);
+           
 
             messageApi.open({
                 type: 'error',
                 content: err.message,
             });
-
         }
     }
 

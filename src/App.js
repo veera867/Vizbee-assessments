@@ -1,6 +1,6 @@
 import React from 'react';
 import {Routes , Route , Navigate } from 'react-router-dom';
-import AppLayout from './Pages';
+import AppLayout from './Pages/index';
 
 import './custom-theme.less';
 import AuthLayout from './Pages/Auth';

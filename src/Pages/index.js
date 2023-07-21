@@ -9,7 +9,7 @@ import {
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import '../App.css';
-import Skills from './Skills';
+import Skills from './Skills/index';
 import Dashboard from './AssessmentDashboard/index';
 import AssesmentReport from './AssessmentDashboard/assessmentReport'
 import SkillCreate from './Skills/create';

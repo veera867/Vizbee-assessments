@@ -41,32 +41,55 @@ const UserRegister = () => {
           type: 'success',
           content: apiResponse.message,
         });
-
-        // on success, get authtoken and store it in localstorage
-        localStorage.setItem('authtoken', apiResponse.authToken);
-
-        // Auto redirection
         setTimeout(() => {
           navigate('/auth/login');
         }, 1000);
-      } else {
-        setLoading(false);
-
+      }
+      else if (apiResponse.status === 401) {
+        // Authentication failed
         messageApi.open({
           type: 'error',
-          content: apiResponse.message,
+          content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
         });
+        setLoading(false);
+        setTimeout(() => {
+          navigate('/auth/login');
+        }, 1000)
 
-        // Auto redirection remove this
+      } else if (apiResponse.status === 403) {
+        // Permission denied
+        setLoading(false);
+       
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.statusText,
+        });
+      } else if (apiResponse.status === 404) {
+        // Skill not found
+        setLoading(false);
+      
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.statusText,
+        });
+      } else {
+        setLoading(false);
+       
+        messageApi.open({
+          type: 'error',
+          content: apiResponse.statusText,
+        });
       }
     } catch (err) {
-      console.log(err.message);
-      setLoading(false);
+      setLoading(false);      
+
       messageApi.open({
         type: 'error',
         content: err.message,
       });
     }
+
+
   };
 
   // Custom validation function for confirm password

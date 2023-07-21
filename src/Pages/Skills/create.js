@@ -74,8 +74,39 @@ function CreateSkill() {
             if (apiResponse.status === 200) {
                 setQuestions(apiResponse.data.questions);
                 setFetchLoading(false);
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setFetchLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setFetchLoading(false);
+              
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setFetchLoading(false);
+             
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setFetchLoading(false);
+                
+                setErrMsg(apiResponse.message);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
@@ -83,11 +114,16 @@ function CreateSkill() {
             }
         } catch (err) {
             setFetchLoading(false);
+          
+            setErrMsg(err.message);
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
             });
         }
+
+
     }
 
     const handleCSVUpload = (e) => {
@@ -116,70 +152,100 @@ function CreateSkill() {
     };
 
     const handleSave = async () => {
-    setSaveLoading(true);
-    try {
-        const payload = {
-            skillName: skillName,
-            skillGroups: skillGroup,
-            questionnaire: questions
-        }
-        const apiResponse = await CreateSkillsAPI(payload);
-        console.log("apiResponse", apiResponse);
+        setSaveLoading(true);
+        try {
+            const payload = {
+                skillName: skillName,
+                skillGroup: skillGroup,
+                questionnaire: questions
+            }
+            const apiResponse = await CreateSkillsAPI(payload);
+            console.log("apiResponse", apiResponse);
 
-        // Check the status code from the API response
-        if (apiResponse.status === 201) {
-            // Skill creation is successful
-            setSaveLoading(false);
-            setLoading(false);
-            navigate(-1);
-        } else if (apiResponse.status === 401) {
-            // Authentication failed
-            console.log("401", 401)
-            setSaveLoading(false);
-            navigate('/auth/login');
-        } else if (apiResponse.status === 403) {
-            // Permission denied
+            //According to the status from API
+            if (apiResponse.status === 201) {
+                // Skill creation is successful
+                setSaveLoading(false);
+                setLoading(false);
+                messageApi.open({
+                    type: 'success',
+                    content: apiResponse.message,
+                  });
+          
+                setTimeout(() => {
+                    navigate(-1);
+                }, 1000)
+                
+            } else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });
+            }
+        } catch (err) {
             setSaveLoading(false);
             setHasErr(true);
-            setErrMsg(apiResponse.message);
-        } else if (apiResponse.status === 404) {
-            // Skill not found
-            setSaveLoading(false);
-            setHasErr(true);
-            setErrMsg(apiResponse.message);
-        } else {
-            // Other error scenarios
-            setSaveLoading(false);
-            setHasErr(true);
-            setErrMsg(apiResponse.message);
+            setErrMsg(err.message);
+
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });
         }
-    } catch (err) {
-        console.log(err.response.data.message);
-        setSaveLoading(false);
-        setHasErr(true);
-        setErrMsg(err.response.data.message);
     }
-};
-
 
     //Edit Functionality
     const handleEdit = async (record) => {
-        setEditId(record.slno);
+        setEditId(record.count);
         setCurrentEditModel(record);
-        setQuestion(record.question);
-        setAnswer(record.answer);
+        setQuestion(record.Q);
+        setAnswer(record.A);
         setImportance(record.importance);
-
         setOpenEdit(true);
     }
+    
     const handleEdit2 = () => {
         setEditId(0);
+       
         setCurrentEditModel({
-            slno: 0,
-            question: '',
-            answer: '',
-            importance: 'Beginner',
+          count: 0, // Calculate the new count based on the current questions array length
+          Q: '',
+          A: '',
+          importance: 'Beginner',
         });
+       
         setQuestion('');
         setAnswer('');
         setImportance('Beginner');
@@ -194,7 +260,7 @@ function CreateSkill() {
                     count: questions.length > 0
                         ? question.length === 1
                             ? questions.length + 1
-                            : question.length
+                            :question.length
                         : 1,
                     Q: question,
                     A: answer,
@@ -203,9 +269,9 @@ function CreateSkill() {
                 setQuestions([...questions, temp]);
             } else {
                 questions.map(ques => {
-                    if (ques.slno === editId) {
-                        ques.question = question;
-                        ques.answer = answer;
+                    if (ques.count === editId) {
+                        ques.Q = question;
+                        ques.A = answer;
                         ques.importance = importance;
                     }
 
@@ -235,7 +301,7 @@ function CreateSkill() {
     // Delete Functionality
     const handleRemove = async (record) => {
         setCnfmDel(true);
-        setDelId(record.slno);
+        setDelId(record.count);
     }
     const handleDelOk = async () => {
         setConfirmLoading(true);
@@ -309,7 +375,7 @@ function CreateSkill() {
                         {
                             saveLoading
                                 ? <Button type="primary" htmlType="submit" loading>Saving</Button>
-                                : <Button type="primary" onClick={handleSave} disabled={fetchLoading}  htmlType="submit">Save</Button>
+                                : <Button type="primary" onClick={handleSave} disabled={skillName === '' || skillGroup === '' || questions.length === 0} htmlType="submit">Save</Button>
                         }
                         {/* <Button type="primary" onClick={handleSave} disabled={fetchLoading}>Save</Button> */}
                     </div>
@@ -342,14 +408,14 @@ function CreateSkill() {
 
                     <div className="button-holder">
                         <Tooltip title="Add Questions">
-                            <Button disabled={fetchLoading} type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />} />
+                            <Button disabled={fetchLoading || skillName === ''} type="primary" shape="circle" onClick={handleEdit2} icon={<PlusOutlined />} />
                         </Tooltip>
                         <span></span>
                         <label htmlFor="csv-upload" style={{ marginBottom: 0 }}>
                             <Tooltip title="Csv File Upload">
                                 <Button type="primary"
                                     shape="circle"
-                                    disabled={fetchLoading}
+                                    disabled={fetchLoading || skillName === ''}
                                     icon={<CloudUploadOutlined />}
                                     onClick={handleUploadClick}
                                 />
@@ -364,14 +430,14 @@ function CreateSkill() {
                             />
                         </label>
                         <span></span>
-                        <Button type="primary" onClick={handleAutoGenerate} disabled={fetchLoading}>Auto Generate</Button>
+                        <Button type="primary" onClick={handleAutoGenerate} disabled={fetchLoading || skillName === ''}>Auto Generate</Button>
                     </div>
                 </div>
                 <div className="content-wrapper">
                     {
                         loading
                             ? <Spin tip="loading"></Spin>
-                            : <Table dataSource={questions} columns={columns} loading={fetchLoading} />
+                            : <Table dataSource={questions} columns={columns} loading={fetchLoading} rowKey="count"/>
                     }
                 </div>
             </div>

@@ -7,7 +7,7 @@ import GetTestWithID from '../../Apis/Tests/GetTestWithID';
 import '../AssessmentDashboard/dashboard.css';
 import GetSkillsAPI from '../../Apis/Skills/getSkillsAPI';
 
-function EditTests() {
+const EditTests = () =>{
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -47,30 +47,65 @@ function EditTests() {
 
     useEffect(() => {
         fetchSkillsData()
-        console.log("useEffect")
     }, [])
 
     const fetchSkillsData = async () => {
-        console.log("fetch")
+        setLoading(true);
         try {
-            const response = await GetSkillsAPI()
-            console.log("response", response)
+            const apiResponse = await GetSkillsAPI()
 
-            if (response.status === 200) {
-                const selectOptions = response.data.skills.map(item => ({
+            if (apiResponse.status === 200) {
+                const selectOptions = apiResponse.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
                 }))
                 setSkillsData(selectOptions);
                 setSkillsDataList(selectOptions);
-            } else {
+                setLoading(false);
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
                 messageApi.open({
                     type: 'error',
-                    content: response.message,
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err);
+            setLoading(false);
+            setHasErr(true);
+            setErrMsg(err.message);
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
@@ -101,20 +136,50 @@ function EditTests() {
                         complexity: apiResponse.data.Complexity
                     });
 
-                } else {
+                }
+                else if (apiResponse.status === 401) {
+                    // Authentication failed
+                    messageApi.open({
+                        type: 'error',
+                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                    });
+                    setLoading(false);
+                    setTimeout(() => {
+                        navigate('/auth/login');
+                    }, 1000)
+                    
+                } else if (apiResponse.status === 403) {
+                    // Permission denied
+                    setLoading(false);
                     setHasErr(true);
                     setErrMsg(apiResponse.message);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else if (apiResponse.status === 404) {
+                    // Skill not found
                     setLoading(false);
-
+                    setHasErr(true);
+                    setErrMsg(apiResponse.statusText);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else {
+                    setLoading(false);
+                    setHasErr(true);
+                    setErrMsg(apiResponse.message);
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
                     });
                 }
             } catch (err) {
-                console.log(err.message);
                 setLoading(false);
-
+                setHasErr(true);
+                setErrMsg(err.message);
+    
                 messageApi.open({
                     type: 'error',
                     content: err.message,
@@ -146,17 +211,52 @@ function EditTests() {
                     type: 'success',
                     content: apiResponse.message,
                 });
+                setTimeout(() => {
                 navigate(-1);
+                }, 500)
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err.message);
             setSaveLoading(false);
+            setHasErr(true);
+            setErrMsg(err.message);
 
             messageApi.open({
                 type: 'error',
@@ -357,8 +457,8 @@ function EditTests() {
                                         <span></span>
                                         {
                                             saveLoading
-                                                ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                                : <Button type="primary" htmlType="submit">Save</Button>
+                                                ? <Button type="primary" htmlType="submit" loading>Updateing</Button>
+                                                : <Button type="primary" htmlType="submit">Update</Button>
                                         }
                                     </div>
                                 </Form.Item>

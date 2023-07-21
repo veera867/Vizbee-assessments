@@ -47,25 +47,55 @@ const  Tests = () => {
                     console.log("success")
                     setTests(apiResponse.data.skills);
                     setLoading(false);
-                } else {
+                }
+                else if (apiResponse.status === 401) {
+                    // Authentication failed
+                    messageApi.open({
+                        type: 'error',
+                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                    });
+                    setLoading(false);
+                    setTimeout(() => {
+                        navigate('/auth/login');
+                    }, 1000)
+                    
+                } else if (apiResponse.status === 403) {
+                    // Permission denied
+                    setLoading(false);
                     setHasErr(true);
                     setErrMsg(apiResponse.message);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else if (apiResponse.status === 404) {
+                    // Skill not found
                     setLoading(false);
-
+                    setHasErr(true);
+                    setErrMsg(apiResponse.statusText);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else {
+                    setLoading(false);
+                    setHasErr(true);
+                    setErrMsg(apiResponse.message);
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
-                    });                  
-                }    
+                    });
+                }
             } catch (err) {
-                console.log(err.message);
                 setLoading(false);
-
+                setHasErr(true);
+                setErrMsg(err.message);
+    
                 messageApi.open({
                     type: 'error',
                     content: err.message,
-                }); 
-            }    
+                });
+            }
         }
          setTimeout(() => {
             getTests();
@@ -106,27 +136,55 @@ const  Tests = () => {
                     type: 'success',
                     content: 'Deleted Successfully',
                 });              
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setConfirmLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setConfirmLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setConfirmLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setConfirmLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
-                });              
-            }    
+                });
+            }
         } catch (err) {
-            console.log(err.message);
             setConfirmLoading(false);
-            setCnfmDel(false);
-            setDelId(null);
+            setHasErr(true);
+            setErrMsg(err.message);
 
             messageApi.open({
                 type: 'error',
                 content: err.message,
-            });              
-        }    
+            });
+        }
     }
     const handleDelCancel = () => {
         setCnfmDel(false);
@@ -182,7 +240,7 @@ const  Tests = () => {
                 <Divider />
                 
                 <div className="content-wrapper">
-                    <Table dataSource={tests} columns={columns} loading={loading}/>
+                    <Table dataSource={tests} columns={columns} loading={loading} rowKey="testId"/>
                 </div>
             </div>
             <Modal

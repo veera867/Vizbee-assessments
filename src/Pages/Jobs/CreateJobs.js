@@ -33,30 +33,64 @@ function CreateJob() {
 
     useEffect(() => {
         fetchSkillsData()
-        console.log("useEffect")
     }, [])
 
     const fetchSkillsData = async () => {
-        console.log("fetch")
         try {
-            const response = await GetSkillsAPI()
-            console.log("response", response)
+            const apiResponse = await GetSkillsAPI()
+            console.log("response", apiResponse)
 
-            if (response.status === 200) {
-                const selectOptions = response.data.skills.map(item => ({
+            if (apiResponse.status === 200) {
+                const selectOptions = apiResponse.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
                 }))
                 setSkillsData(selectOptions);
                 setSkillsDataList(selectOptions);
-            } else {
+            } 
+            else if (apiResponse.status === 401) {
+                // Authentication failed
                 messageApi.open({
                     type: 'error',
-                    content: response.message,
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                // setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                // setLoading(false);
+                // setHasErr(true);
+                // setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                // setLoading(false);
+                // setHasErr(true);
+                // setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                // setLoading(false);
+                // setHasErr(true);
+                // setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err);
+            // setLoading(false);
+            // setHasErr(true);
+            // setErrMsg(err.message);
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
@@ -76,16 +110,43 @@ function CreateJob() {
                 totalPositions: totalPositions
             }
             const apiResponse = await CreateJobAPI(payload);
-            console.log(apiResponse);
-
             //According to the status from API
-            if (apiResponse.status === 200) {
+            if (apiResponse.status === 201) {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
                     content: apiResponse.message,
                 });
-                navigate(-1);
+                setTimeout(() => {
+                    navigate(-1);
+                },500)
+                
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false)
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setSaveLoading(false);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setSaveLoading(false);
                 messageApi.open({
@@ -94,7 +155,6 @@ function CreateJob() {
                 });
             }
         } catch (err) {
-            console.log(err.message);
             setSaveLoading(false);
 
             messageApi.open({

@@ -18,6 +18,7 @@ function VerifyCode() {
     const [relavantExperince, setRelavantExperince] = useState()
     const [role, setRole] = useState()
     const [noticePeriod, setNoticePeriod] = useState()
+    
     const handleRedirect = async () => {
         const payload = {
             currentCompanyName: currentCompanyName,
@@ -239,7 +240,7 @@ function VerifyCode() {
                                     <Input
                                         placeholder="123456"
                                         value={code}
-                                        onChange={(value) => setCode(value.target.value)}
+                                        onChange={(value) => setCode(value.target.value.trim())}
                                     />
                                 </Form.Item>
                                 <Button style={{ marginTop: '5px' }} type="primary" htmlType="submit">Start</Button>                            </Col>

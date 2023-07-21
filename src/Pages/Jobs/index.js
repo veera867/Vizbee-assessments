@@ -55,19 +55,49 @@ const Jobs = () => {
                     console.log("success")
                     setJobs(apiResponse.data.skills);
                     setLoading(false);
-                } else {
+                }
+                else if (apiResponse.status === 401) {
+                    // Authentication failed
+                    messageApi.open({
+                        type: 'error',
+                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                    });
+                    setLoading(false);
+                    setTimeout(() => {
+                        navigate('/auth/login');
+                    }, 1000)
+
+                } else if (apiResponse.status === 403) {
+                    // Permission denied
+                    setLoading(false);
                     setHasErr(true);
                     setErrMsg(apiResponse.message);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else if (apiResponse.status === 404) {
+                    // Skill not found
                     setLoading(false);
-
+                    setHasErr(true);
+                    setErrMsg(apiResponse.statusText);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else {
+                    setLoading(false);
+                    setHasErr(true);
+                    setErrMsg(apiResponse.message);
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
                     });
                 }
             } catch (err) {
-                console.log(err.message);
                 setLoading(false);
+                setHasErr(true);
+                setErrMsg(err.message);
 
                 messageApi.open({
                     type: 'error',
@@ -86,10 +116,10 @@ const Jobs = () => {
     useEffect(() => {
         if (deletedSkillId) {
             setJobs(prevSkills => prevSkills.filter(skill => skill.JobID !== deletedSkillId));
-          setDeletedSkillId(null);
+            setDeletedSkillId(null);
         }
-      }, [deletedSkillId]);
-      console.log("jobsssssssss", jobs)
+    }, [deletedSkillId]);
+    console.log("jobsssssssss", jobs)
 
     const handleRemove = async (record) => {
         setCnfmDel(true);
@@ -114,21 +144,49 @@ const Jobs = () => {
                     type: 'success',
                     content: 'Deleted Successfully',
                 });
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setConfirmLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setConfirmLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setConfirmLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setConfirmLoading(false);
-                setCnfmDel(false);
-                setDelId(null);
-
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err.message);
             setConfirmLoading(false);
-            setCnfmDel(false);
-            setDelId(null);
+            setHasErr(true);
+            setErrMsg(err.message);
 
             messageApi.open({
                 type: 'error',
@@ -149,11 +207,60 @@ const Jobs = () => {
 
     const getParticularAssesmentData = async () => {
         setLoading(true)
-        const apiResponse = await GetSpecificSchdules(selectedRowId)
-        if (apiResponse.status === 200) {
-            setLoading(false)
-            setSelectedRowData(apiResponse?.data.schedules)
-            console.log("getParticularAssesmentData", apiResponse)
+        try {
+            const apiResponse = await GetSpecificSchdules(selectedRowId)
+            if (apiResponse.status === 200) {
+                setLoading(false)
+                setSelectedRowData(apiResponse?.data.schedules)
+                console.log("getParticularAssesmentData", apiResponse)
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
+                });
+            }
+        } catch (err) {
+            setLoading(false);
+            setHasErr(true);
+            setErrMsg(err.message);
+
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });
         }
 
     }
@@ -241,7 +348,7 @@ const Jobs = () => {
             title: 'Total No Of Positions',
             dataIndex: 'totalPositions',
             key: 'totalPositions',
-        },      
+        },
         {
             title: 'Action',
             dataIndex: '',
@@ -271,7 +378,7 @@ const Jobs = () => {
                 <Divider />
 
                 <div className="content-wrapper">
-                    <Table dataSource={jobs} columns={columns} loading={loading} />
+                    <Table dataSource={jobs} columns={columns} loading={loading} rowKey="JobID" />
                 </div>
             </div>
             <Modal
@@ -304,7 +411,7 @@ const Jobs = () => {
                 onCancel={handleEyeCancel}
                 onOk={handleEyeCancel}
             >
-                <Table dataSource={selectedRowData} columns={assessmentDashboardColumns} loading={loading} />
+                <Table dataSource={selectedRowData} columns={assessmentDashboardColumns} loading={loading} rowKey="JobID" />
             </Modal>
         </div>
     );

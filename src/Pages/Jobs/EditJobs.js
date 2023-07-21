@@ -42,7 +42,7 @@ function EditJobs() {
         complexity: '',
         totalPositions: '',
         jobDescription: ''
-      });
+    });
 
     //temporary auth token verification process
     //has to create an api for verification of authToken
@@ -58,25 +58,63 @@ function EditJobs() {
     }, [])
 
     const fetchSkillsData = async () => {
+        setLoading(true);
         try {
-            const response = await GetSkillsAPI()
-            console.log("response", response)
+            const apiResponse = await GetSkillsAPI()
+            console.log("response", apiResponse)
 
-            if (response.status === 200) {
-                const selectOptions = response.data.skills.map(item => ({
+            if (apiResponse.status === 200) {
+                const selectOptions = apiResponse.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
                 }))
                 setSkillsData(selectOptions);
                 setSkillsDataList(selectOptions);
-            } else {
+                setLoading(false);
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
                 messageApi.open({
                     type: 'error',
-                    content: response.message,
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err);
+            setLoading(false);
+            setHasErr(true);
+            setErrMsg(err.message);
+
             messageApi.open({
                 type: 'error',
                 content: err.message,
@@ -105,7 +143,7 @@ function EditJobs() {
                 complexity: data.complexity,
                 totalPositions: data.totalPositions,
                 jobDescription: data.jobDescription
-              });
+            });
         }
     }, [data, fetchFinished]);
 
@@ -115,32 +153,63 @@ function EditJobs() {
 
             try {
                 const apiResponse = await GetJobWithID(id !== undefined || id !== null ? id : 0);
-                console.log("GetSpecificJobDetails", apiResponse);
 
                 //According to the status from API
                 if (apiResponse.status === 200) {
                     console.log("success", apiResponse);
                     setData(apiResponse.data);
-                    setFetchFinished(true);
-                } else {
+                    setLoading(true);
+                }
+                else if (apiResponse.status === 401) {
+                    // Authentication failed
+                    messageApi.open({
+                        type: 'error',
+                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                    });
+                    setLoading(false);
+                    setTimeout(() => {
+                        navigate('/auth/login');
+                    }, 1000)
+
+                } else if (apiResponse.status === 403) {
+                    // Permission denied
+                    setLoading(false);
                     setHasErr(true);
                     setErrMsg(apiResponse.message);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else if (apiResponse.status === 404) {
+                    // Skill not found
                     setLoading(false);
-
+                    setHasErr(true);
+                    setErrMsg(apiResponse.statusText);
+                    messageApi.open({
+                        type: 'error',
+                        content: apiResponse.statusText,
+                    });
+                } else {
+                    setLoading(false);
+                    setHasErr(true);
+                    setErrMsg(apiResponse.message);
                     messageApi.open({
                         type: 'error',
                         content: apiResponse.message,
                     });
                 }
             } catch (err) {
-                console.log(err.message);
                 setLoading(false);
+                setHasErr(true);
+                setErrMsg(err.message);
 
                 messageApi.open({
                     type: 'error',
                     content: err.message,
                 });
             }
+
+
         }
 
         setJdId();
@@ -156,12 +225,10 @@ function EditJobs() {
                 mandatorySkills: mskills,
                 optionalSkills: oskills,
                 complexity: complexity,
-                totalPositions:totalPositions,
-                jobDescription:jobDescription
+                totalPositions: totalPositions,
+                jobDescription: jobDescription
             }
             const apiResponse = await UpdateJobAPI(payload);
-            console.log("UpdateJobAPI", apiResponse);
-
             //According to the status from API
             if (apiResponse.status === 200) {
                 setSaveLoading(false);
@@ -170,16 +237,49 @@ function EditJobs() {
                     content: apiResponse.message,
                 });
                 navigate(-1);
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
+                    type: 'error',
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.statusText);
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
             } else {
                 setSaveLoading(false);
+                setHasErr(true);
+                setErrMsg(apiResponse.message);
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
                 });
             }
         } catch (err) {
-            console.log(err.message);
             setSaveLoading(false);
+            setHasErr(true);
+            setErrMsg(err.message);
 
             messageApi.open({
                 type: 'error',
@@ -366,21 +466,21 @@ function EditJobs() {
                                             />
                                         </Form.Item>
                                         <Form.Item
-                            label="Job Description"
-                            name="jobDescription"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please enter Jd Name!',
-                                }
-                            ]}
-                        >
-                           
-                            <Input.TextArea rows={4}
-                                value={jobDescription}
-                                onChange={(value) => setJobDescription(value.target.value)}
-                            />
-                        </Form.Item>
+                                            label="Job Description"
+                                            name="jobDescription"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Please enter Jd Name!',
+                                                }
+                                            ]}
+                                        >
+
+                                            <Input.TextArea rows={4}
+                                                value={jobDescription}
+                                                onChange={(value) => setJobDescription(value.target.value)}
+                                            />
+                                        </Form.Item>
 
                                         <div className="title-bar">
                                             <h1>{''}</h1>

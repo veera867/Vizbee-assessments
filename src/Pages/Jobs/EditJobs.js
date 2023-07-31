@@ -124,6 +124,7 @@ function EditJobs() {
 
     useEffect(() => {
         console.log("Data changed : ", data);
+        //console.log("fetch Finished : ",fetchFinished);
 
         if (fetchFinished) {
             setLoading(false);
@@ -158,6 +159,7 @@ function EditJobs() {
                 if (apiResponse.status === 200) {
                     console.log("success", apiResponse);
                     setData(apiResponse.data);
+                    setFetchFinished(true);
                     setLoading(true);
                 }
                 else if (apiResponse.status === 401) {

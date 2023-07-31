@@ -19,12 +19,12 @@ const Schedule = () => {
     const [cmail, setCmail] = useState();
     const [cName, setCName] = useState()
     const [hmail, setHmail] = useState();
-    const [jdNumberOptions, setJdNumberOptions] = useState()
-    const [jdNameOptions, setJdNameOptions] = useState()
-    const [testDataOptions, setTestDataOptions] = useState()
+    const [jdNumberOptions, setJdNumberOptions] = useState([])
+    const [jdNameOptions, setJdNameOptions] = useState([])
+    const [testDataOptions, setTestDataOptions] = useState([])
     const [jDData, setJDData] = useState()
-    const [testData, setTestData] = useState()
-    const [loading, setLoading] = useState()
+    const [testData, setTestData] = useState([])
+    const [loading, setLoading] = useState(false)
     //console.log(hmail, "cmail", cmail)
 
     //temporary auth token verification process
@@ -43,8 +43,8 @@ const Schedule = () => {
     }, []);
 
     const [saveLoading, setSaveLoading] = useState(false);
-    const [mandatorySkills, setMandatorySkills] = useState()
-    const [optionalSkills, setOptionalSkills] = useState()
+    const [mandatorySkills, setMandatorySkills] = useState([])
+    const [optionalSkills, setOptionalSkills] = useState([])
 
     const handleDateSelect = (value) => {
         // const date = new Date(value);
@@ -60,8 +60,10 @@ const Schedule = () => {
     }
 
     const handleTestSelectChange = (value) => {
-        setTest(value)
-        const filterData = testData.filter(item => item.testName == value)
+        setTest(value);
+
+        const filterData = testData.filter(item => item.testName === value)
+        console.log(filterData);
         setTestId(filterData[0].testId)
         setMandatorySkills(filterData[0].mandatorySkills)
         setOptionalSkills(filterData[0].optionalSkills)
@@ -423,7 +425,6 @@ const Schedule = () => {
                             >
                                 <Select
                                     value={test}
-                                    // onChange={(value)=>{setTest(value)}}
                                     onChange={handleTestSelectChange}
                                     style={{
                                         width: '100%'

@@ -183,9 +183,13 @@ function EditSkill() {
                 //setQuestions(apiResponse.data.ListOfQuestions);
                 messageApi.open({
                     type: 'success',
-                    content: 'Saved successfully!'
+                    content: apiResponse?.data.message
                 })
-                navigate(-1);
+
+                setTimeout(() => {
+                    navigate(-1);
+                }, 500)
+                
                 setSaveLoading(false);
             } 
             else if (apiResponse.status === 401) {

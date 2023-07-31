@@ -49,6 +49,10 @@ const Skills = () => {
                 if (apiResponse.status == 200) {
                     setSkills(apiResponse.data.skills);
                     setLoading(false);
+                    messageApi.open({
+                        type: 'success',
+                        content: `${apiResponse.data.message}`,
+                    });
                 }
                 else if (apiResponse.status === 401) {
                     // Authentication failed

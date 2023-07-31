@@ -113,9 +113,12 @@ const CreateTest = () => {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.message,
-                });           
-                navigate(-1);
+                    content: apiResponse?.data.message,
+                });       
+                setTimeout(() => {
+                    navigate(-1);
+                },500)    
+                
             }
             else if (apiResponse.status === 401) {
                 // Authentication failed

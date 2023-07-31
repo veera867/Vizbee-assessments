@@ -45,6 +45,10 @@ const  Tests = () => {
                 //According to the status from API
                 if(apiResponse.status == 200){
                     console.log("success")
+                    messageApi.open({
+                        type: 'success',
+                        content: `${apiResponse.data.message}`,
+                    });
                     setTests(apiResponse.data.skills);
                     setLoading(false);
                 }

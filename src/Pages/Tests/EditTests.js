@@ -55,13 +55,17 @@ const EditTests = () =>{
             const apiResponse = await GetSkillsAPI()
 
             if (apiResponse.status === 200) {
-                const selectOptions = apiResponse.data.skills.map(item => ({
+                const selectOptions = apiResponse?.data.skills.map(item => ({
                     value: item.SkillName,
                     label: item.SkillName
                 }))
                 setSkillsData(selectOptions);
                 setSkillsDataList(selectOptions);
                 setLoading(false);
+                messageApi.open({
+                    type: 'success',
+                    content: `${apiResponse.data.message}`,
+                });
             }
             else if (apiResponse.status === 401) {
                 // Authentication failed
@@ -118,7 +122,7 @@ const EditTests = () =>{
             setLoading(true);
             try {
                 const apiResponse = await GetTestWithID(id !== undefined || id !== null ? id : 0);
-                console.log(apiResponse);
+                console.log("GetTestWithID",apiResponse);
 
                 //According to the status from API
                 if (apiResponse.status === 200) {
@@ -128,6 +132,7 @@ const EditTests = () =>{
                     setOskills(apiResponse.data.OptionalSkills);
                     setComplexity(apiResponse.data.Complexity);
                     setLoading(false);
+                    
                     setInitialValues({
                         testId: apiResponse.data.TestID,
                         testName: apiResponse.data.TestName,
@@ -209,7 +214,7 @@ const EditTests = () =>{
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.message,
+                    content: apiResponse?.data.message,
                 });
                 setTimeout(() => {
                 navigate(-1);

@@ -12,7 +12,6 @@ import './skills.css';
 import processCSVData from './CSVparser';
 
 function CreateSkill() {
-
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const [saveLoading, setSaveLoading] = useState(false);
@@ -74,6 +73,10 @@ function CreateSkill() {
             if (apiResponse.status === 200) {
                 setQuestions(apiResponse.data.questions);
                 setFetchLoading(false);
+                messageApi.open({
+                    type: 'success',
+                    content: `${apiResponse?.data.message}`,
+                });
             } 
             else if (apiResponse.status === 401) {
                 // Authentication failed
@@ -169,9 +172,8 @@ function CreateSkill() {
                 setLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.message,
+                    content: apiResponse?.data.message,
                   });
-          
                 setTimeout(() => {
                     navigate(-1);
                 }, 1000)

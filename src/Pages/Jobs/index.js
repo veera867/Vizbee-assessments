@@ -142,7 +142,7 @@ const Jobs = () => {
 
                 messageApi.open({
                     type: 'success',
-                    content: 'Deleted Successfully',
+                    content: apiResponse.data.message
                 });
             }
             else if (apiResponse.status === 401) {

@@ -185,7 +185,6 @@ function EditSkill() {
                     type: 'success',
                     content: apiResponse?.data.message
                 })
-
                 setTimeout(() => {
                     navigate(-1);
                 }, 500)

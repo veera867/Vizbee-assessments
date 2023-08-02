@@ -236,9 +236,12 @@ function EditJobs() {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.message,
+                    content: apiResponse.data.message,
                 });
-                navigate(-1);
+                setTimeout(() => {
+                    navigate(-1);
+                }, 500)
+               
             }
             else if (apiResponse.status === 401) {
                 // Authentication failed

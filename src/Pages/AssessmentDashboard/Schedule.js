@@ -60,13 +60,14 @@ const Schedule = () => {
     }
 
     const handleTestSelectChange = (value) => {
-        setTest(value);
-
-        const filterData = testData.filter(item => item.testName === value)
-        console.log(filterData);
-        setTestId(filterData[0].testId)
-        setMandatorySkills(filterData[0].mandatorySkills)
-        setOptionalSkills(filterData[0].optionalSkills)
+        
+        const filterData = testData.filter(item => item.testId == value)
+       
+        setTestId(filterData[0]?.testId)
+        setMandatorySkills(filterData[0]?.mandatorySkills)
+        setOptionalSkills(filterData[0]?.optionalSkills)
+        setTest(filterData[0]?.testName)
+        console.log("filterData", filterData)
     }
 
     const handleEmailChange = (e) => {
@@ -127,11 +128,11 @@ const Schedule = () => {
                 setTimeout(() => {
                     navigate('/auth/login');
                 }, 1000)
-                
+
             } else if (apiResponse.status === 403) {
                 // Permission denied
                 setLoading(false);
-               
+
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.statusText,
@@ -139,21 +140,21 @@ const Schedule = () => {
             } else if (apiResponse.status === 404) {
                 // Skill not found
                 setLoading(false);
-               
+
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.statusText,
                 });
             } else {
                 setLoading(false);
-               
+
                 messageApi.open({
                     type: 'error',
                     content: apiResponse.message,
                 });
             }
         } catch (err) {
-            setLoading(false);          
+            setLoading(false);
 
             messageApi.open({
                 type: 'error',
@@ -163,213 +164,216 @@ const Schedule = () => {
 
 
 
-        }
+    }
 
     useEffect(() => {
-            fetchTestData()
-        }, [])
+        fetchTestData()
+    }, [])
 
-        const fetchTestData = async () => {
-            setLoading(true);
-            try {
-                const apiResponse = await LoadTestsAPI();
-                console.log("test response", apiResponse)
+    const fetchTestData = async () => {
+        setLoading(true);
+        try {
+            const apiResponse = await LoadTestsAPI();
+            console.log("test response", apiResponse)
 
-                if (apiResponse.status === 200) {
-                    const testOptions = apiResponse.data.skills.map(item => ({
-                        value: item.testName,
-                        label: item.testName
-                    }))
-                    setTestDataOptions(testOptions);
-                    setTestData(apiResponse.data.skills);
-                }
-                else if (apiResponse.status === 401) {
-                    // Authentication failed
-                    messageApi.open({
-                        type: 'error',
-                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
-                    });
-                    setLoading(false);
-                    setTimeout(() => {
-                        navigate('/auth/login');
-                    }, 1000)
-                    
-                } else if (apiResponse.status === 403) {
-                    // Permission denied
-                    setLoading(false);
-                   
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.statusText,
-                    });
-                } else if (apiResponse.status === 404) {
-                    // Skill not found
-                    setLoading(false);
-                   
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.statusText,
-                    });
-                } else {
-                    setLoading(false);
-                   
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.message,
-                    });
-                }
-            } catch (err) {
-                setLoading(false);
+            if (apiResponse.status === 200) {
+                console.log("apiResponse", apiResponse?.data?.skills)
+                const testOptions = apiResponse.data.skills.map(item => ({                   
+                    value: item.testId,
+                    label: item.testName
+                }))
+                setTestDataOptions(testOptions);
+                setTestData(apiResponse.data.skills);
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
                 messageApi.open({
                     type: 'error',
-                    content: err.message,
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
                 });
             }
-
-
+        } catch (err) {
+            setLoading(false);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });
         }
 
-        const handleSave = async () => {
-            try {
-                setSaveLoading(true);
 
-                const payload = {
-                    jdName: jdName,
-                    jdNumber: jdNumber,
-                    testName: test,
-                    testId: testId,
-                    candidateName: cName,
-                    candidateEmail: cmail,
-                    hrEmail: hmail,
-                    scheduleDate: date,
-                    mandatorySkills: mandatorySkills,
-                    optionalSkills: optionalSkills
-                }
-                const apiResponse = await ScheduleAssessmentAPI(payload);
-                console.log(apiResponse);
+    }
 
-                //According to the status from API
-                if (apiResponse.status == 200) {
-                    console.log("aaaaaa")
-                    setSaveLoading(false);
-                    messageApi.open({
-                        type: 'success',
-                        content: apiResponse.message,
-                    });
+    const handleSave = async () => {
+        try {
+            setSaveLoading(true);
 
-                    navigate(-1);
-                }
-                else if (apiResponse.status === 401) {
-                    // Authentication failed
-                    messageApi.open({
-                        type: 'error',
-                        content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
-                    });
-                    setSaveLoading(false);
-                    setTimeout(() => {
-                        navigate('/auth/login');
-                    }, 1000)
+            const payload = {
+                jdName: jdName,
+                jdNumber: jdNumber,
+                testName: test,
+                testId: testId,
+                candidateName: cName,
+                candidateEmail: cmail,
+                hrEmail: hmail,
+                scheduleDate: date,
+                mandatorySkills: mandatorySkills,
+                optionalSkills: optionalSkills
+            }
+            console.log("payload", payload)
+            const apiResponse = await ScheduleAssessmentAPI(payload);
+            console.log(apiResponse);
 
-                } else if (apiResponse.status === 403) {
-                    // Permission denied
-                    setSaveLoading(false);
-
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.statusText,
-                    });
-                } else if (apiResponse.status === 404) {
-                    // Skill not found
-                    setSaveLoading(false);
-
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.statusText,
-                    });
-                } else {
-                    setSaveLoading(false);
-
-                    messageApi.open({
-                        type: 'error',
-                        content: apiResponse.message,
-                    });
-                }
-            } catch (err) {
+            //According to the status from API
+            if (apiResponse.status == 201) {
                 setSaveLoading(false);
                 messageApi.open({
+                    type: 'success',
+                    content: apiResponse?.data.message,
+                });
+                setTimeout(() => {
+                    navigate(-1);
+                },500)
+                
+            }
+            else if (apiResponse.status === 401) {
+                // Authentication failed
+                messageApi.open({
                     type: 'error',
-                    content: err.message,
+                    content: `${apiResponse.statusText}  ${apiResponse.data.detail}`,
+                });
+                setSaveLoading(false);
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+
+            } else if (apiResponse.status === 403) {
+                // Permission denied
+                setSaveLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else if (apiResponse.status === 404) {
+                // Skill not found
+                setSaveLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.statusText,
+                });
+            } else {
+                setSaveLoading(false);
+
+                messageApi.open({
+                    type: 'error',
+                    content: apiResponse.message,
                 });
             }
-
-
+        } catch (err) {
+            setSaveLoading(false);
+            messageApi.open({
+                type: 'error',
+                content: err.message,
+            });
         }
 
-        const handleCancel = () => {
-            navigate(-1);
-        }
 
-        return (
-            <div className="layout-outer">
-                {contextHolder}
-                <div className="layout-inner">
-                    <div className="title-bar">
-                        <h1>Schedule Assessment</h1>
+    }
 
-                        <div className="button-holder">
-                            <Button onClick={handleCancel}>Back</Button>
-                        </div>
+    const handleCancel = () => {
+        navigate(-1);
+    }
+
+    return (
+        <div className="layout-outer">
+            {contextHolder}
+            <div className="layout-inner">
+                <div className="title-bar">
+                    <h1>Schedule Assessment</h1>
+
+                    <div className="button-holder">
+                        <Button onClick={handleCancel}>Back</Button>
                     </div>
+                </div>
 
-                    <Divider />
+                <Divider />
 
-                    <div className="content-wrapper form-center">
-                        <Form
-                            name="basic"
-                            layout="vertical"
+                <div className="content-wrapper form-center">
+                    <Form
+                        name="basic"
+                        layout="vertical"
+                        style={{
+                            width: '100%',
+                            maxWidth: 600,
+                        }}
+                        initialValues={{
+                            remember: true,
+                        }}
+                        autoComplete="off"
+                        onFinish={handleSave}
+                    >
+                        <Space
+                            direction="horizontal"
+                            size="large"
                             style={{
                                 width: '100%',
-                                maxWidth: 600,
+                                display: 'flex',
+                                justifyContent: 'space-between'
                             }}
-                            initialValues={{
-                                remember: true,
-                            }}
-                            autoComplete="off"
-                            onFinish={handleSave}
                         >
-                            <Space
-                                direction="horizontal"
-                                size="large"
+                            <Form.Item
+                                label="JD Name"
+                                name="JD Name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please select!',
+                                    }
+                                ]}
                                 style={{
                                     width: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'space-between'
                                 }}
                             >
-                                <Form.Item
-                                    label="JD Name"
-                                    name="JD Name"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Please select!',
-                                        }
-                                    ]}
+                                <Select
+                                    value={jdName}
+                                    onChange={handleJdNameChange}
                                     style={{
-                                        width: '100%',
+                                        width: '100%'
                                     }}
-                                >
-                                    <Select
-                                        value={jdName}
-                                        onChange={handleJdNameChange}
-                                        style={{
-                                            width: '100%'
-                                        }}
-                                        options={jdNameOptions}
-                                    ></Select>
-                                </Form.Item>
+                                    options={jdNameOptions}
+                                ></Select>
+                            </Form.Item>
 
-                                {/* <Form.Item
+                            {/* <Form.Item
                                 label="JD Number"
                                 name="JD Number"
                                 rules={[
@@ -396,7 +400,7 @@ const Schedule = () => {
 
 
 
-                                {/* <Form.Item
+                            {/* <Form.Item
                                 label="JD Name"
                                 name="jdName"
                                 rules={[
@@ -411,122 +415,126 @@ const Schedule = () => {
                                     onChange={(value)=>setJdName(value)}                                    
                                 />
                             </Form.Item> */}
-                            </Space>
+                        </Space>
+                        
 
-                            <Form.Item
-                                label="Test"
-                                name="test"
-                                rules={[
+                        <Form.Item
+                            label="Test"
+                            name="test"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please select!',
+                                }
+                            ]}
+                        >
+                            <Select
+                                value={test}
+                                // onChange={(value)=>{setTest(value)}}
+                                onChange={handleTestSelectChange}
+                                style={{
+                                    width: '100%'
+                                }}
+                                options={testDataOptions}
+                            ></Select>
+                        </Form.Item>
+
+                        
+
+                        <Form.Item
+                            label="Schedule Date and Time"
+                            name="Schedule Date"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please select Date!',
+                                },
+                            ]}
+                        >
+                            {/*<DatePicker value={date} onChange={handleDateSelect} style={{ width: '100%' }}/>*/}
+                            <DatePicker
+                                showTime
+                                format="YYYY-MM-DD HH:mm"
+                                placeholder="ex. 12/06/2023 08:30"
+                                value={date}
+                                onChange={handleDateSelect}
+                                onOk={handleDateSelect}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Candidate Name"
+                            name="candidateName"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter  Name!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder='john'
+                                value={cName}
+                                onChange={(value) => setCName(value.target.value)}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Candidate EMail"
+                            name="candidateMail"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter valid mail!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder='john@gmail.com'
+                                value={cmail}
+                                // onChange={handleEmailChange}
+                                onChange={(value) => setCmail(value.target.value)}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="HR EMail"
+                            name="hrMail"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter valid mail!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder='virat@gmail.com'
+                                value={hmail}
+                                onChange={(value) => setHmail(value.target.value)}
+                            />
+                        </Form.Item>
+
+                        <div className="title-bar">
+                            <h1>{''}</h1>
+
+                            <Form.Item>
+                                <div className="button-holder">
+                                    <Button danger onClick={handleCancel}>Cancel</Button>
+                                    <span></span>
                                     {
-                                        required: true,
-                                        message: 'Please select!',
+                                        saveLoading
+                                            ? <Button type="primary" htmlType="submit" loading>Save</Button>
+                                            : <Button type="primary" htmlType="submit">Save</Button>
                                     }
-                                ]}
-                            >
-                                <Select
-                                    value={test}
-                                    onChange={handleTestSelectChange}
-                                    style={{
-                                        width: '100%'
-                                    }}
-                                    options={testDataOptions}
-                                ></Select>
+                                </div>
                             </Form.Item>
-
-                            <Form.Item
-                                label="Schedule Date and Time"
-                                name="Schedule Date"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please select Date!',
-                                    },
-                                ]}
-                            >
-                                {/*<DatePicker value={date} onChange={handleDateSelect} style={{ width: '100%' }}/>*/}
-                                <DatePicker
-                                    showTime
-                                    format="YYYY-MM-DD HH:mm"
-                                    placeholder="ex. 12/06/2023 08:30"
-                                    value={date}
-                                    onChange={handleDateSelect}
-                                    onOk={handleDateSelect}
-                                    style={{ width: '100%' }}
-                                />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Candidate Name"
-                                name="candidateName"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter  Name!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    placeholder='john'
-                                    value={cName}
-                                    onChange={(value) => setCName(value.target.value)}
-                                />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Candidate EMail"
-                                name="candidateMail"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter valid mail!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    placeholder='john@gmail.com'
-                                    value={cmail}
-                                    // onChange={handleEmailChange}
-                                    onChange={(value) => setCmail(value.target.value)}
-                                />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="HR EMail"
-                                name="hrMail"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter valid mail!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    placeholder='virat@gmail.com'
-                                    value={hmail}
-                                    onChange={(value) => setHmail(value.target.value)}
-                                />
-                            </Form.Item>
-
-                            <div className="title-bar">
-                                <h1>{''}</h1>
-
-                                <Form.Item>
-                                    <div className="button-holder">
-                                        <Button danger onClick={handleCancel}>Cancel</Button>
-                                        <span></span>
-                                        {
-                                            saveLoading
-                                                ? <Button type="primary" htmlType="submit" loading>Save</Button>
-                                                : <Button type="primary" htmlType="submit">Save</Button>
-                                        }
-                                    </div>
-                                </Form.Item>
-                            </div>
-                        </Form>
-                    </div>
+                        </div>
+                    </Form>
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
 
-    export default Schedule
+export default Schedule

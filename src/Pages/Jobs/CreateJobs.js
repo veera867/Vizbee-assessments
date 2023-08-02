@@ -115,7 +115,7 @@ function CreateJob() {
                 setSaveLoading(false);
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.message,
+                    content: apiResponse.data.message,
                 });
                 setTimeout(() => {
                     navigate(-1);

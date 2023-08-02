@@ -8,8 +8,8 @@ const instance = axios.create({
 
   //  baseURL: ' http://34.135.225.91:8000', // Replace with your base URL
 
-  baseURL: 'http://34.135.225.91:8000/', // Replace with your base URL
-  
+  baseURL: 'https://34.135.225.91:8000', // Replace with your base URL
+
 
 });
 

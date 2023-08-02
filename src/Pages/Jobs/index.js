@@ -55,6 +55,10 @@ const Jobs = () => {
                     console.log("success")
                     setJobs(apiResponse.data.skills);
                     setLoading(false);
+                    messageApi.open({
+                        type: 'success',
+                        content: ` ${apiResponse.data.message}`,
+                    });
                 }
                 else if (apiResponse.status === 401) {
                     // Authentication failed
@@ -142,7 +146,7 @@ const Jobs = () => {
 
                 messageApi.open({
                     type: 'success',
-                    content: apiResponse.data.message
+                    content: apiResponse?.data.message
                 });
             }
             else if (apiResponse.status === 401) {
@@ -212,7 +216,10 @@ const Jobs = () => {
             if (apiResponse.status === 200) {
                 setLoading(false)
                 setSelectedRowData(apiResponse?.data.schedules)
-                console.log("getParticularAssesmentData", apiResponse)
+                messageApi.open({
+                    type: 'success',
+                    content: `${apiResponse.data.message}`,
+                });
             }
             else if (apiResponse.status === 401) {
                 // Authentication failed

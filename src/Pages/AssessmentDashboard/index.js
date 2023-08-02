@@ -42,6 +42,10 @@ const Dashboard = () => {
 
                 //According to the status from API
                 if (apiResponse.status === 200) {
+                    messageApi.open({
+                        type: 'success',
+                        content: `  ${apiResponse.data.message}`,
+                    });
                     let dupData;
                     if (filterJobData !== null || filterJobData?.jobID !== undefined) {
                         dupData = apiResponse.data.skills.filter(item => item.testId === filterJobData?.JobID);
@@ -50,7 +54,7 @@ const Dashboard = () => {
                     }
                     console.log("dupData", dupData)
                     setAssessments(apiResponse.data.skills);
-                    setLoading(false);
+                    setLoading(false);                   
                 }
                 else if (apiResponse.status === 401) {
                     // Authentication failed
